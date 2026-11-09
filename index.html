@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex,nofollow">
+<title>الرسائل المختومة</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Lateef&family=Reem+Kufi&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;--bg:#0b0907;--text:#e2d8c4;--muted:#948a78;--gold:#b8955a;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .3 0 0 0 0 .15 0 0 0 1.1 -.32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --creases:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 66' preserveAspectRatio='none'%3E%3Cpath d='M0 66L50 38M100 66L50 38' stroke='%23000' stroke-opacity='.45' stroke-width='.6' fill='none' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'Amiri',serif;color:var(--text);min-height:100vh;
+  background:radial-gradient(ellipse at 50% 0,rgba(90,55,25,.35),transparent 60%),
+  repeating-linear-gradient(92deg,rgba(255,255,255,.012) 0 2px,transparent 2px 7px,rgba(0,0,0,.18) 7px 8px),#120d09 fixed}
+#loginBtn{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:12px;font-size:.9rem;color:var(--muted);text-decoration:none;border:1px solid #3a2e22;border-radius:20px;padding:4px 14px}
+header{position:relative;text-align:center;padding:34px 20px 6px}
+header h1{font-family:'Scheherazade New',serif;font-size:2.3rem;color:#efe4c8}
+header p{color:var(--muted);font-style:italic;font-size:1rem}
+nav{display:flex;justify-content:center;gap:8px;margin:16px 0 22px}
+nav a{color:var(--text);text-decoration:none;padding:8px 22px;border:1px solid #3a2e22;border-radius:30px;font-size:1.1rem;background:rgba(0,0,0,.3);transition:.25s}
+nav a.on{background:#3b2314;border-color:var(--gold);color:#f4ecd8}
+#cnt{display:inline-block;min-width:1.5em;margin-right:6px;padding:0 6px;border-radius:20px;background:var(--gold);color:#1a120b;font-size:.9rem}
+#cnt.pulse{animation:pulse .8s 2}
+@keyframes pulse{50%{transform:scale(1.4)}}
+.view{display:none}.view.on{display:block}
+.btn{font-family:'Amiri',serif;font-size:1.1rem;cursor:pointer;border-radius:4px;padding:10px 28px;background:#3b2314;color:#f4ecd8;border:1px solid #6b4326;box-shadow:0 4px 10px rgba(0,0,0,.4);transition:.25s}
+.btn:hover{background:#5c3720}
+.btn.ghost{background:transparent;color:#3b2314;border:1px solid #9c855c;box-shadow:none}
+
+/* paper */
+.pw{filter:drop-shadow(0 18px 28px rgba(0,0,0,.75))}
+.parch{
+  position:relative;color:var(--ink,#1f1a17);font-family:var(--ff,'Amiri',serif);
+  background:radial-gradient(circle at 15% 20%,rgba(150,100,45,.24),transparent 16%),
+    radial-gradient(circle at 85% 72%,rgba(120,80,35,.22),transparent 20%),
+    radial-gradient(circle at 62% 8%,rgba(160,115,60,.16),transparent 13%),
+    radial-gradient(circle at 30% 85%,rgba(140,95,40,.14),transparent 12%),
+    var(--noise),radial-gradient(ellipse at center,#efe2c0 0%,#e3cf9f 58%,#c4a468 100%);
+  box-shadow:inset 0 0 70px rgba(110,70,25,.55),inset 0 0 8px rgba(80,50,20,.6);
+  clip-path:polygon(.3% .4%,18% 0,41% .5%,66% .1%,99.5% .4%,100% 24%,99.6% 52%,100% 99.5%,72% 100%,44% 99.4%,12% 100%,0 99.4%,.4% 62%,0 30%);
+}
+.sheet{max-height:80vh;overflow-y:auto;padding:38px 34px 28px}
+.sheet.read::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(transparent calc(33% - 1px),rgba(80,50,20,.2) 33%,rgba(255,255,255,.28) calc(33% + 1px),transparent calc(33% + 3px)),
+  linear-gradient(transparent calc(66% - 1px),rgba(80,50,20,.2) 66%,rgba(255,255,255,.28) calc(66% + 1px),transparent calc(66% + 3px))}
+.pad{max-width:680px;margin:0 auto}
+.to{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;font-size:1.3rem}
+.to span{opacity:.6}
+.to input{flex:1;min-width:0;background:transparent;border:none;border-bottom:1px dashed rgba(90,60,25,.5);outline:none;font:inherit;font-size:calc(var(--fs,1.3) * 1.1rem);color:inherit;padding:4px 2px}
+textarea{width:100%;height:250px;resize:none;background:transparent;border:none;outline:none;font:inherit;font-size:calc(var(--fs,1.3) * 1rem);line-height:2;color:inherit}
+::placeholder{color:#8c7853;font-style:italic}
+.note{min-height:1.4em;text-align:center;color:#8a1c1c}
+.row{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+
+/* tools */
+.tools{max-width:680px;margin:0 auto 20px;padding:16px 18px;background:rgba(0,0,0,.35);border:1px solid #2e241a;border-radius:8px}
+.tools h3{font-weight:400;font-size:1rem;color:var(--muted);margin:10px 0 8px}.tools h3:first-child{margin-top:0}
+.sw{display:flex;flex-wrap:wrap;gap:10px}
+.sw button{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;box-shadow:inset 0 0 6px rgba(0,0,0,.5);transition:.2s}
+.sw button.on{border-color:#fff;transform:scale(1.18)}
+.fonts button{width:auto;height:auto;border-radius:6px;padding:4px 14px;font-size:1.15rem;color:var(--text);background:rgba(255,255,255,.05)}
+.fonts button.on{background:#3b2314;border-color:var(--gold)}
+.pvwrap{width:min(250px,70%);margin:6px auto 26px;padding-top:26%;transition:.55s}
+.pvwrap.gone{transform:translateY(40px) scale(.7);opacity:0}
+
+/* envelope */
+.env{position:relative;aspect-ratio:10/6.6;filter:drop-shadow(0 14px 16px rgba(0,0,0,.6));font-family:var(--ff,'Amiri',serif)}
+.shelf .env{cursor:pointer;transition:transform .3s}.shelf .env:hover{transform:translateY(-5px)}
+.env.drop{animation:drop .8s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes drop{from{opacity:0;transform:translateY(-70px) scale(.8)}}
+.env-back{position:absolute;inset:0;border-radius:3px;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.28) 0 3px,transparent 3px 8px),repeating-linear-gradient(-45deg,rgba(0,0,0,.28) 0 3px,transparent 3px 8px),color-mix(in srgb,var(--c) 60%,#2a170c)}
+.env-paper{position:absolute;left:6%;right:6%;top:10%;bottom:4%;z-index:1;border-radius:2px;
+  background:var(--noise),linear-gradient(#efe2c0,#d9c28f);box-shadow:inset 0 0 14px rgba(110,70,25,.5);
+  transition:transform .85s cubic-bezier(.3,.8,.3,1) .45s}
+.env.open .env-paper{transform:translateY(-62%)}
+.env.out .env-paper{transform:translateY(-96%) rotate(-1.5deg);z-index:6;box-shadow:0 10px 18px rgba(0,0,0,.5),inset 0 0 14px rgba(110,70,25,.5)}
+.env-front{position:absolute;inset:0;z-index:2;border-radius:3px;
+  background:var(--creases),var(--grain),linear-gradient(160deg,color-mix(in srgb,var(--c) 86%,#fff),var(--c) 55%,color-mix(in srgb,var(--c) 82%,#000));
+  background-size:100% 100%,200px 200px,100% 100%;
+  clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%)}
+.env-name{position:absolute;z-index:3;left:50%;bottom:12%;transform:translateX(-50%);width:70%;text-align:center;padding:5px 10px 7px;color:#2a1d12;
+  background:var(--noise),linear-gradient(#f0e4c4,#dcc796);box-shadow:0 2px 5px rgba(0,0,0,.55),inset 0 0 8px rgba(110,70,25,.4);border-radius:1px}
+.env-name small{display:block;font-size:.75rem;opacity:.6;line-height:1.2}
+.env-name b{display:block;font-weight:400;font-size:1.2rem;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink,#2a1d12)}
+.env-flap{position:absolute;left:0;right:0;top:0;height:58%;z-index:4;transform-origin:top;
+  background:var(--grain),linear-gradient(180deg,color-mix(in srgb,var(--c) 80%,#fff),color-mix(in srgb,var(--c) 90%,#000));
+  clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .6s ease,z-index 0s .3s,background-image .6s}
+.env.open .env-flap{transform:perspective(600px) rotateX(180deg);z-index:0;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.3) 0 3px,transparent 3px 8px),repeating-linear-gradient(-45deg,rgba(0,0,0,.3) 0 3px,transparent 3px 8px),color-mix(in srgb,var(--c) 60%,#2a170c)}
+.env-seal{position:absolute;z-index:5;left:50%;top:58%;width:21%;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.75));transition:opacity .3s,transform .45s cubic-bezier(.2,1.6,.4,1)}
+.env-seal svg{display:block;width:100%;height:auto;overflow:visible}
+.env.open .env-seal{opacity:0}
+.env.unsealed .env-seal{opacity:0;transform:translate(-50%,-50%) scale(2.2)}
+
+.shelf{max-width:1000px;margin:0 auto;padding:10px 24px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:30px 28px}
+.slot{padding-top:34%}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);font-size:1.2rem;padding:50px 0;font-style:italic}
+.desk{padding:0 16px 80px}
+
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.82);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;
+  padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.on{opacity:1;pointer-events:auto}
+.overlay .pw{width:100%;max-width:560px;transform-origin:50% 100%;opacity:0}
+.overlay.on .pw{animation:unfold 1.1s cubic-bezier(.25,.8,.3,1) forwards}
+@keyframes unfold{0%{opacity:.2;transform:perspective(1000px) translateY(120px) rotateX(-70deg) scale(.7,.35)}45%{opacity:1;transform:perspective(1000px) translateY(40px) rotateX(-28deg) scale(.9,.7)}100%{opacity:1;transform:perspective(1000px) rotateX(0) translateY(0) scale(1)}}
+.read-to{font-size:1.2rem;opacity:.7;margin-bottom:6px}
+.read-to b{font-weight:400;opacity:1;font-size:1.3rem}
+.read-body{font-size:calc(var(--fs,1.3) * 1rem);line-height:2;white-space:pre-wrap;word-wrap:break-word;min-height:96px}
+.read-date{text-align:left;opacity:.6;font-size:.95rem;margin-top:12px}
+.sealing{transition:transform .65s ease-in,opacity .65s;transform:translateY(140px) scale(.5);opacity:0}
+.dlg{width:100%;max-width:440px;padding:26px 24px;background:#1b130d;border:1px solid #4a3622;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.8);transform:translateY(30px);transition:transform .5s}
+.overlay.on .dlg{transform:none}
+.dlg h2{font-family:'Scheherazade New',serif;font-weight:700;font-size:1.5rem;color:#efe4c8;text-align:center;margin-bottom:6px}
+.dlg p{color:var(--muted);text-align:center;font-size:1rem;margin-bottom:14px}
+.plat{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+.plat button{font:1rem 'Amiri',serif;padding:6px 14px;border-radius:20px;border:1px solid #4a3622;background:rgba(255,255,255,.04);color:var(--text);cursor:pointer}
+.plat button.on{background:#3b2314;border-color:var(--gold)}
+.dlg input{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #4a3622;background:rgba(0,0,0,.4);color:var(--text);font:1.15rem 'Amiri',serif;direction:ltr;text-align:left;outline:none}
+.dlg .btn.ghost{color:var(--text);border-color:#4a3622}
+.stage{width:min(340px,82vw);padding-top:36%;transition:transform .9s ease-in,opacity .9s}
+.stage.fly{transform:translateY(60vh) scale(.4);opacity:0}
+#cerMsg{margin-top:26px;text-align:center;min-height:130px;opacity:0;transition:opacity .6s}
+#cerMsg.on{opacity:1}
+#cerMsg p{color:var(--muted);margin-bottom:12px}
+.btn.a{display:inline-block;text-decoration:none}
+body.guest nav,body.guest #loginBtn,body.guest #delBtn,body.guest #sendLink,body.guest #toast{display:none!important}
+.lnk{max-width:680px;margin:0 auto 18px;padding:12px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:rgba(0,0,0,.35);border:1px solid #2e241a;border-radius:8px;font-size:.95rem;color:var(--muted)}
+.lnk input{flex:1;min-width:160px;direction:ltr;text-align:left;background:rgba(0,0,0,.4);border:1px solid #3a2e22;color:var(--text);border-radius:5px;padding:6px 8px;font-size:.9rem}
+.lnk .btn{padding:6px 16px;font-size:1rem}
+#rMsg{text-align:center;color:var(--muted);padding:10px 20px;font-size:1.15rem;min-height:2em}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);z-index:60;padding:12px 20px;border-radius:30px;
+  background:#2a1b10;border:1px solid var(--gold);color:#f4ecd8;transition:transform .5s;white-space:nowrap}
+#toast.on{transform:translate(-50%,0)}#toast a{color:var(--gold);margin-right:10px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="waxEdge" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency=".18" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+<filter id="waxBlur"><feGaussianBlur stdDeviation=".5"/></filter>
+<radialGradient id="waxShade" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+</defs></svg>
+<header><a href="#" id="loginBtn">دخول صاحب الموقع</a><h1>الرسائل المختومة</h1><p>The Eclipse</p></header>
+<nav><a href="#desk" id="tDesk">المكتب</a><a href="#box" id="tBox">الصندوق<span id="cnt">0</span></a></nav>
+
+<section class="view desk" id="vDesk">
+  <div class="pvwrap" id="pvWrap"></div>
+  <div class="tools">
+    <h3>لون الظرف</h3><div class="sw" id="swEnv"></div>
+    <h3>نوع الخط</h3><div class="sw fonts" id="swFont"></div>
+    <h3>لون الحبر</h3><div class="sw" id="swInk"></div>
+    <h3>لون الختم</h3><div class="sw" id="swSeal"></div>
+  </div>
+  <div class="pw" style="max-width:680px;margin:0 auto">
+    <div class="parch" id="compose"><div class="sheet"><div class="pad">
+      <label class="to"><span id="toLbl">إلى:</span><input id="toInput" maxlength="40" placeholder="اسم الشخص" autocomplete="off"></label>
+      <textarea id="msg" placeholder="خطّ كلماتك هنا..."></textarea>
+      <p class="note" id="note"></p>
+      <div class="row"><button class="btn" id="sendBtn">ختم وإرسال</button></div>
+    </div></div></div>
+  </div>
+</section>
+
+<section class="view" id="vBox"><div class="lnk"><span>رابط الكتابة (شاركه مع اللي تريده يكتبلك رسالة):</span><input id="wLink" readonly><button class="btn" id="wCopy">نسخ</button></div><main class="shelf" id="shelf"></main></section>
+<section class="view" id="vRead"><div id="rMsg"></div><div class="stage" id="rStage" style="margin:0 auto"></div><div class="row" id="rBtns" style="margin:24px 0 60px"></div></section>
+
+<div class="overlay" id="readOv">
+  <div class="pw"><div class="parch"><div class="sheet read" id="readSheet"><div class="pad">
+    <div class="read-to"><span id="rLbl">إلى:</span> <b id="rTo"></b></div>
+    <div class="read-body" id="rBody"></div>
+    <div class="read-date" id="rDate"></div>
+    <div class="row">
+      <button class="btn" id="closeBtn">طيّ الرسالة</button>
+      <a class="btn a" id="sendLink" target="_blank" rel="noopener" style="display:none">إرسال له</a>
+      <button class="btn ghost" id="delBtn">حذف</button>
+    </div>
+  </div></div></div></div>
+</div>
+<div class="overlay" id="ctOv"><div class="dlg">
+  <h2>كيف توصلها له؟</h2>
+  <p>اختار الوسيلة وحط رقمه أو يوزره حتى تكدر ترسل الرسالة له بعد الختم.</p>
+  <div class="plat" id="plat"></div>
+  <input id="ctInput" autocomplete="off">
+  <p id="ctNote" style="color:#e07a6a;margin:10px 0 0;min-height:1.4em"></p>
+  <div class="row"><button class="btn" id="ctOk">ختم الرسالة</button><button class="btn ghost" id="ctSkip">ختم بدون إرسال</button><button class="btn ghost" id="ctBack">رجوع</button></div>
+</div></div>
+<div class="overlay" id="cerOv" style="flex-direction:column">
+  <div class="stage" id="stage"></div>
+  <div id="cerMsg"><p id="cerTxt"></p><div class="row" id="cerBtns"></div></div>
+</div>
+<div id="toast">أُرسلت الرسالة إلى الصندوق <a href="#box">افتح الصندوق</a></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ====== عدّل هذا القسم فقط ====== */
+var FIREBASE_CONFIG={
+  apiKey:"AIzaSyCMOIllaOqdsCEQlzW_7VJqxkslVK2ZU6U",
+  authDomain:"dps2-94f74.firebaseapp.com",
+  projectId:"dps2-94f74",
+  storageBucket:"dps2-94f74.firebasestorage.app",
+  messagingSenderId:"499750157368",
+  appId:"1:499750157368:web:e945ab3d4550d6afac3acd"
+};
+var OWNER_EMAIL='saifbin21@gmail.com'; /* إيميل كوكل مالتك (صاحب الموقع) */
+/* ================================ */
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var ENVS=[['أسود','#1a1a1d'],['عنابي','#5e1527'],['كحلي','#17305a'],['أخضر','#1f4130'],['قهوائي','#5b3a22'],['كرافت','#b58a58'],['عاجي','#e8dcc0'],['بنفسجي','#412660']];
+  var INKS=[['أسود','#1f1a17'],['أزرق','#1d3a6b'],['أحمر','#8a1c1c'],['أخضر','#2f4a2b'],['بنفسجي','#4b2e63'],['بني','#5a3a1e']];
+  var FONTS={amiri:['نسخ',"'Amiri',serif",1.3],ruqaa:['رقعة',"'Aref Ruqaa',serif",1.25],lateef:['يد',"'Lateef',serif",1.75],kufi:['كوفي',"'Reem Kufi',sans-serif",1.15],schehe:['مزخرف',"'Scheherazade New',serif",1.4]};
+  var SEALS=[['أحمر','#a31212'],['عنابي','#6e0f26'],['ذهبي','#b8892e'],['أسود','#262626'],['أزرق','#1c3f8a'],['أخضر','#1f6b3f'],['وردي','#d1507a'],['بنفسجي','#5a2d91']];
+  var PLATS={wa:['واتساب','رقم'],tg:['تلغرام','يوزر'],ig:['انستغرام','يوزر'],sc:['سناب','يوزر'],sms:['رسالة نصية','رقم']};
+  var sel={env:ENVS[0][1],font:'amiri',ink:INKS[0][1],seal:SEALS[0][1]};
+  var pend=null,ctPlat='wa';
+  var BASE=location.href.split('#')[0],guest=false,ready=false,readId=null,letters=[],col=null,dbh=null,LS='eclipse-letters-v1',busy=false,current=null,confirmDel=false,pendingDrop=null;
+
+  function lsRead(){try{return JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){return[]}}
+  function lsWrite(){try{localStorage.setItem(LS,JSON.stringify(letters.filter(function(x){return !x.inc})))}catch(e){}}
+  function tmo(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(function(){r(null)},ms)})])}
+  var auth=null,isOwner=false;
+  async function loadOwner(){
+    var u=auth.currentUser;
+    isOwner=!!(u&&u.email&&u.email.toLowerCase()===OWNER_EMAIL.toLowerCase());
+    $('loginBtn').textContent=isOwner?'خروج':'دخول صاحب الموقع';
+    if(!isOwner){col=null;return}
+    col=dbh.collection('private');
+    var snap=await col.get();letters=snap.docs.map(function(d){return d.data()});
+    try{var ib=await dbh.collection('inbox').get();ib.docs.forEach(function(d){var x=d.data();x.inc=true;letters.push(x)})}catch(e){}
+  }
+  async function initStore(){
+    try{
+      firebase.initializeApp(FIREBASE_CONFIG);dbh=firebase.firestore();auth=firebase.auth();
+      await new Promise(function(r){var off=auth.onAuthStateChanged(function(){off();r()})});
+      await loadOwner();
+    }catch(e){dbh=null}
+  }
+  $('loginBtn').onclick=async function(){
+    if(!auth)return;
+    if(auth.currentUser){await auth.signOut();location.reload();return}
+    var p=new firebase.auth.GoogleAuthProvider();
+    try{await auth.signInWithPopup(p);location.reload()}catch(e){try{await auth.signInWithRedirect(p)}catch(e2){}}
+  };
+  async function persistAdd(l){if(col){try{await col.doc(l.id).set(l);return}catch(e){}}lsWrite()}
+  async function persistDel(l){if(l.inc&&dbh){try{await dbh.collection('inbox').doc(l.id).delete()}catch(e){}return}if(dbh&&l.shared){try{await dbh.doc('shared/'+l.id).delete()}catch(e){}}if(col){try{await col.doc(l.id).delete();return}catch(e){}}lsWrite()}
+
+  function mkEnv(l){
+    var e=document.createElement('div');e.className='env';
+    e.style.setProperty('--c',l.env);e.style.setProperty('--seal',l.seal||'#a31212');e.style.setProperty('--ff',FONTS[l.font][1]);e.style.setProperty('--ink',l.ink);
+    e.innerHTML='<div class="env-back"></div><div class="env-paper"></div><div class="env-front"></div><div class="env-name"><small></small><b></b></div><div class="env-flap"></div><div class="env-seal"><svg viewBox="-2 -2 36 34"><g filter="url(#waxEdge)"><circle cx="8" cy="23" r="2.3" style="fill:var(--seal)"/><circle cx="25.5" cy="22" r="2" style="fill:var(--seal)"/><circle cx="16" cy="29" r="2.2" style="fill:var(--seal)"/><path style="fill:var(--seal)" d="M16 28C16 28 3 19 3 10C3 5.5 6.5 2.5 10.5 2.5C13 2.5 15 3.8 16 6C17 3.8 19 2.5 21.5 2.5C25.5 2.5 29 5.5 29 10C29 19 16 28 16 28Z"/><path fill="url(#waxShade)" d="M16 28C16 28 3 19 3 10C3 5.5 6.5 2.5 10.5 2.5C13 2.5 15 3.8 16 6C17 3.8 19 2.5 21.5 2.5C25.5 2.5 29 5.5 29 10C29 19 16 28 16 28Z"/><path fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1.2" d="M16 28C16 28 3 19 3 10C3 5.5 6.5 2.5 10.5 2.5C13 2.5 15 3.8 16 6C17 3.8 19 2.5 21.5 2.5C25.5 2.5 29 5.5 29 10C29 19 16 28 16 28Z"/></g><path fill="rgba(0,0,0,.16)" stroke="rgba(0,0,0,.5)" stroke-width=".8" d="M16 22.5C16 22.5 7.5 16.5 7.5 10.8C7.5 8.2 9.3 6.5 11.3 6.5C13.3 6.5 15 7.7 16 9.5C17 7.7 18.7 6.5 20.7 6.5C22.7 6.5 24.5 8.2 24.5 10.8C24.5 16.5 16 22.5 16 22.5Z"/><path fill="none" stroke="rgba(255,255,255,.4)" stroke-width=".7" transform="translate(.7 .8)" d="M16 22.5C16 22.5 7.5 16.5 7.5 10.8C7.5 8.2 9.3 6.5 11.3 6.5C13.3 6.5 15 7.7 16 9.5C17 7.7 18.7 6.5 20.7 6.5C22.7 6.5 24.5 8.2 24.5 10.8C24.5 16.5 16 22.5 16 22.5Z"/><ellipse cx="10" cy="7.5" rx="3.4" ry="1.7" transform="rotate(-32 10 7.5)" fill="rgba(255,255,255,.55)" filter="url(#waxBlur)"/></svg></div>';
+    e.querySelector('small').textContent=l.from!=null?'من':'إلى';e.querySelector('b').textContent=(l.from!=null?l.from:l.to)||'اسم الشخص';
+    return e;
+  }
+
+  /* ---- desk ---- */
+  function swatches(el,list,key){
+    list.forEach(function(x){
+      var b=document.createElement('button');b.title=x[0];b.style.background=x[1];
+      b.onclick=function(){sel[key]=x[1];sync()};b.dataset.v=x[1];el.appendChild(b);
+    });
+  }
+  function buildFonts(){
+    Object.keys(FONTS).forEach(function(k){
+      var b=document.createElement('button');b.textContent=FONTS[k][0];b.style.fontFamily=FONTS[k][1];b.dataset.v=k;
+      b.onclick=function(){sel.font=k;sync()};$('swFont').appendChild(b);
+    });
+  }
+  function mark(id,val){[].forEach.call($(id).children,function(b){b.classList.toggle('on',b.dataset.v===val)})}
+  function sync(){
+    mark('swEnv',sel.env);mark('swFont',sel.font);mark('swInk',sel.ink);mark('swSeal',sel.seal);
+    var c=$('compose');c.style.setProperty('--ff',FONTS[sel.font][1]);c.style.setProperty('--fs',FONTS[sel.font][2]);c.style.setProperty('--ink',sel.ink);
+    var pv=$('pvWrap');pv.innerHTML='';var nm=$('toInput').value.trim(),o={env:sel.env,font:sel.font,ink:sel.ink,seal:sel.seal};if(guest)o.from=nm;else o.to=nm;pv.appendChild(mkEnv(o));
+  }
+  $('toInput').addEventListener('input',sync);
+
+  $('sendBtn').onclick=function(){
+    var to=$('toInput').value.trim(),text=$('msg').value.trim();
+    if(!to){$('note').textContent=guest?'اكتب اسمك.':'اكتب اسم الشخص على الظرف.';return}
+    if(!text){$('note').textContent='اكتب شيئاً في الرسالة أولاً.';return}
+    $('note').textContent='';$('ctNote').textContent='';
+    pend={to:to,text:text};if(guest){sealIt(null,null);return}openOv('ctOv');setTimeout(function(){$('ctInput').focus()},450);
+  };
+  function openOv(i){$(i).classList.add('on')}
+  function closeOv(i){$(i).classList.remove('on')}
+  function buildPlat(){
+    var p=$('plat');p.innerHTML='';
+    Object.keys(PLATS).forEach(function(k){
+      var b=document.createElement('button');b.textContent=PLATS[k][0];b.className=k===ctPlat?'on':'';
+      b.onclick=function(){ctPlat=k;buildPlat()};p.appendChild(b);
+    });
+    var num=PLATS[ctPlat][1]==='رقم';
+    $('ctInput').placeholder=num?'رقم الهاتف (مثال 0770...)':'اليوزر (بدون @)';$('ctInput').inputMode=num?'tel':'text';
+  }
+  function digits(v){
+    var d=v.replace(/[^\d+]/g,'');
+    if(d.indexOf('00')===0)d='+'+d.slice(2);
+    if(d.charAt(0)==='0')d='+964'+d.slice(1);
+    return d;
+  }
+  function msgOf(l){return 'وصلتك رسالة مختومة 💌\n\nافتحها من هنا:\n'+BASE+'#r-'+l.id}
+  function deliver(l){
+    if(!l.via||!l.who||!l.shared)return null;
+    var t=encodeURIComponent(msgOf(l));
+    if(l.via==='wa')return {url:'https://wa.me/'+l.who.replace('+','')+'?text='+t,copy:false};
+    if(l.via==='sms')return {url:'sms:'+l.who+'?body='+t,copy:false};
+    if(l.via==='tg')return {url:'https://t.me/'+l.who,copy:true};
+    if(l.via==='ig')return {url:'https://ig.me/m/'+l.who,copy:true};
+    return {url:'https://www.snapchat.com/add/'+l.who,copy:true};
+  }
+  function copyMsg(l,btn){
+    try{navigator.clipboard.writeText(msgOf(l)).then(function(){if(btn)btn.textContent='تم النسخ ✓'},function(){})}catch(e){}
+  }
+  function confirmContact(skip){
+    var via=null,who=null;
+    if(!skip){
+      var v=$('ctInput').value.trim();
+      if(PLATS[ctPlat][1]==='رقم'){who=digits(v);if(who.replace(/\D/g,'').length<8){$('ctNote').textContent='الرقم مو صحيح.';return}}
+      else{who=v.replace(/^@/,'').replace(/\s/g,'');if(!/^[A-Za-z0-9._]{2,}$/.test(who)){$('ctNote').textContent='اليوزر مو صحيح.';return}}
+      via=ctPlat;
+    }
+    closeOv('ctOv');sealIt(via,who);
+  }
+  $('ctOk').onclick=function(){confirmContact(false)};
+  $('ctSkip').onclick=function(){confirmContact(true)};
+  $('ctBack').onclick=function(){closeOv('ctOv')};
+
+  function sealIt(via,who){
+    var l={id:'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),text:pend.text,env:sel.env,font:sel.font,ink:sel.ink,seal:sel.seal,ts:Date.now()};
+    if(guest)l.from=pend.to;else l.to=pend.to;
+    if(via){l.via=via;l.who=who}
+    var sp,no=function(){return false},yes=function(){return true};
+    if(guest){
+      sp=dbh?dbh.collection('inbox').doc(l.id).set(l).then(yes,no):Promise.resolve(false);
+    }else{
+      letters.push(l);pendingDrop=l.id;persistAdd(l);
+      sp=dbh?dbh.doc('shared/'+l.id).set({to:l.to,text:l.text,env:l.env,font:l.font,ink:l.ink,seal:l.seal,ts:l.ts}).then(yes,no):Promise.resolve(false);
+      sp.then(function(ok){if(ok){l.shared=true;persistAdd(l)}});
+    }
+    var st=$('stage');st.className='stage';st.innerHTML='';
+    var env=mkEnv(l);env.classList.add('open','out','unsealed');st.appendChild(env);
+    $('cerMsg').classList.remove('on');$('cerBtns').innerHTML='';$('cerTxt').textContent='';
+    openOv('cerOv');
+    setTimeout(function(){env.classList.remove('out')},700);
+    setTimeout(function(){env.classList.remove('open')},1700);
+    setTimeout(function(){env.classList.remove('unsealed')},2450);
+    setTimeout(function(){sp.then(function(ok){finish(l,st,ok)})},3200);
+  }
+  function finish(l,st,ok){
+    var b=$('cerBtns'),k=document.createElement('button'),t=$('cerTxt');k.className='btn';
+    if(guest){
+      t.textContent=ok?'خُتمت رسالتك ووصلت.':'ما كدرت أوصّل رسالتك. ممكن صاحب الرابط ما فعّل الكتابة لك.';
+      k.textContent='اكتب رسالة ثانية';
+    }else{
+      var d=deliver(l);
+      t.textContent=!ok?'خُتمت الرسالة وحُفظت بالصندوق، بس ما كدرت أسوي لها رابط (يحتاج تسجيل دخول).':(d?(d.copy?'خُتمت الرسالة وجاهز رابطها. افتح المحادثة والصق الرسالة (تنسخ تلقائياً أو بزر النسخ).':'خُتمت الرسالة وجاهز رابطها. تريد ترسله له هسة؟'):'خُتمت الرسالة وجاهز رابطها.');
+      if(d){
+        var a=document.createElement('a');a.className='btn a';a.href=d.url;a.target='_blank';a.rel='noopener';a.textContent='إرسال عبر '+PLATS[l.via][0];
+        a.onclick=function(){if(d.copy)copyMsg(l)};b.appendChild(a);
+      }
+      if(ok){var c=document.createElement('button');c.className='btn ghost';c.style.color='#e2d8c4';c.textContent='نسخ الرابط';c.onclick=function(){copyMsg(l,c)};b.appendChild(c)}
+      k.textContent='إلى الصندوق';
+    }
+    k.onclick=function(){st.classList.add('fly');$('cerMsg').classList.remove('on');setTimeout(function(){closeOv('cerOv');done()},900)};
+    b.appendChild(k);$('cerMsg').classList.add('on');
+  }
+  function done(){
+    $('toInput').value='';$('msg').value='';sync();count();
+    $('cnt').classList.add('pulse');setTimeout(function(){$('cnt').classList.remove('pulse')},1700);
+    $('toast').classList.add('on');setTimeout(function(){$('toast').classList.remove('on')},4500);
+  }
+  function count(){$('cnt').textContent=letters.length}
+
+  /* ---- box ---- */
+  function renderBox(){
+    letters.sort(function(a,b){return b.ts-a.ts});
+    var s=$('shelf');s.innerHTML='';
+    if(!letters.length){var e=document.createElement('div');e.className='empty';e.textContent='الصندوق فارغ. اكتب رسالتك الأولى من المكتب.';s.appendChild(e);return}
+    letters.forEach(function(l){
+      var slot=document.createElement('div');slot.className='slot';
+      var env=mkEnv(l);if(l.id===pendingDrop)env.classList.add('drop');
+      env.addEventListener('click',function(){openLetter(l,env)});
+      slot.appendChild(env);s.appendChild(slot);
+    });
+    pendingDrop=null;
+  }
+  function openLetter(l,env){
+    if(busy)return;busy=true;current={l:l,env:env};confirmDel=false;$('delBtn').textContent='حذف';
+    env.classList.add('open');setTimeout(function(){env.classList.add('out')},950);
+    setTimeout(function(){
+      var r=$('readOv');r.style.setProperty('--ff',FONTS[l.font][1]);r.style.setProperty('--fs',FONTS[l.font][2]);r.style.setProperty('--ink',l.ink);
+      $('rLbl').textContent=l.from!=null?'من:':'إلى:';$('rTo').textContent=l.from!=null?l.from:l.to;$('rBody').textContent=l.text;
+      var d=deliver(l),sl=$('sendLink');sl.style.display=d?'':'none';
+      if(d){sl.href=d.url;sl.textContent='إرسال عبر '+PLATS[l.via][0];sl.onclick=function(){if(d.copy)copyMsg(l)}}
+      $('rDate').textContent=new Date(l.ts).toLocaleDateString('ar-IQ',{year:'numeric',month:'long',day:'numeric'});
+      $('readSheet').scrollTop=0;r.classList.add('on');
+    },2000);
+  }
+  function closeReader(){
+    $('readOv').classList.remove('on');var c=current;
+    setTimeout(function(){if(c)c.env.classList.remove('open','out');busy=false;current=null},300);
+  }
+  $('closeBtn').onclick=closeReader;
+  $('readOv').addEventListener('click',function(e){if(e.target===this)closeReader()});
+  $('delBtn').onclick=async function(){
+    if(!confirmDel){confirmDel=true;this.textContent='تأكيد الحذف';return}
+    var c=current;if(!c)return;
+    letters=letters.filter(function(x){return x.id!==c.l.id});await persistDel(c.l);
+    $('readOv').classList.remove('on');count();
+    setTimeout(function(){busy=false;current=null;renderBox()},300);
+  };
+
+  /* ---- routing ---- */
+  async function loadRead(id){
+    if(readId===id)return;
+    var msg=$('rMsg'),st=$('rStage'),b=$('rBtns');
+    if(!ready){msg.textContent='جاري التحميل...';return}
+    readId=id;st.innerHTML='';b.innerHTML='';msg.textContent='جاري فتح الرسالة...';
+    var data=null;
+    try{if(dbh){var sn=await dbh.doc('shared/'+id).get();if(sn.exists)data=sn.data()}}catch(e){}
+    if(!data){msg.textContent='ما كدرت أفتح الرسالة. ممكن الرابط ناقص أو الرسالة انحذفت أو تحتاج تسجيل دخول.';readId=null;return}
+    msg.textContent='انقر على الظرف لتفتحه';
+    var l=Object.assign({id:id},data),env=mkEnv(l);env.style.cursor='pointer';
+    env.addEventListener('click',function(){openLetter(l,env);msg.textContent=''});
+    st.appendChild(env);
+    var a=document.createElement('a');a.className='btn a';a.href='#write';a.textContent='اكتب رداً';b.appendChild(a);
+  }
+  function route(){
+    var h=location.hash,m=/^#r-([a-z0-9]+)$/.exec(h),mode=m?'read':(h==='#write'?'write':(h==='#box'?'box':'desk'));
+    guest=mode==='read'||mode==='write';
+    document.body.classList.toggle('guest',guest);
+    var shown=mode==='write'?'desk':mode;
+    ['desk','box','read'].forEach(function(v){$('v'+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle('on',v===shown)});
+    $('tBox').classList.toggle('on',mode==='box');$('tDesk').classList.toggle('on',mode==='desk');
+    var wr=mode==='write';
+    $('toLbl').textContent=wr?'من:':'إلى:';$('toInput').placeholder=wr?'اسمك':'اسم الشخص';
+    document.querySelector('header p').textContent=wr?'اكتب رسالة مختومة':'The Eclipse';
+    sync();
+    if(mode==='box'){renderBox();$('toast').classList.remove('on')}
+    if(mode==='read')loadRead(m[1]);
+  }
+  window.addEventListener('hashchange',route);
+
+  swatches($('swEnv'),ENVS,'env');swatches($('swInk'),INKS,'ink');swatches($('swSeal'),SEALS,'seal');buildFonts();buildPlat();$('wLink').value=BASE+'#write';$('wCopy').onclick=function(){$('wLink').select();try{navigator.clipboard.writeText($('wLink').value)}catch(e){}this.textContent='تم ✓'};
+  letters=lsRead();sync();count();route();
+  initStore().then(function(){ready=true;count();route()});
+})();
+</script>
+</body>
+</html>
