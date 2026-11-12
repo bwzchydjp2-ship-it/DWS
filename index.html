@@ -1240,7 +1240,8 @@ var FIREBASE_CONFIG={
   $('ctSkip').onclick=function(){confirmContact(true)};
   $('ctBack').onclick=function(){closeOv('ctOv')};
 
-  function wto(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(function(){r(false)},ms)})])}
+  var lastErr='';
+  function wto(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(function(){lastErr='timeout';r(false)},ms)})])}
   function newId(){return 'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
     /* ---------- طي الورقة (يختلف حسب نوع الظرف) ---------- */
   var FOLDS={
@@ -1346,13 +1347,13 @@ var FIREBASE_CONFIG={
     var no=function(){return false},yes=function(){return true};
     sentCol().doc(l.id).set(clean(l)).catch(function(){});
     var sh=clean({ownerUid:l.ownerUid,to:l.to,text:l.text,kind:l.kind,secret:l.secret,fromName:l.fromName,det:l.det,ts:l.ts,env:l.env,etype:l.etype,ptype:l.ptype,paper:l.paper,font:l.font,ink:l.ink,seal:l.seal,semb:l.semb,sch:l.sch,embc:l.embc,mot:l.mot,esh:l.esh,noRep:l.noRep,hd:l.hd,link:l.link,draw:l.draw,stk:l.stk,asp:l.asp});
-    var sp=wto(dbh.doc('shared/'+l.id).set(sh).then(yes,no),15000);
+    var sp=wto(dbh.doc('shared/'+l.id).set(sh).then(yes,function(e){lastErr=(e&&e.code)||String(e&&e.message||e);return false}),15000);
     sp.then(function(ok){if(ok){l.shared=true;sentCol().doc(l.id).set(clean(l)).catch(function(){})}});
     ceremony(l,sp,finish);
   }
   function sealReply(){
     var r=Object.assign({id:newId(),ts:Date.now(),letterId:replyCtx.letterId,toUid:replyCtx.toUid,fromName:replyCtx.toName||'المستلم',text:pend.text},styleOf(sel));
-    var sp=wto(dbh.collection('replies').doc(r.id).set(clean(r)).then(function(){return true},function(){return false}),15000);
+    var sp=wto(dbh.collection('replies').doc(r.id).set(clean(r)).then(function(){return true},function(e){lastErr=(e&&e.code)||String(e&&e.message||e);return false}),15000);
     ceremony(r,sp,finishReply);
   }
   function endBtn(st,txt,fn){
@@ -1373,7 +1374,7 @@ var FIREBASE_CONFIG={
     b.appendChild(endBtn(st,'إلى الصندوق',done));$('cerMsg').classList.add('on');
   }
   function finishReply(r,st,ok){
-    $('cerTxt').textContent=ok?'خُتم ردّك ووصل.':'ما كدرت أوصّل ردّك. جرّب تفتح الرابط من المتصفح (سفاري أو كروم) وتأكد من الإنترنت، وبعدها حاول مرة ثانية.';
+    $('cerTxt').textContent=ok?'خُتم ردّك ووصل.':'ما كدرت أوصّل ردّك ('+lastErr+'). جرّب تفتح الرابط من المتصفح (سفاري أو كروم) وتأكد من الإنترنت، وبعدها حاول مرة ثانية.';
     $('cerBtns').appendChild(endBtn(st,'تمام',function(){$('msg').value='';sync()}));$('cerMsg').classList.add('on');
   }
   function done(){
