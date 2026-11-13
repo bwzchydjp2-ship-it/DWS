@@ -1956,7 +1956,7 @@ var FIREBASE_CONFIG={
 
   
   /* ---------- الصوت: ملف صوتي + تسجيل صوتي ---------- */
-  var aud=[],AUD_MAX=330000,AUD_SEC=60,AUD_MB=30,AUD_FMIN=1,AUD_FMAX=120,rec=null,audCur=null,lamePr=null,trimEl=null;
+  var aud=[],AUD_MAX=700000,AUD_SEC=60,AUD_MB=30,AUD_FMIN=.1,AUD_FMAX=Math.floor((AUD_MAX-2000)*.75*.97/1000),rec=null,audCur=null,lamePr=null,trimEl=null;
   function okAud(d){return typeof d==='string'&&d.length<=AUD_MAX+2000&&/^data:audio\/(mpeg|mp3|mp4|x-m4a|aac|webm|ogg|wav|x-wav);base64,/.test(d)}
   function fmtS(v){v=Math.max(0,Math.round(Number(v)||0));return Math.floor(v/60)+':'+p2(v%60)}
   function aNote(t){$('note').textContent=t||''}
@@ -2032,15 +2032,15 @@ var FIREBASE_CONFIG={
     try{
       var lame=await audLame(),res=null;
       try{
-        var buf=(opts&&opts.buf)||await audDecode(blob),st=(opts&&opts.start)||0,dr=(opts&&opts.dur)||Math.min(buf.duration,AUD_SEC),rb=await audSlice(buf,22050,st,dr);
-        if(lame){var out=await audMp3(lame,rb,kind==='v'?24:audKbps(rb.duration));res={d:await toData(out,'audio/mpeg'),t:rb.duration,cut:kind==='v'&&buf.duration>AUD_SEC+.5}}
+        var buf=(opts&&opts.buf)||await audDecode(blob),st=(opts&&opts.start)||0,dr=(opts&&opts.dur)||Math.min(buf.duration,AUD_SEC),kb=kind==='v'?24:audKbps(dr),rb=await audSlice(buf,kb<=8?16000:22050,st,dr);
+        if(lame){var out=await audMp3(lame,rb,kb);res={d:await toData(out,'audio/mpeg'),t:rb.duration,cut:kind==='v'&&buf.duration>AUD_SEC+.5}}
       }catch(e){if(kind==='f'){audBusy(false);aNote('ما كدرت أقرأ الملف الصوتي. جرّب ملف mp3 أو m4a.');return}}
       if(!res&&opts){audBusy(false);aNote('ما كدرت أقص الصوت (تأكد من الإنترنت) وجرّب مرة ثانية.');return}
       if(!res){
         var mime=(blob.type||'').split(';')[0];
         if(!/^audio\/(mpeg|mp3|mp4|x-m4a|aac|webm|ogg|wav|x-wav)$/.test(mime))mime=kind==='v'?'audio/webm':'audio/mpeg';
         var d=await toData(blob,mime);
-        if(d.length>AUD_MAX){audBusy(false);aNote('ما كدرت أضغط الصوت (تأكد من الإنترنت وجرّب مرة ثانية)، أو استخدم ملف أصغر من ٢٥٠ كيلوبايت.');return}
+        if(d.length>AUD_MAX){audBusy(false);aNote('ما كدرت أضغط الصوت (تأكد من الإنترنت وجرّب مرة ثانية)، أو استخدم ملف أصغر من ٥٠٠ كيلوبايت.');return}
         res={d:d,t:0};
       }
       if(res.d.length>AUD_MAX){audBusy(false);aNote('الصوت كبير، قصّر المدة شوية.');return}
@@ -2051,7 +2051,7 @@ var FIREBASE_CONFIG={
   }
 
   /* ---------- قصّ الملف الصوتي: من ثانية واحدة إلى دقيقتين ---------- */
-  function audKbps(s){return s<=60?32:s<=80?24:16}
+  function audKbps(s){var by=(AUD_MAX-2000)*.75*.97,L=[32,24,16];for(var i=0;i<L.length;i++)if(L[i]*125*s<=by)return L[i];return 8}
   function audSlice(buf,rate,st,dur){
     var OC=window.OfflineAudioContext||window.webkitOfflineAudioContext,len=Math.max(1,Math.ceil(dur*rate)),oc=new OC(1,len,rate),sr=oc.createBufferSource();
     sr.buffer=buf;sr.connect(oc.destination);sr.start(0,st,dur);
@@ -2065,7 +2065,7 @@ var FIREBASE_CONFIG={
     audDecode(f).then(function(buf){
       audBusy(false);
       var T=buf.duration;
-      if(!(T>=AUD_FMIN)){aNote('الملف الصوتي أقصر من ثانية واحدة.');return}
+      if(!(T>=AUD_FMIN)){aNote('الملف الصوتي قصير جداً.');return}
       var el=mk('div','trim'),pcx=null,psrc=null,
           head=mk('div','th','✂️ قصّ الصوت: '+String(f.name||'').replace(/\.[^.]+$/,'').slice(0,30)+' (الأصلي '+fmtS(T)+')'),
           info=mk('div','ti'),btns=mk('div','tb'),
@@ -2092,7 +2092,7 @@ var FIREBASE_CONFIG={
         rd.i.max=md;if((parseFloat(rd.i.value)||0)>md)rd.i.value=md;
         var c=cur();
         rs.v.textContent=fT(c.s);rd.v.textContent=fT(c.d);
-        info.textContent='من '+fT(c.s)+' إلى '+fT(c.s+c.d)+' — المدة '+fT(c.d)+' (الحد: من ثانية إلى دقيقتين)';
+        info.textContent='من '+fT(c.s)+' إلى '+fT(c.s+c.d)+' — المدة '+fT(c.d)+' (الأقصى حسب حجم الرسالة: '+fT(AUD_FMAX)+')';
       }
       rs.i.oninput=upd;rd.i.oninput=upd;
       pv.onclick=function(){
