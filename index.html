@@ -39,7 +39,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <script>if(/^#re?-/.test(location.hash))document.documentElement.classList.add('guesth')</script>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Lateef&family=Reem+Kufi&family=Scheherazade+New:wght@400;700&family=Katibeh&family=Mirza&family=Lemonada&family=Lalezar&family=Tajawal&family=Playpen+Sans+Arabic&family=Noto+Nastaliq+Urdu&family=Harmattan&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Lateef&family=Reem+Kufi&family=Scheherazade+New:wght@400;700&family=Katibeh&family=Mirza&family=Lemonada&family=Lalezar&family=Tajawal&family=Playpen+Sans+Arabic&family=Noto+Nastaliq+Urdu&family=Harmattan&family=El+Messiri&family=Markazi+Text&family=Rakkas&family=Vibes&family=Gulzar&family=Blaka&family=Noto+Naskh+Arabic&family=Cairo&family=Almarai&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;--bg:#0b0607;--text:#e8cfb6;--muted:#a38b78;--gold:#c98a62;
@@ -66,6 +66,12 @@ header h1.dws img.lg-g{display:none}
 html.guesth header h1.dws img.lg-g,body.guest header h1.dws img.lg-g{display:block}
 html.guesth header h1.dws img.lg-o,body.guest header h1.dws img.lg-o{display:none}
 header p{color:var(--muted);font-style:italic;font-size:1rem}
+#accBtn{position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:50;width:36px;height:36px;border-radius:50%;border:1px solid #4a2a24;background:rgba(0,0,0,.55);color:#e8cfb6;font-size:17px;cursor:pointer;line-height:1;padding:0}
+#accPop{position:absolute;left:12px;top:calc(54px + env(safe-area-inset-top,0px));z-index:60;width:min(270px,80vw);background:rgba(12,6,7,.96);border:1px solid #4a2a24;border-radius:14px;padding:12px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.6);text-align:center}
+#accPop.on{display:block}
+#accPop #accLbl{font-size:.9rem;color:var(--muted);margin:0 0 10px;direction:rtl;word-break:break-all}
+#accPop .btn{width:100%;color:#e8cfb6!important;background:rgba(120,40,40,.25)!important;border:1px solid #8a5a40!important;padding:10px 12px;font-size:1rem}
+body.guest #accBtn,body.auth #accBtn,body.guest #accPop,body.auth #accPop{display:none!important}
 #userBar{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:12px;font-size:.85rem;color:var(--muted);display:flex;gap:8px;align-items:center;max-width:60%}
 #userBar a{color:var(--muted);text-decoration:none;border:1px solid #4a2a24;border-radius:20px;padding:3px 12px;white-space:nowrap}
 #userBar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
@@ -284,6 +290,14 @@ body.rmode .tbar button.ol{display:none}
 .pt-water .pbg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 14%,rgba(230,120,150,.3),transparent 34%),radial-gradient(circle at 82% 28%,rgba(90,150,220,.3),transparent 36%),radial-gradient(circle at 30% 82%,rgba(110,190,140,.28),transparent 36%),radial-gradient(circle at 78% 88%,rgba(240,190,90,.3),transparent 32%)}
 .pt-cornertear{--bn:.35}.pt-cornertear .pbg{filter:url(#roughB);clip-path:polygon(0 0,80% 0,84% 3%,88% 2%,91% 6%,95% 6%,98% 10%,100% 12%,100% 100%,0 100%)}
 .pt-perf{--bn:0}.pt-perf .pbg{border-radius:3px}
+.pt-dotgrid{--bn:0}.pt-dotgrid .pbg{border-radius:3px}
+.pt-dotgrid .pbg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(60,50,40,.38) 1.2px,transparent 1.6px);background-size:22px 22px}
+.pt-dframe{--bn:0}.pt-dframe .pbg{border-radius:3px}
+.pt-dframe .pbg::before{content:"";position:absolute;inset:10px;border:3px double rgba(120,80,30,.65)}
+.pt-corners{--bn:.1}.pt-corners .pbg{filter:url(#roughB)}
+.pt-corners .pbg::before{content:"";position:absolute;inset:12px;background:linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) top left/34px 3px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) top left/3px 34px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) top right/34px 3px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) top right/3px 34px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) bottom left/34px 3px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) bottom left/3px 34px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) bottom right/34px 3px no-repeat,linear-gradient(rgba(150,100,40,.7),rgba(150,100,40,.7)) bottom right/3px 34px no-repeat}
+.pt-confetti{--bn:0}.pt-confetti .pbg{border-radius:3px}
+.pt-confetti .pbg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(220,80,100,.5) 0 2.5px,transparent 3px) 0 0/47px 47px,radial-gradient(circle,rgba(70,130,210,.5) 0 2.5px,transparent 3px) 17px 23px/53px 53px,radial-gradient(circle,rgba(240,180,50,.55) 0 2.5px,transparent 3px) 31px 9px/61px 61px,radial-gradient(circle,rgba(80,170,110,.5) 0 2.5px,transparent 3px) 8px 36px/43px 43px}
 .pt-perf .pbg::before{content:"";position:absolute;inset:9px;border:6px dotted rgba(70,50,25,.38);border-radius:2px}
 
 /* ===== أنواع ظروف إضافية ===== */
@@ -317,6 +331,12 @@ body.rmode .tbar button.ol{display:none}
 .t-frost .env-deco{display:block;background:linear-gradient(150deg,rgba(255,255,255,.35),transparent 40%,rgba(200,230,255,.25))}
 .t-news{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='36'%3E%3Crect width='120' height='36' fill='%23ddd6c2' fill-opacity='.93'/%3E%3Cpath d='M8 6H62' stroke='%23222' stroke-opacity='.7' stroke-width='3'/%3E%3Cpath d='M8 14H112M8 19H96M8 24H108M8 29H84' stroke='%23444' stroke-opacity='.55' stroke-width='2'/%3E%3C/svg%3E");--texsz:120px 36px;--ish:10px}
 .t-blue{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='24' height='24' fill='%231f56a8' fill-opacity='.5'/%3E%3Cpath d='M12 0V24M0 12H24' stroke='%23bfe0ff' stroke-opacity='.25'/%3E%3Cpath d='M24 0V24M0 24H24' stroke='%23bfe0ff' stroke-opacity='.5'/%3E%3C/svg%3E");--texsz:24px 24px;--ish:8px}
+.t-hearts{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M6.5 11C6.5 11 2.5 8.2 2.5 5.4C2.5 3.8 3.6 3 4.8 3C5.6 3 6.2 3.5 6.5 4.2C6.8 3.5 7.4 3 8.2 3C9.4 3 10.5 3.8 10.5 5.4C10.5 8.2 6.5 11 6.5 11Z' fill='white' fill-opacity='.32'/%3E%3Cpath d='M19.5 24C19.5 24 15.5 21.2 15.5 18.4C15.5 16.8 16.6 16 17.8 16C18.6 16 19.2 16.5 19.5 17.2C19.8 16.5 20.4 16 21.2 16C22.4 16 23.5 16.8 23.5 18.4C23.5 21.2 19.5 24 19.5 24Z' fill='white' fill-opacity='.32'/%3E%3C/svg%3E");--texsz:26px 26px;--ish:8px}
+.t-rhombus{--tex:linear-gradient(45deg,rgba(255,255,255,.16) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.16) 75%),linear-gradient(-45deg,rgba(0,0,0,.18) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.18) 75%);--texsz:22px 22px;--ish:8px}
+.t-waves{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Cpath d='M0 7C7 0 7 0 14 7C21 14 21 14 28 7' fill='none' stroke='white' stroke-opacity='.3' stroke-width='1.6'/%3E%3C/svg%3E");--texsz:28px 14px;--ish:8px}
+.t-zigzag{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='12'%3E%3Cpath d='M0 10L5 2L10 10L15 2L20 10' fill='none' stroke='white' stroke-opacity='.32' stroke-width='2'/%3E%3C/svg%3E");--texsz:20px 12px;--ish:8px}
+.t-brick{--tex:linear-gradient(rgba(0,0,0,.28) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.28) 2px,transparent 2px),linear-gradient(90deg,transparent 0 50%,rgba(0,0,0,.28) 50% calc(50% + 2px),transparent calc(50% + 2px));--texsz:36px 18px,36px 18px,36px 36px;--ish:10px}
+.t-glitter{--tex:radial-gradient(circle,rgba(255,255,255,.75) 0 1px,transparent 1.6px),radial-gradient(circle,rgba(255,236,170,.6) 0 1.2px,transparent 1.8px),radial-gradient(circle,rgba(255,255,255,.45) 0 .8px,transparent 1.4px);--texsz:23px 23px,31px 31px,17px 17px;--ish:8px}
 .t-check{--tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='12' height='12' fill='black' fill-opacity='.3'/%3E%3Crect x='12' y='12' width='12' height='12' fill='black' fill-opacity='.3'/%3E%3C/svg%3E");--texsz:24px 24px;--ish:8px}
 
 /* ===== حركات فتح وغلق وطي إضافية ===== */
@@ -1442,7 +1462,7 @@ var RvScene=(function(){
   </div>
 </section>
 
-<section class="view" id="vBox"><div class="row" style="justify-content:center;margin:0 0 14px"><button class="btn ghost" id="bkBtn" type="button" style="display:none">نسخة احتياطية</button><button class="btn ghost" id="rsBtn" type="button" style="display:none">استرجاع نسخة</button><button class="btn ghost" id="gBtn" type="button">ربط حسابي بـ Google</button><button class="btn ghost" id="swBtn" type="button">تبديل الحساب</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="accLbl" style="text-align:center;font-size:12px;color:var(--muted);margin:-6px 0 12px"></div>
+<section class="view" id="vBox"><div class="row" style="justify-content:center;margin:0 0 14px"><button class="btn ghost" id="bkBtn" type="button" style="display:none">نسخة احتياطية</button><button class="btn ghost" id="rsBtn" type="button" style="display:none">استرجاع نسخة</button><button class="btn ghost" id="gBtn" type="button" style="display:none">ربط حسابي بـ Google</button><button class="btn ghost" id="swBtn" type="button" style="display:none">تبديل الحساب</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div>
   <div class="row" style="justify-content:center;margin:0 0 14px"><input id="bxQ" placeholder="بحث بالصندوق (اسم، كلمة...)" autocomplete="off" style="width:min(340px,86vw);padding:8px 14px;border-radius:20px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1.05rem Amiri,serif"></div>
   <div class="row" style="justify-content:center;margin:0 0 10px"><div class="sw chips" id="bxF"><button type="button" data-f="all" class="on">الكل</button><button type="button" data-f="unread">غير مقروءة</button><button type="button" data-f="read">مقروءة</button><button type="button" data-f="sched">مؤجلة</button></div></div>
   <div class="row" style="justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px"><select id="bxS" aria-label="الترتيب" style="padding:6px 12px;border-radius:20px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1.05rem Amiri,serif"><option value="new">الأحدث أولاً</option><option value="old">الأقدم أولاً</option><option value="read">آخر ما انفتح</option><option value="open">أقرب موعد فتح</option></select><span id="bxN" style="font-size:12px;color:var(--muted)"></span></div><main class="shelf" id="shelf"></main></section>
@@ -1613,14 +1633,14 @@ var FIREBASE_CONFIG={
   var $=function(i){return document.getElementById(i)};
   var BASE=location.origin+location.pathname;
 
-  var ENVS=[['أسود','#1a1a1d'],['عنابي','#5e1527'],['كحلي','#17305a'],['أخضر','#1f4130'],['قهوائي','#5b3a22'],['كرافت','#b58a58'],['عاجي','#e8dcc0'],['بنفسجي','#412660'],['رمادي','#5d6168'],['تركوازي','#1e5a60'],['وردي','#b86b7e'],['خردلي','#b9902f'],['أبيض','#f2eee4'],['سماوي','#6f93b8']];
-  var ETYPES=[['قديم','old'],['ناعم','smooth'],['كتان','linen'],['جلد','leather'],['مخمل','velvet'],['ملكي','royal'],['بريدي','air'],['كرتون','carton'],['قماش','canvas'],['جينز','denim'],['ساتان','satin'],['معدن','metal'],['ذهب','gold'],['خشب','wood'],['رخام','marble'],['دانتيل','lace'],['ورود','floral'],['منقط','dots'],['مخطط','stripe'],['كاروهات','plaid'],['أرابيسك','arab'],['شفاف','vellum'],['خيش','burlap'],['حراشف','scales'],['كربون','carbon'],['ليل نجوم','night'],['مجرة','galaxy'],['جليد','frost'],['جريدة','news'],['مخطط هندسي','blue'],['شطرنج','check']];
-  var PTYPES=[['محروقة','burnt'],['قديمة','old'],['ممزقة','torn'],['لفافة','scroll'],['نظيفة','clean'],['بقع قهوة','coffee'],['مجعّدة','creased'],['بردي','papyrus'],['رق','parch'],['مسطّرة','lined'],['إطار مذهّب','frame'],['مربعات','grid'],['ترويسة','letterhead'],['ألوان مائية','water'],['زاوية ممزقة','cornertear'],['مثقبة','perf']];
-  var PAPERS={aged:['قديمة','#efe2c0','#e3cf9f','#c4a468','110,70,25'],cream:['عاجية','#f6efdc','#ece0c2','#d6c294','120,90,40'],yellow:['صفراء','#f3e6a8','#e8d27c','#c9ac4c','130,100,20'],peach:['خوخية','#f8e0cc','#efc9a8','#d6a47c','140,90,50'],white:['بيضاء','#fbf8f1','#f1ece0','#ddd5c0','130,110,80'],rose:['وردية','#f8e4e1','#efcdc8','#d9a9a3','140,80,80'],sky:['زرقاء','#e3ecf5','#cfdcec','#a9bdd6','70,95,135'],mint:['خضراء','#e4efe1','#cde0c8','#a6c3a0','70,110,70'],lav:['بنفسجية','#ece4f3','#dccfea','#bba9d3','100,75,135'],gray:['رمادية','#e8e6e1','#d6d3cc','#b3afa5','90,85,75']};
-  var INKS=[['أسود','#1f1a17'],['أزرق','#1d3a6b'],['أحمر','#8a1c1c'],['أخضر','#2f4a2b'],['بنفسجي','#4b2e63'],['بني','#5a3a1e'],['كحلي','#10213f'],['رمادي','#4a4a4a'],['برتقالي','#a24a12'],['ذهبي','#8a6a1f']];
-  var SEALS=[['أحمر','#a31212'],['عنابي','#6e0f26'],['ذهبي','#b8892e'],['أسود','#262626'],['أزرق','#1c3f8a'],['أخضر','#1f6b3f'],['وردي','#d1507a'],['بنفسجي','#5a2d91'],['برتقالي','#c9591b'],['تركوازي','#187a80'],['أبيض','#e9e4d6'],['بني','#6b3f22']];
-  var EMBS=[['قلب','heart'],['نجمة','star'],['هلال','moon'],['زهرة','flower'],['ماس','gem'],['هلال ونجمة','moonstar'],['خاتم','ring'],['هدية','gift'],['قبعة تخرج','cap'],['ريشة','feather'],['حمامة','dove'],['تاج','crown'],['قفل','lock'],['شمس','sun'],['كتاب','book'],['حرف','letter']];
-  var FONTS={amiri:['نسخ',"'Amiri',serif",1.3],ruqaa:['رقعة',"'Aref Ruqaa',serif",1.25],lateef:['يد',"'Lateef',serif",1.75],kufi:['كوفي',"'Reem Kufi',sans-serif",1.15],schehe:['مزخرف',"'Scheherazade New',serif",1.4],katibeh:['كاتبة',"'Katibeh',serif",1.7],mirza:['مرزا',"'Mirza',serif",1.35],lemon:['مرح',"'Lemonada',sans-serif",1.05],lalezar:['عريض',"'Lalezar',sans-serif",1.4],tajawal:['هادئ',"'Tajawal',sans-serif",1.15],playpen:['خط يد حديث',"'Playpen Sans Arabic',sans-serif",1.05],nastaliq:['نستعليق',"'Noto Nastaliq Urdu',serif",1],harmattan:['هرمتان',"'Harmattan',sans-serif",1.35]};
+  var ENVS=[['أسود','#1a1a1d'],['عنابي','#5e1527'],['كحلي','#17305a'],['أخضر','#1f4130'],['قهوائي','#5b3a22'],['كرافت','#b58a58'],['عاجي','#e8dcc0'],['بنفسجي','#412660'],['رمادي','#5d6168'],['تركوازي','#1e5a60'],['وردي','#b86b7e'],['خردلي','#b9902f'],['أبيض','#f2eee4'],['سماوي','#6f93b8'],['ذهبي','#b8913a'],['فيروزي غامق','#0f4c5c'],['زيتي','#4b5320'],['نبيتي','#4a0d1d'],['بيج','#d8c3a5'],['روز جولد','#b76e79'],['لافندر','#9a86c4'],['مرجاني','#d9644f'],['نعناعي','#8fc1a9'],['فحمي','#2b2d33'],['برتقالي محروق','#a4491b'],['أزرق ملكي','#1f3f9a']];
+  var ETYPES=[['قديم','old'],['ناعم','smooth'],['كتان','linen'],['جلد','leather'],['مخمل','velvet'],['ملكي','royal'],['بريدي','air'],['كرتون','carton'],['قماش','canvas'],['جينز','denim'],['ساتان','satin'],['معدن','metal'],['ذهب','gold'],['خشب','wood'],['رخام','marble'],['دانتيل','lace'],['ورود','floral'],['منقط','dots'],['مخطط','stripe'],['كاروهات','plaid'],['أرابيسك','arab'],['شفاف','vellum'],['خيش','burlap'],['حراشف','scales'],['كربون','carbon'],['ليل نجوم','night'],['مجرة','galaxy'],['جليد','frost'],['جريدة','news'],['مخطط هندسي','blue'],['شطرنج','check'],['قلوب','hearts'],['معيّنات','rhombus'],['أمواج','waves'],['متعرج','zigzag'],['طوب','brick'],['بريق','glitter']];
+  var PTYPES=[['محروقة','burnt'],['قديمة','old'],['ممزقة','torn'],['لفافة','scroll'],['نظيفة','clean'],['بقع قهوة','coffee'],['مجعّدة','creased'],['بردي','papyrus'],['رق','parch'],['مسطّرة','lined'],['إطار مذهّب','frame'],['مربعات','grid'],['ترويسة','letterhead'],['ألوان مائية','water'],['زاوية ممزقة','cornertear'],['مثقبة','perf'],['منقّطة','dotgrid'],['إطار مزدوج','dframe'],['زوايا مزخرفة','corners'],['قصاصات ملوّنة','confetti']];
+  var PAPERS={aged:['قديمة','#efe2c0','#e3cf9f','#c4a468','110,70,25'],cream:['عاجية','#f6efdc','#ece0c2','#d6c294','120,90,40'],yellow:['صفراء','#f3e6a8','#e8d27c','#c9ac4c','130,100,20'],peach:['خوخية','#f8e0cc','#efc9a8','#d6a47c','140,90,50'],white:['بيضاء','#fbf8f1','#f1ece0','#ddd5c0','130,110,80'],rose:['وردية','#f8e4e1','#efcdc8','#d9a9a3','140,80,80'],sky:['زرقاء','#e3ecf5','#cfdcec','#a9bdd6','70,95,135'],mint:['خضراء','#e4efe1','#cde0c8','#a6c3a0','70,110,70'],lav:['بنفسجية','#ece4f3','#dccfea','#bba9d3','100,75,135'],gray:['رمادية','#e8e6e1','#d6d3cc','#b3afa5','90,85,75'],orange:['برتقالية','#f9e1c4','#f1c98f','#d9a45a','150,95,30'],gold:['ذهبية','#f1e1a6','#e3c871','#c3a042','140,105,20'],teal:['فيروزية','#d9eeee','#bddfe0','#8fc4c6','50,110,115'],olive:['زيتونية','#e6e8cf','#d3d7ae','#b2b883','90,100,45'],ruby:['عنابية فاتحة','#efd3d8','#e2b4bd','#c98c99','120,40,60'],kraft:['كرافت','#d9bb8c','#c9a46b','#a98040','100,70,25'],black:['سوداء','#2a2623','#1d1a18','#0f0d0c','0,0,0'],navy:['كحلية','#26324f','#1b2540','#10182c','0,0,0']};
+  var INKS=[['أسود','#1f1a17'],['أزرق','#1d3a6b'],['أحمر','#8a1c1c'],['أخضر','#2f4a2b'],['بنفسجي','#4b2e63'],['بني','#5a3a1e'],['كحلي','#10213f'],['رمادي','#4a4a4a'],['برتقالي','#a24a12'],['ذهبي','#8a6a1f'],['أبيض','#f4efe6'],['ذهبي فاتح','#e0b94a'],['فضي','#cfd4da'],['عنابي','#6e0f26'],['أزرق سماوي','#2b6cb0'],['أخضر زيتي','#4b5320'],['وردي','#b83b6b'],['تركوازي','#12717a']];
+  var SEALS=[['أحمر','#a31212'],['عنابي','#6e0f26'],['ذهبي','#b8892e'],['أسود','#262626'],['أزرق','#1c3f8a'],['أخضر','#1f6b3f'],['وردي','#d1507a'],['بنفسجي','#5a2d91'],['برتقالي','#c9591b'],['تركوازي','#187a80'],['أبيض','#e9e4d6'],['بني','#6b3f22'],['ذهبي لامع','#d4a437'],['فضي','#b8bcc4'],['نبيتي','#4a0d1d'],['كحلي','#16264d'],['زيتي','#4b5320'],['روز جولد','#b76e79'],['زمردي','#0f7a55'],['كوبالت','#2a56c6']];
+  var EMBS=[['قلب','heart'],['نجمة','star'],['هلال','moon'],['زهرة','flower'],['ماس','gem'],['هلال ونجمة','moonstar'],['خاتم','ring'],['هدية','gift'],['قبعة تخرج','cap'],['ريشة','feather'],['حمامة','dove'],['تاج','crown'],['قفل','lock'],['شمس','sun'],['كتاب','book'],['حرف','letter'],['فراشة','butterfly'],['مفتاح','key'],['جرس','bell'],['لانهاية','infinity'],['برق','bolt'],['برسيم','clover'],['نوتة','note'],['فنجان','cup'],['طائرة','plane'],['شمعة','candle']];
+  var FONTS={amiri:['نسخ',"'Amiri',serif",1.3],ruqaa:['رقعة',"'Aref Ruqaa',serif",1.25],lateef:['يد',"'Lateef',serif",1.75],kufi:['كوفي',"'Reem Kufi',sans-serif",1.15],schehe:['مزخرف',"'Scheherazade New',serif",1.4],katibeh:['كاتبة',"'Katibeh',serif",1.7],mirza:['مرزا',"'Mirza',serif",1.35],lemon:['مرح',"'Lemonada',sans-serif",1.05],lalezar:['عريض',"'Lalezar',sans-serif",1.4],tajawal:['هادئ',"'Tajawal',sans-serif",1.15],playpen:['خط يد حديث',"'Playpen Sans Arabic',sans-serif",1.05],nastaliq:['نستعليق',"'Noto Nastaliq Urdu',serif",1],harmattan:['هرمتان',"'Harmattan',sans-serif",1.35],messiri:['ميسيري',"'El Messiri',sans-serif",1.3],markazi:['مركزي',"'Markazi Text',serif",1.5],rakkas:['رقّاص',"'Rakkas',serif",1.3],vibes:['زخرفي',"'Vibes',cursive",1.5],gulzar:['گلزار',"'Gulzar',serif",1.8],blaka:['بلاكا',"'Blaka',cursive",1.3],naskh:['نسخ كلاسيكي',"'Noto Naskh Arabic',serif",1.55],cairo:['القاهرة',"'Cairo',sans-serif",1.2],almarai:['المراعي',"'Almarai',sans-serif",1.25]};
   var KINDS={
     letter:['رسالة','',[],'خطّ كلماتك هنا...'],
     invite:['دعوة','دعوة كريمة',['title','date','time','place'],'يسعدني دعوتك لحضور...'],
@@ -1648,12 +1668,12 @@ var FIREBASE_CONFIG={
     if(l.mot&&l.mot!=='auto')return l.mot;
     var SH={slim:'air',round:'velvet',card:'smooth'},
         PP={scroll:'linen',papyrus:'linen',creased:'leather',lined:'smooth',frame:'royal',coffee:'old',parch:'old'};
-    var TM={'carton': 'old', 'canvas': 'linen', 'denim': 'leather', 'satin': 'velvet', 'metal': 'royal', 'gold': 'royal', 'wood': 'leather', 'marble': 'royal', 'lace': 'smooth', 'floral': 'smooth', 'dots': 'smooth', 'stripe': 'air', 'plaid': 'linen', 'arab': 'royal', 'vellum': 'smooth', 'burlap': 'linen', 'scales': 'leather', 'carbon': 'air', 'night': 'velvet', 'galaxy': 'velvet', 'frost': 'smooth', 'news': 'old', 'blue': 'air', 'check': 'air'},cand=[SH[l.esh||'classic'],PP[l.ptype||'old'],TM[l.etype]||l.etype||'old'].filter(Boolean),v={},best=cand[0];
+    var TM={'carton': 'old', 'canvas': 'linen', 'denim': 'leather', 'satin': 'velvet', 'metal': 'royal', 'gold': 'royal', 'wood': 'leather', 'marble': 'royal', 'lace': 'smooth', 'floral': 'smooth', 'dots': 'smooth', 'stripe': 'air', 'plaid': 'linen', 'arab': 'royal', 'vellum': 'smooth', 'burlap': 'linen', 'scales': 'leather', 'carbon': 'air', 'night': 'velvet', 'galaxy': 'velvet', 'frost': 'smooth', 'news': 'old', 'blue': 'air', 'check': 'air', 'hearts': 'smooth', 'rhombus': 'royal', 'waves': 'smooth', 'zigzag': 'air', 'brick': 'leather', 'glitter': 'velvet'},cand=[SH[l.esh||'classic'],PP[l.ptype||'old'],TM[l.etype]||l.etype||'old'].filter(Boolean),v={},best=cand[0];
     cand.forEach(function(k){v[k]=(v[k]||0)+1});
     cand.forEach(function(k){if(v[k]>v[best])best=k});
     return best;
   }
-  var EMBC=[['بارز','','repeating-linear-gradient(45deg,#6b3f22 0 4px,#8a1c1c 4px 8px)'],['ذهبي','#e0b94a'],['فضي','#d9dde3'],['أبيض','#f5f1e6'],['أسود','#1c1c1c'],['أحمر','#b3201f'],['أزرق','#1f4fa8'],['أخضر','#2a7a3f']];
+  var EMBC=[['بارز','','repeating-linear-gradient(45deg,#6b3f22 0 4px,#8a1c1c 4px 8px)'],['ذهبي','#e0b94a'],['فضي','#d9dde3'],['أبيض','#f5f1e6'],['أسود','#1c1c1c'],['أحمر','#b3201f'],['أزرق','#1f4fa8'],['أخضر','#2a7a3f'],['وردي','#e07a9a'],['ذهبي غامق','#a8801f'],['كحلي','#17305a'],['عنابي','#6e0f26'],['بنفسجي','#6a3fa0'],['تركوازي','#1e8a90'],['برتقالي','#d9701f']];
 
   var sel={kind:'letter',priv:'public',env:ENVS[0][1],etype:'old',ptype:'old',paper:'aged',font:'amiri',ink:INKS[0][1],seal:SEALS[0][1],semb:'heart',sch:'',embc:'',mot:'auto',esh:'classic',rep:'yes',multi:'no',hd:'',open:''};
   var det={};
@@ -1697,6 +1717,16 @@ var FIREBASE_CONFIG={
       crown:'<path d="M10.5 28L12 15L17.5 21L20 12.5L22.5 21L28 15L29.5 28Z"/>',
       lock:'<path d="M12.5 19.5H27.5A1.5 1.5 0 0 1 29 21V28A1.5 1.5 0 0 1 27.5 29.5H12.5A1.5 1.5 0 0 1 11 28V21A1.5 1.5 0 0 1 12.5 19.5Z"/><path fill-rule="evenodd" d="M14.8 19.5V15.8A5.2 5.2 0 0 1 25.2 15.8V19.5H23V15.8A3 3 0 0 0 17 15.8V19.5Z"/>',
       sun:'<circle cx="20" cy="20" r="5.4"/>'+[0,1,2,3,4,5,6,7].map(function(i){var a=i*Math.PI/4;return '<circle cx="'+(20+9.8*Math.cos(a)).toFixed(2)+'" cy="'+(20+9.8*Math.sin(a)).toFixed(2)+'" r="1.6"/>'}).join(''),
+      butterfly:'<path d="M20 19C17 12 11 11 10.5 15.5C10 19.5 14 21.5 19 21Z"/><path d="M20 19C23 12 29 11 29.5 15.5C30 19.5 26 21.5 21 21Z"/><path d="M19.2 22C14.5 22 12.2 26 14.5 28.5C16.8 30.5 19.2 27.5 19.2 22Z"/><path d="M20.8 22C25.5 22 27.8 26 25.5 28.5C23.2 30.5 20.8 27.5 20.8 22Z"/><path d="M19.4 14H20.6V28H19.4Z"/>',
+      key:'<path fill-rule="evenodd" d="M13 12.5A5.5 5.5 0 1 0 13 23.5A5.5 5.5 0 1 0 13 12.5Z M13 15.5A2.5 2.5 0 1 1 13 20.5A2.5 2.5 0 1 1 13 15.5Z"/><path d="M17.5 17H30.5V19.6H27.8V23H25.4V19.6H22.8V22H20.4V19.6H17.5Z"/>',
+      bell:'<path d="M20 10.5C16.2 10.5 14 13.2 14 17V21.5L11.5 25H28.5L26 21.5V17C26 13.2 23.8 10.5 20 10.5Z"/><path d="M17.5 26.5A2.5 2.5 0 0 0 22.5 26.5Z"/>',
+      infinity:'<path fill-rule="evenodd" d="M8.2 20A6.3 6.3 0 1 0 20.8 20A6.3 6.3 0 1 0 8.2 20Z M10.9 20A3.6 3.6 0 1 1 18.1 20A3.6 3.6 0 1 1 10.9 20Z"/><path fill-rule="evenodd" d="M19.2 20A6.3 6.3 0 1 0 31.8 20A6.3 6.3 0 1 0 19.2 20Z M21.9 20A3.6 3.6 0 1 1 29.1 20A3.6 3.6 0 1 1 21.9 20Z"/>',
+      bolt:'<path d="M23.5 10L13.5 21.5H19.2L16.5 30L27 18H21Z"/>',
+      clover:'<circle cx="20" cy="14.2" r="4.3"/><circle cx="14.2" cy="20" r="4.3"/><circle cx="25.8" cy="20" r="4.3"/><circle cx="20" cy="25.8" r="4.3"/><circle cx="20" cy="20" r="2.2"/><path d="M20.8 26L24 31H22.4L19.8 27Z"/>',
+      note:'<path d="M17 12.5L28.5 10.5V24.5C28.5 26.3 26.8 27.7 24.8 27.7C22.8 27.7 21.3 26.5 21.3 25C21.3 23.5 22.8 22.3 24.8 22.3C25.4 22.3 25.8 22.4 26 22.5V14L19.8 15.1V26.4C19.8 28.2 18.1 29.6 16.1 29.6C14.1 29.6 12.6 28.4 12.6 26.9C12.6 25.4 14.1 24.2 16.1 24.2C16.7 24.2 17 24.3 17.2 24.4Z"/>',
+      cup:'<path d="M11.5 17H26V23C26 26.5 23.5 28.8 20.4 28.8H17.1C14 28.8 11.5 26.5 11.5 23Z"/><path fill-rule="evenodd" d="M26 18.5H27.6C29.6 18.5 30.8 19.9 30.8 21.6C30.8 23.3 29.6 24.7 27.6 24.7H25.6V23.2H27.4C28.3 23.2 29 22.6 29 21.6C29 20.6 28.3 20 27.4 20H26Z"/><path d="M15 10.5C14 12 16 13 15 14.5L16.2 14.5C17.2 13 15.2 12 16.2 10.5Z M19.6 10.5C18.6 12 20.6 13 19.6 14.5L20.8 14.5C21.8 13 19.8 12 20.8 10.5Z"/>',
+      plane:'<path d="M30 10L10.5 19L16.2 21.8L18 28.5L21.4 23.6L26 26Z"/>',
+      candle:'<path d="M20 9.5C18.2 12 18.2 13.6 20 14.6C21.8 13.6 21.8 12 20 9.5Z"/><path d="M16 17H24V30H16Z"/><path d="M19.4 15.4H20.6V17H19.4Z"/>',
       book:'<path d="M9.5 14C14 12.8 18 13.3 20 15.6C22 13.3 26 12.8 30.5 14V27.5C26 26.4 22 26.9 20 29C18 26.9 14 26.4 9.5 27.5Z"/>'
     };
     if(kind==='letter'){var c=String(ch||'✦').replace(/[<>&"']/g,''),g=glyphPos(c,17);return '<text x="'+g.x.toFixed(2)+'" y="'+g.y.toFixed(2)+'" direction="ltr" text-anchor="start" font-size="17" font-weight="700" style="font-family:\'Scheherazade New\',\'Amiri\',serif">'+c+'</text>'}
@@ -1797,7 +1827,7 @@ var FIREBASE_CONFIG={
     if(!auth||user||signing)return;signing=true;
     auth.signInAnonymously().catch(function(e){signing=false;authMsg=authErr(e)});
   }
-  function updAcc(){var e=$('accLbl');if(!e)return;e.textContent=!user?'':(user.isAnonymous?'الحساب: مؤقت (غير مربوط بـ Google)':'الحساب: '+(user.email||'Google'))}
+  function updAcc(){window.__dwsAnon=!user||!!user.isAnonymous;var e=$('accLbl');if(!e)return;e.textContent=!user?'':(user.isAnonymous?'الحساب: مؤقت (غير مربوط بـ Google)':'الحساب: '+(user.email||'Google'))}
   function initStore(){
     try{
       firebase.initializeApp(FIREBASE_CONFIG);dbh=firebase.firestore();try{dbh.settings({experimentalAutoDetectLongPolling:true,merge:true})}catch(e){}auth=firebase.auth();
@@ -2289,7 +2319,7 @@ var FIREBASE_CONFIG={
     });
   }
   /* ---------- رسم الورقة على الكانفس بنفس شكلها بالموقع ---------- */
-  var PTM={burnt:{bn:1,j:11},old:{bn:.5,j:5},torn:{bn:.25,j:15,hi:1},scroll:{bn:.3,j:5,rd:1},clean:{bn:0,j:0},coffee:{bn:.35,j:5},creased:{bn:.3,j:5},papyrus:{bn:.4,j:15,hi:1},parch:{bn:.55,j:11},lined:{bn:0,j:0},frame:{bn:0,j:0},grid:{bn:0,j:0},letterhead:{bn:.12,j:5},water:{bn:0,j:5},cornertear:{bn:.35,j:5,ct:1},perf:{bn:0,j:0}};
+  var PTM={burnt:{bn:1,j:11},old:{bn:.5,j:5},torn:{bn:.25,j:15,hi:1},scroll:{bn:.3,j:5,rd:1},clean:{bn:0,j:0},coffee:{bn:.35,j:5},creased:{bn:.3,j:5},papyrus:{bn:.4,j:15,hi:1},parch:{bn:.55,j:11},lined:{bn:0,j:0},frame:{bn:0,j:0},grid:{bn:0,j:0},letterhead:{bn:.12,j:5},water:{bn:0,j:5},cornertear:{bn:.35,j:5,ct:1},perf:{bn:0,j:0},dotgrid:{bn:0,j:0},dframe:{bn:0,j:0},corners:{bn:.1,j:3},confetti:{bn:0,j:0}};
   function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   function rrect(c,x0,y0,x1,y1,rx,ry){
     c.moveTo(x0+rx,y0);c.lineTo(x1-rx,y0);c.ellipse(x1-rx,y0+ry,rx,ry,0,-Math.PI/2,0);
@@ -2393,6 +2423,15 @@ var FIREBASE_CONFIG={
       line(lx0,h*.95,lx1,h*.95,'#a8812f',3);
     }else if(key==='water'){
       blob(18,14,34,'rgba(230,120,150,.3)');blob(82,28,36,'rgba(90,150,220,.3)');blob(30,82,36,'rgba(110,190,140,.28)');blob(78,88,32,'rgba(240,190,90,.3)');
+    }else if(key==='dotgrid'){
+      c.fillStyle='rgba(60,50,40,.38)';for(var dx=11;dx<w;dx+=22)for(var dy=11;dy<h;dy+=22){c.beginPath();c.arc(dx,dy,1.4,0,6.3);c.fill()}
+    }else if(key==='dframe'){
+      c.strokeStyle='rgba(120,80,30,.65)';c.lineWidth=1.2;c.strokeRect(10,10,w-20,h-20);c.strokeRect(14,14,w-28,h-28);
+    }else if(key==='corners'){
+      c.strokeStyle='rgba(150,100,40,.7)';c.lineWidth=3;[[12,12,1,1],[w-12,12,-1,1],[12,h-12,1,-1],[w-12,h-12,-1,-1]].forEach(function(q){c.beginPath();c.moveTo(q[0]+34*q[2],q[1]);c.lineTo(q[0],q[1]);c.lineTo(q[0],q[1]+34*q[3]);c.stroke()});
+    }else if(key==='confetti'){
+      var cc=['rgba(220,80,100,.5)','rgba(70,130,210,.5)','rgba(240,180,50,.55)','rgba(80,170,110,.5)'],k=0;
+      for(var cx=20;cx<w;cx+=47)for(var cy=20;cy<h;cy+=43){c.fillStyle=cc[k++%4];c.beginPath();c.arc(cx+(k*13)%17,cy+(k*7)%19,2.6,0,6.3);c.fill()}
     }else if(key==='perf'){
       c.strokeStyle='rgba(70,50,25,.38)';c.lineWidth=8;c.lineCap='round';c.setLineDash([.1,14]);c.strokeRect(17,17,w-34,h-34);c.setLineDash([]);c.lineCap='butt';
     }
@@ -3080,6 +3119,16 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   sync();count();route();
   initStore();
   try{if(document.fonts&&document.fonts.load)document.fonts.load('700 17px "Scheherazade New"','حأب').then(function(){sync();if(location.hash==='#box')renderShelf(letters,$('shelf'),false)},function(){})}catch(e){}
+})();
+</script>
+<button type="button" id="accBtn" aria-label="الحساب" title="الحساب">👤</button><div id="accPop"><div id="accLbl"></div><button class="btn ghost" id="accGo" type="button">ربط / تبديل الحساب بـ Google</button></div>
+<script>
+(function(){
+  var b=document.getElementById('accBtn'),p=document.getElementById('accPop'),g=document.getElementById('accGo');
+  b.onclick=function(e){e.stopPropagation();p.classList.toggle('on')};
+  document.addEventListener('click',function(e){if(!p.contains(e.target)&&e.target!==b)p.classList.remove('on')});
+  g.onclick=function(){p.classList.remove('on');var t=document.getElementById('swBtn'),l=document.getElementById('gBtn');
+    if(window.__dwsAnon!==false&&l&&l.onclick)l.onclick();else if(t&&t.onclick)t.onclick()};
 })();
 </script>
 </body>
