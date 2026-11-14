@@ -9,8 +9,8 @@
 <meta name="application-name" content="Dead Writers Society">
 <meta name="apple-mobile-web-app-title" content="Dead Writers Society">
 <meta property="og:site_name" content="DWS">
-<meta property="og:title" content="وصلتك رسالة مختومة 💌">
-<meta name="twitter:title" content="وصلتك رسالة مختومة 💌">
+<meta property="og:title" content="Dead Writers Society">
+<meta name="twitter:title" content="Dead Writers Society">
 <meta name="description" content="افتح الظرف لتقرأها.">
 <meta property="og:type" content="website">
 <meta property="og:description" content="افتح الظرف لتقرأها.">
@@ -123,6 +123,7 @@ textarea{width:100%;height:230px;resize:none;background:transparent;border:none;
 .dets span{opacity:.65;min-width:74px}
 .dets input{flex:1;min-width:0;background:transparent;border:none;border-bottom:1px dashed rgba(90,60,25,.45);outline:none;font:inherit;color:inherit;padding:2px}
 .sig{margin-top:14px}
+#rpName::placeholder{color:#6b4a35;opacity:.85}#rpName:focus{outline:none;border-color:#7a3a2a;box-shadow:none}
 .rpnote{text-align:center;opacity:.7;margin-bottom:8px}
 body.rmode .only-letter{display:none!important}
 
@@ -358,6 +359,8 @@ body.rmode .tbar button.ol{display:none}
 .sigline{margin-top:14px;font-size:1.2rem}
 .secretline{margin-top:14px;opacity:.6;font-style:italic}
 .hw{margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qrpanel{flex:1 1 100%;display:flex;gap:6px;align-items:center}.qrpanel input{flex:1;min-width:0;font:1rem system-ui,sans-serif;background:rgba(255,255,255,.35);color:inherit;border:1px solid rgba(90,60,25,.5);border-radius:10px;padding:6px 10px;text-align:left}
+.qpbox{margin:8px 0}.qph{font-size:.95rem;opacity:.85;margin-bottom:6px}.qpbox input{display:block;width:100%;box-sizing:border-box;margin:4px 0;padding:6px 12px;border-radius:16px;border:1px solid rgba(90,60,25,.5);background:rgba(255,250,235,.55);color:#2b1a10;font:1.05rem Amiri,serif}.qpbox input::placeholder{color:#6b4a35;opacity:.8}.qpsug{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.qpsug button{font:.95rem Amiri,serif;cursor:pointer;background:transparent;color:inherit;border:1px dashed rgba(90,60,25,.45);border-radius:14px;padding:2px 10px}
 .stpanel{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px}
 .stpanel button{font-size:1.7rem;line-height:1;background:transparent;border:0;cursor:pointer;padding:3px 5px;border-radius:8px}
 .stpanel button:active{background:rgba(90,60,25,.25)}
@@ -1403,7 +1406,7 @@ var RvScene=(function(){
     <div class="only-letter"><h3>نوع الرسالة</h3><div class="sw chips" id="swKind"></div>
     <h3>الخصوصية</h3><div class="sw chips" id="swPriv"></div>
     <h3>الرد</h3><div class="sw chips" id="swRep"></div>
-    <h3>المستلمون</h3><div class="sw chips" id="swMulti"></div><p style="margin:2px 0 8px;font-size:.85rem;color:var(--muted)">رابط واحد ترسله لأي عدد من الناس. اكتب بخانة «إلى» اسم المجموعة (مثلاً: الأهل). كل شخص يكتب اسمه عند الرد، وتشوف عدّاد الفتح وقائمة الردود.</p>
+    <h3>المستلمون</h3><div class="sw chips" id="swMulti"></div>
     <h3>إضافات</h3><div class="sw chips" id="swAdd"></div>
     <h3>فتح مؤجل</h3><div class="sw chips" id="swOpen"><input type="datetime-local" id="openIn" style="flex:0 0 auto;padding:4px 8px;border-radius:14px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1rem Amiri,serif"></div>
     <h3>كلمة سر</h3><div class="sw chips" id="swPw"><input id="pwIn" maxlength="30" autocomplete="off" placeholder="اتركها فارغة بدون كلمة سر" style="flex:0 0 220px;padding:6px 12px;border-radius:14px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1rem Amiri,serif"><input id="pwHint" maxlength="120" autocomplete="off" placeholder="ملاحظة تلميح للمستلم (اختياري)" style="flex:1 1 100%;padding:6px 12px;border-radius:14px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1rem Amiri,serif"></div></div>
@@ -1428,7 +1431,8 @@ var RvScene=(function(){
       <div class="rpnote" id="rpNote"></div>
       <label class="to only-letter"><span>إلى:</span><input id="toInput" maxlength="40" placeholder="اسم الشخص" autocomplete="off"></label>
       <textarea id="msg" placeholder="خطّ كلماتك هنا..."></textarea>
-      <div class="hw only-letter"><button type="button" class="hwtgl" id="hwTgl">✍️ كتابة باليد</button><button type="button" class="hwtgl" id="stTgl">🌸 ملصقات</button><button type="button" class="hwtgl" id="imTgl">🖼️ صورة</button><div class="stpanel" id="stPanel" style="display:none"></div><input type="file" id="stFile" accept="image/*" hidden></div>
+      <div class="hw only-letter"><button type="button" class="hwtgl" id="hwTgl">✍️ كتابة باليد</button><button type="button" class="hwtgl" id="stTgl">🌸 ملصقات</button><button type="button" class="hwtgl" id="imTgl">🖼️ صورة</button><button type="button" class="hwtgl" id="qrTgl">🔳 باركود</button><div class="qrpanel" id="qrPanel" style="display:none"><input id="qrIn" type="text" dir="ltr" maxlength="300" placeholder="الرابط أو النص داخل الباركود" autocomplete="off"><button type="button" class="hwtgl" id="qrAdd">أضف</button></div><div class="stpanel" id="stPanel" style="display:none"></div><input type="file" id="stFile" accept="image/*" hidden></div>
+      <div class="qpbox only-letter" id="qpBox" style="display:none"><div class="qph">💬 ردود جاهزة (يختار منها المستلم، أو يكتب ردّه بنفسه):</div><div id="qpList"></div><div class="qpsug" id="qpSug"></div><button type="button" class="hwtgl" id="qpAdd">+ أضف رد</button></div>
       <div class="dets only-letter" id="dets"></div>
       <label class="to only-letter"><span>الرابط:</span><input id="lkIn" type="url" inputmode="url" dir="ltr" style="text-align:left" maxlength="300" placeholder="https:// (اختياري)" autocomplete="off"></label>
       <label class="to sig only-letter" id="sigRow"><span>من:</span><input id="fromInput" maxlength="40" placeholder="اسمك" autocomplete="off"></label>
@@ -1584,7 +1588,7 @@ var RvScene=(function(){
   function btn(){
     var b=document.createElement('button');b.type='button';b.id='sfxBtn';b.setAttribute('aria-label','الصوت');
     b.textContent=on?'🔊':'🔇';
-    b.style.cssText='position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;width:40px;height:40px;border-radius:50%;border:1px solid #4a2a24;background:rgba(0,0,0,.55);color:#e8cfb6;font-size:18px;cursor:pointer;line-height:1';
+    b.style.cssText='position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:50;width:36px;height:36px;border-radius:50%;border:1px solid #4a2a24;background:rgba(0,0,0,.55);color:#e8cfb6;font-size:18px;cursor:pointer;line-height:1';
     b.onclick=function(){b.textContent=SFX.toggle()?'🔊':'🔇'};
     document.body.appendChild(b);
   }
@@ -1867,7 +1871,7 @@ var FIREBASE_CONFIG={
     if(!text&&(rmode||(!strokes.length&&!stk.length))){$('note').textContent='اكتب شيئاً بالرسالة أولاً.';return}
     if(rmode){
       if(!replyCtx){$('note').textContent='جاري تحميل الرسالة الأصلية...';loadReplyCtx(replyId).then(function(){if(replyCtx){$('note').textContent='';$('sendBtn').click()}else $('note').textContent=$('rpNote').textContent||'ما كدرت أحمّل الرسالة الأصلية. افتح الرابط من المتصفح وحاول مرة ثانية.'});return}
-      if(replyCtx.multi){var nm0=$('rpName')?$('rpName').value.trim():'';if(!nm0){$('note').textContent='اكتب اسمك حتى يعرف المرسل مين ردّ.';return}try{localStorage.setItem('dws_myname',nm0.slice(0,40))}catch(e){}}
+      if(replyCtx.multi){var nm0=$('rpName')?$('rpName').value.trim():'';if(!nm0){$('note').textContent='اكتب اسمك حتى يعرف المرسل مين ردّ.';var rn=$('rpName');if(rn){rn.style.borderColor='#b3261e';rn.style.boxShadow='0 0 0 3px rgba(179,38,30,.3)';try{rn.focus();rn.scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}}return}try{localStorage.setItem('dws_myname',nm0.slice(0,40))}catch(e){}}
       $('note').textContent='';pend={text:text};sealReply();return;
     }
     var to=$('toInput').value.trim(),from=$('fromInput').value.trim();
@@ -2108,12 +2112,13 @@ var FIREBASE_CONFIG={
     if(pend.link)l.link=pend.link;
     if(strokes.length)l.draw=JSON.parse(JSON.stringify(strokes));
     if(stk.length)l.stk=JSON.parse(JSON.stringify(stk));
+    if(!l.noRep&&qrClean().length)l.qr=qrClean();
     if(strokes.length||stk.length)l.asp=hwAsp();
     if(via){l.via=via;l.who=who}
     letters.push(l);pendingDrop=l.id;
     var no=function(){return false},yes=function(){return true};
     sentCol().doc(l.id).set(clean(l)).catch(function(){});
-    var sh=clean({ownerUid:l.ownerUid,to:l.to,text:l.text,kind:l.kind,secret:l.secret,fromName:l.fromName,det:l.det,ts:l.ts,env:l.env,etype:l.etype,ptype:l.ptype,paper:l.paper,font:l.font,ink:l.ink,seal:l.seal,semb:l.semb,sch:l.sch,embc:l.embc,mot:l.mot,esh:l.esh,noRep:l.noRep,multi:l.multi,hd:l.hd,link:l.link,draw:l.draw,stk:l.stk,asp:l.asp,openAt:l.openAt,pw:l.pw,pwh:l.pwh});
+    var sh=clean({ownerUid:l.ownerUid,to:l.to,text:l.text,kind:l.kind,secret:l.secret,fromName:l.fromName,det:l.det,ts:l.ts,env:l.env,etype:l.etype,ptype:l.ptype,paper:l.paper,font:l.font,ink:l.ink,seal:l.seal,semb:l.semb,sch:l.sch,embc:l.embc,mot:l.mot,esh:l.esh,noRep:l.noRep,multi:l.multi,hd:l.hd,link:l.link,draw:l.draw,stk:l.stk,qr:l.qr,asp:l.asp,openAt:l.openAt,pw:l.pw,pwh:l.pwh});
     var sp=wto(dbh.doc('shared/'+l.id).set(sh).then(yes,function(e){lastErr=(e&&e.code)||String(e&&e.message||e);return false}),15000);
     sp.then(function(ok){if(ok){l.shared=true;sentCol().doc(l.id).set(clean(l)).catch(function(){})}});
     ceremony(l,sp,finish);
@@ -2242,6 +2247,7 @@ var FIREBASE_CONFIG={
     if(sel.hd)l.hd=sel.hd;if(Object.keys(d).length)l.det=d;
     var lk=($('lkIn').value||'').trim();if(lk&&!/^https?:\/\//i.test(lk))lk='https://'+lk;if(/^https?:\/\/\S+\.\S+/i.test(lk))l.link=lk;
     if(strokes.length)l.draw=JSON.parse(JSON.stringify(strokes));if(stk.length)l.stk=JSON.parse(JSON.stringify(stk));
+    if(sel.rep!=='no'&&qrClean().length)l.qr=qrClean();
     if(strokes.length||stk.length)l.asp=hwAsp();return l;
   }
   $('pvBtn').onclick=function(){
@@ -2531,7 +2537,7 @@ var FIREBASE_CONFIG={
     if(!mine.length){var e=mk('div','','لسه ما وصل أي ردّ.');e.style.opacity='.7';box.appendChild(e);return}
     mine.forEach(function(r){
       var it=mk('div','');it.style.cssText='padding:6px 0;border-top:1px solid rgba(128,128,128,.3)';
-      var nm=mk('b','',(r.fromName||'مجهول'));it.appendChild(nm);
+      var nm=mk('b','','من: '+(r.fromName||'مجهول'));it.appendChild(nm);
       it.appendChild(mk('span','','  ·  '+fmtDT(r.ts)));
       var tx=mk('div','',r.text||'');tx.style.whiteSpace='pre-wrap';it.appendChild(tx);box.appendChild(it);
     });
@@ -2541,7 +2547,7 @@ var FIREBASE_CONFIG={
   var RSVP_OPTS=[['✅ أحضر','أحضر إن شاء الله ✅','yes'],['❌ أعتذر','أعتذر عن الحضور ❌','no'],['🤔 ربما','ربما أحضر 🤔','maybe']];
   function setupRsvp(l,mode){
     var box=$('rsvpQ');if(!box)return;
-    var show=mode==='recv'&&!l.noRep&&l.ownerUid&&dbh&&RSVP_KINDS.indexOf(l.kind)>=0;
+    var show=mode==='recv'&&!l.noRep&&l.ownerUid&&dbh,isRs=RSVP_KINDS.indexOf(l.kind)>=0&&!(l.qr&&l.qr.length),OPTS=(l.qr&&l.qr.length)?l.qr.slice(0,4).map(function(t,i){t=String(t).slice(0,40);return [t,t,'c'+i]}):(isRs?RSVP_OPTS:[]);if(show&&!OPTS.length)show=false;
     box.style.display=show?'':'none';box.innerHTML='';if(!show)return;
     var key='dws_rsvp_'+l.id,prev=null;try{prev=localStorage.getItem(key)}catch(e){}
     var st=mk('div','','');st.style.cssText='width:100%;text-align:center;font-size:1rem;min-height:1.3em';
@@ -2550,10 +2556,10 @@ var FIREBASE_CONFIG={
     if(l.multi){ni=document.createElement('input');ni.id='rsvpName';ni.placeholder='اسمك';ni.maxLength=40;ni.autocomplete='off';ni.style.cssText='width:min(220px,60vw);padding:6px 12px;border-radius:18px;border:1px solid currentColor;background:transparent;color:inherit;font:1.05rem Amiri,serif;text-align:center';try{ni.value=localStorage.getItem('dws_myname')||''}catch(e){}box.appendChild(ni)}
     function paint(){
       btns.forEach(function(b){b.className='btn'+(b._v===prev?'':' ghost')});
-      var o=RSVP_OPTS.filter(function(x){return x[2]===prev})[0];
-      st.textContent=o?('ردّك وصل: '+o[0]+' — تكدر تغيّره'):'رد سريع بضغطة وحدة:';
+      var o=OPTS.filter(function(x){return x[2]===prev})[0];
+      st.textContent=o?('ردّك وصل: '+o[0]+' — تكدر تغيّره'):(isRs?'رد سريع بضغطة وحدة:':'اختر رداً جاهزاً، أو اضغط «اكتب رداً» واكتب ردك بنفسك:');
     }
-    RSVP_OPTS.forEach(function(o){
+    OPTS.forEach(function(o){
       var b=mk('button','btn ghost',o[0]);b.type='button';b._v=o[2];
       b.onclick=function(){
         if(prev===o[2])return;
@@ -2622,7 +2628,7 @@ var FIREBASE_CONFIG={
     var rv=$('rsvp');if(!rv){rv=document.createElement('div');rv.id='rsvp';rv.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin:8px 0';$('rpNote').parentNode.insertBefore(rv,$('rpNote').nextSibling)}
     rv.innerHTML='';
     if(d.multi){
-      if(!$('rpName')){var ni=document.createElement('input');ni.id='rpName';ni.placeholder='اسمك (حتى يعرف المرسل مين ردّ)';ni.maxLength=40;ni.autocomplete='off';ni.style.cssText='display:block;width:min(340px,86vw);margin:8px auto;padding:8px 14px;border-radius:20px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1.05rem Amiri,serif';try{ni.value=localStorage.getItem('dws_myname')||''}catch(e){}rv.parentNode.insertBefore(ni,rv)}
+      if(!$('rpName')){var ni=document.createElement('input');ni.id='rpName';ni.placeholder='اكتب اسمك هنا (مطلوب) *';ni.maxLength=40;ni.autocomplete='off';ni.oninput=function(){ni.style.borderColor='#7a3a2a';ni.style.boxShadow='none'};ni.style.cssText='display:block;width:min(340px,86vw);margin:8px auto;padding:8px 14px;border-radius:20px;border:2px solid #7a3a2a;background:rgba(255,250,235,.7);color:#2b1a10;font:1.15rem Amiri,serif;text-align:center';try{ni.value=localStorage.getItem('dws_myname')||''}catch(e){}rv.parentNode.insertBefore(ni,rv)}
     }else if($('rpName'))$('rpName').remove();
     if(['invite','bday','wedding','engage','grad'].indexOf(d.kind)>=0)[['✅ أحضر','أحضر إن شاء الله ✅'],['❌ أعتذر','أعتذر عن الحضور ❌'],['🤔 ربما','ربما أحضر 🤔']].forEach(function(x){var b=mk('button','',x[0]);b.type='button';b.style.cssText='padding:6px 14px;border-radius:18px;border:1px solid #4a2a24;background:rgba(0,0,0,.35);color:inherit;font:1.05rem Amiri,serif;cursor:pointer';b.onclick=function(){$('msg').value=x[1]};rv.appendChild(b)});
   }
@@ -2788,7 +2794,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   hwInit();
 
   /* ---------- الملصقات والصور ---------- */
-  var stk=[],stSel=-1,stLayer=null,stBar=null;
+  var stk=[],stSel=-1,stLayer=null,stBar=null,qrs=[];
   var EMO=['❤️','💌','🌹','🌸','🌟','✨','🎉','🎂','🎁','💍','🕊️','🌙','☀️','🌈','🦋','🍀','☕','🎈','💐','🥰','😍','😂','🙏','👑','🔥','💫','🎶','📜','🕯️','💎'];
   function okData(d){return typeof d==='string'&&/^data:image\/(jpeg|png|webp);base64,/.test(d)}
   function loadImg(src){return new Promise(function(res){var im=new Image();im.onload=function(){res(im)};im.onerror=function(){res(null)};im.src=src})}
@@ -2833,7 +2839,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     stk.forEach(function(it,i){var e=stEl(it);if(!e)return;e.dataset.i=i;if(i===stSel)e.classList.add('sel');stLayer.appendChild(e)});
     if(stBar)stBar.style.display=stSel>=0?'flex':'none';
   }
-  function stClear(){stk=[];stSel=-1;stRender()}
+  function stClear(){stk=[];stSel=-1;stRender();if(window.qpReset)qpReset()}
   window.stClear=stClear;
   function stInit(){
     stLayer=document.createElement('div');stLayer.className='st-layer edit';document.querySelector('#compose .pad').appendChild(stLayer);
@@ -2858,7 +2864,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     $('imTgl').onclick=function(){$('stFile').click()};
     $('stFile').onchange=function(){
       var f=this.files&&this.files[0];this.value='';if(!f)return;
-      if(stk.filter(function(x){return x.t==='i'}).length>=3){$('note').textContent='الحد الأقصى ٣ صور.';return}
+      if(stk.filter(function(x){return x.t==='i'&&!x.q}).length>=3){$('note').textContent='الحد الأقصى ٣ صور.';return}
       if(stk.length>=20){$('note').textContent='وصلت الحد الأقصى من الملصقات والصور.';return}
       var u=URL.createObjectURL(f),im=new Image();
       im.onload=function(){
@@ -2870,12 +2876,42 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
         URL.revokeObjectURL(u);
         if(!okData(d)||d.length>220000){$('note').textContent='الصورة كبيرة، جرّب صورة أصغر.';return}
         $('note').textContent='';
-        var ar=Math.round(cv.height/cv.width*1000)/1000,sz=ar>1?Math.min(520,Math.round(600/ar)):520,n=stk.filter(function(x){return x.t==='i'}).length;
+        var ar=Math.round(cv.height/cv.width*1000)/1000,sz=ar>1?Math.min(520,Math.round(600/ar)):520,n=stk.filter(function(x){return x.t==='i'&&!x.q}).length;
         stk.push({t:'i',d:d,ar:ar,x:500+[0,-90,90][n%3],y:340+n*90,s:sz,r:0});stSel=stk.length-1;stRender();
       };
       im.onerror=function(){URL.revokeObjectURL(u);$('note').textContent='ما كدرت أفتح الصورة.'};
       im.src=u;
     };
+    $('qrTgl').onclick=function(){var p=$('qrPanel');p.style.display=p.style.display==='none'?'flex':'none';if(p.style.display!=='none')$('qrIn').focus()};
+    function qrData(text){
+      var cv=null,box=document.createElement('div');
+      box.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(box);
+      try{
+        new QRCode(box,{text:text,width:360,height:360,colorDark:'#1a1410',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+        cv=box.querySelector('canvas');
+        if(!cv||!cv.width)return null;
+        var m=40,o=document.createElement('canvas');o.width=cv.width+m*2;o.height=cv.height+m*2;
+        var c=o.getContext('2d');c.fillStyle='#ffffff';c.fillRect(0,0,o.width,o.height);c.drawImage(cv,m,m);
+        return o.toDataURL('image/png');
+      }catch(e){return null}
+      finally{box.remove()}
+    }
+    function qrAddNow(){
+      var t=$('qrIn').value.trim();
+      if(!t){$('note').textContent='اكتب الرابط أو النص اللي تريده داخل الباركود.';return}
+      if(!window.QRCode){$('note').textContent='مكتبة الباركود ما تحمّلت. تأكد من الإنترنت وحدّث الصفحة.';return}
+      if(stk.filter(function(x){return x.q}).length>=2){$('note').textContent='الحد الأقصى باركودين بالرسالة.';return}
+      if(stk.length>=20){$('note').textContent='وصلت الحد الأقصى من الملصقات والصور.';return}
+      if(/^(www\.)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(t)&&!/^[a-z][a-z0-9+.-]*:/i.test(t))t='https://'+t;
+      var d=qrData(t);
+      if(!d||!okData(d)){$('note').textContent='النص طويل أو ما كدرت أسوي الباركود، جرّب أقصر.';return}
+      $('note').textContent='';
+      var n=stk.filter(function(x){return x.q}).length;
+      stk.push({t:'i',q:t.slice(0,300),d:d,ar:1,x:500+n*60,y:420+n*60,s:260,r:0});stSel=stk.length-1;stRender();
+      $('qrIn').value='';$('qrPanel').style.display='none';
+    }
+    $('qrAdd').onclick=qrAddNow;
+    $('qrIn').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();qrAddNow()}};
     var drag=null;
     stLayer.addEventListener('pointerdown',function(e){
       var t=e.target.closest('.st');if(!t)return;e.preventDefault();
@@ -2894,25 +2930,52 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   }
   stInit();
   /* ---------- إضافات اختيارية: المستخدم يفعّل اللي يريده من الشريط ---------- */
-  var AD={hw:false,st:false,im:false};
+  var AD={hw:false,st:false,im:false,qr:false,qp:false};
   function adApply(){
-    $('hwTgl').style.display=AD.hw?'':'none';$('stTgl').style.display=AD.st?'':'none';$('imTgl').style.display=AD.im?'':'none';
-    if(!AD.st)$('stPanel').style.display='none';
-    document.querySelector('.hw').style.display=(AD.hw||AD.st||AD.im)?'':'none';
+    $('hwTgl').style.display=AD.hw?'':'none';$('stTgl').style.display=AD.st?'':'none';$('imTgl').style.display=AD.im?'':'none';$('qrTgl').style.display=AD.qr?'':'none';
+    if(!AD.st)$('stPanel').style.display='none';if(!AD.qr)$('qrPanel').style.display='none';$('qpBox').style.display=AD.qp?'':'none';
+    document.querySelector('.hw').style.display=(AD.hw||AD.st||AD.im||AD.qr)?'':'none';
   }
-  [['كتابة باليد','hw'],['ملصقات','st'],['صور','im']].forEach(function(a){
+  [['كتابة باليد','hw'],['ملصقات','st'],['صور','im'],['باركود','qr'],['ردود جاهزة','qp']].forEach(function(a){
     var b=document.createElement('button');b.type='button';b.textContent=a[0];b.dataset.v=a[1];
     b.onclick=function(){
       AD[a[1]]=!AD[a[1]];b.classList.toggle('on',AD[a[1]]);
       if(!AD[a[1]]){
-        if(a[1]==='hw'){strokes=[];hwSet(false);hwRedraw()}
-        else{stk=stk.filter(function(x){return a[1]==='st'?x.t!=='e':x.t!=='i'});stSel=-1;stRender()}
+        if(a[1]==='qp'){qrs=[];qpRender()}else if(a[1]==='hw'){strokes=[];hwSet(false);hwRedraw()}
+        else{stk=stk.filter(function(x){return a[1]==='st'?x.t!=='e':a[1]==='qr'?!x.q:(x.t!=='i'||!!x.q)});stSel=-1;stRender()}
       }
       adApply();
     };
     $('swAdd').appendChild(b);
   });
   adApply();
+  /* ---------- ردود جاهزة يحددها المرسل ---------- */
+  var QSUG=['❤️ شكراً، وصلتني رسالتك','🌹 الله يسعدك ويحفظك','🤍 أحبك','👍 تمام','😂 ضحكتني رسالتك','🥹 رسالتك لامست قلبي'];
+  function qrClean(){var o=[];qrs.forEach(function(t){t=String(t||'').trim().slice(0,40);if(t&&o.indexOf(t)<0)o.push(t)});return o.slice(0,4)}
+  function qpRender(){
+    var box=$('qpList');if(!box)return;box.innerHTML='';
+    if(!qrs.length&&AD.qp)qrs=[''];
+    qrs.forEach(function(t,i){
+      var inp=document.createElement('input');inp.type='text';inp.maxLength=40;inp.value=t;inp.placeholder='مثلاً: شكراً لك ❤️';inp.autocomplete='off';
+      inp.oninput=function(){qrs[i]=inp.value};
+      inp.onblur=function(){if(!inp.value.trim()&&qrs.length>1){qrs.splice(i,1);qpRender()}};
+      box.appendChild(inp);
+    });
+    $('qpAdd').style.display=qrs.length>=4?'none':'';
+    var sg=$('qpSug');sg.innerHTML='';
+    QSUG.forEach(function(t){
+      var b=document.createElement('button');b.type='button';b.textContent=t;
+      b.onclick=function(){
+        if(qrClean().indexOf(t)>=0)return;
+        var k=qrs.findIndex(function(x){return !String(x).trim()});
+        if(k>=0)qrs[k]=t;else if(qrs.length<4)qrs.push(t);else return;
+        qpRender();
+      };sg.appendChild(b);
+    });
+  }
+  window.qpReset=function(){qrs=[];qpRender()};
+  $('qpAdd').onclick=function(){if(qrs.length<4){qrs.push('');qpRender();var ins=$('qpList').querySelectorAll('input');if(ins.length)ins[ins.length-1].focus()}};
+  qpRender();
 
   
   /* ---------- شريط الاختيارات الثابت ---------- */
@@ -2966,6 +3029,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       var d={id:curId||('d'+Date.now().toString(36)),ts:Date.now(),s:st,f:f,det:JSON.parse(JSON.stringify(det))};
       if(strokes.length)d.draw=JSON.parse(JSON.stringify(strokes));
       if(stk.length)d.stk=JSON.parse(JSON.stringify(stk));
+      if(qrClean().length)d.qr=qrClean();
       return d;
     }
     function save(){
@@ -2983,7 +3047,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       F.forEach(function(i){if($(i))$(i).value=(d.f&&d.f[i])||''});
       $('pwIn').value='';if($('pwHint'))$('pwHint').value='';
       Object.keys(det).forEach(function(k){delete det[k]});Object.keys(d.det||{}).forEach(function(k){det[k]=d.det[k]});
-      strokes=d.draw?JSON.parse(JSON.stringify(d.draw)):[];stk=d.stk?JSON.parse(JSON.stringify(d.stk)):[];stSel=-1;
+      strokes=d.draw?JSON.parse(JSON.stringify(d.draw)):[];stk=d.stk?JSON.parse(JSON.stringify(d.stk)):[];stSel=-1;qrs=d.qr?d.qr.slice(0,4):[];if(qrs.length&&!AD.qp){AD.qp=true;var qb=document.querySelector('#swAdd button[data-v=qp]');if(qb)qb.classList.add('on')}try{qpRender();adApply()}catch(e){}
       curId=d.id;embManual=true;buildDets();sync();try{hwRedraw()}catch(e){}try{stRender()}catch(e){}
       closeOv('dfOv');if(location.hash!=='#desk'&&location.hash!=='')location.hash='#desk';
       $('msg').focus();
