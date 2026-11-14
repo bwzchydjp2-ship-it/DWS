@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
-<title>الرسائل المختومة</title>
+<title>Dead Writers Society</title>
+<meta name="application-name" content="Dead Writers Society">
+<meta name="apple-mobile-web-app-title" content="Dead Writers Society">
+<meta property="og:site_name" content="Dead Writers Society">
+<meta property="og:title" content="Dead Writers Society">
+<meta name="twitter:title" content="Dead Writers Society">
 <script>if(/^#re?-/.test(location.hash))document.documentElement.classList.add('guesth')</script>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Lateef&family=Reem+Kufi&family=Scheherazade+New:wght@400;700&family=Katibeh&family=Mirza&family=Lemonada&family=Lalezar&family=Tajawal&family=Playpen+Sans+Arabic&family=Noto+Nastaliq+Urdu&family=Harmattan&display=swap" rel="stylesheet">
 <style>
@@ -1699,7 +1704,7 @@ var FIREBASE_CONFIG={
     $('ctInput').placeholder=num?'رقم الهاتف (مثال 0770...)':'اليوزر (بدون @)';$('ctInput').inputMode=num?'tel':'text';
   }
   function digits(v){var d=v.replace(/[^\d+]/g,'');if(d.indexOf('00')===0)d='+'+d.slice(2);if(d.charAt(0)==='0')d='+964'+d.slice(1);return d}
-  function msgOf(l){return 'وصلتك رسالة مختومة 💌\n\nافتحها من هنا:\n'+BASE+'#r-'+l.id}
+  function msgOf(l){return 'From: DWS\n\n'+BASE+'#r-'+l.id}
   function deliver(l){
     if(!l.via||!l.who||!l.shared)return null;
     var t=encodeURIComponent(msgOf(l));
@@ -2093,7 +2098,7 @@ var FIREBASE_CONFIG={
       if(hasStk)stPaint(x,l.stk.slice(0,24),imgs,mw/1000,pad,pad);
       if(hasDraw)hwPaint(x,l.draw,mw/1000,pad,pad);
       x.restore();
-      txt=[lu?('وصلتك رسالة مختومة 💌\n\nافتحها من هنا:\n'+lu):'',(!isReply&&l.link)?l.link:''].filter(Boolean).join('\n\n');
+      txt=[lu?('From: DWS\n\n'+lu):'',(!isReply&&l.link)?l.link:''].filter(Boolean).join('\n\n');
       var blob=await new Promise(function(res){var d=false;function fin(v){if(!d){d=true;res(v)}}setTimeout(function(){fin(null)},8000);try{cv.toBlob(fin,'image/png')}catch(e){fin(null)}});
       var du=null;if(!blob){try{du=cv.toDataURL('image/png')}catch(e){}}
       if(!blob&&!du)throw new Error('blob');
