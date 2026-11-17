@@ -2097,12 +2097,12 @@ var FIREBASE_CONFIG={
     var th=mk('div','');
     th.style.cssText='position:absolute;left:50%;bottom:50%;width:7%;margin-left:-3.5%;height:'+sh+'px;border-radius:40% 40% 50% 50%;background:linear-gradient(90deg,rgba(0,0,0,.35),'+col+' 30%,'+col+' 70%,rgba(0,0,0,.35));box-shadow:0 0 8px rgba(255,140,50,.5);transform-origin:50% 0%;transform:scaleY(0);opacity:0;transition:transform .45s cubic-bezier(.5,0,.8,.5),opacity .3s';
     top.appendChild(th);
-    var hit=mk('button','wx-hit');hit.type='button';hit.setAttribute('aria-label','اضغط مطولاً حتى يكتمل الشمع');
+    var hit=mk('button','wx-hit');hit.type='button';hit.setAttribute('aria-label','اضغط لختم الرسالة');
     env.appendChild(hit);
     var cm=$('cerMsg'),ct=$('cerTxt');
     function say(t){ct.textContent=t;cm.classList.add('on')}
-    say('اضغط مطوّلاً على الختم 🕯️');
-    var DUR=2400,BACK=1500,p=0,down=false,last=0,raf=0,fin=false,vt=0,sndT=0;
+    say('اضغط على الختم 🕯️');
+    var DUR=2400,BACK=1500,started=false,p=0,down=false,last=0,raf=0,fin=false,vt=0,sndT=0;
     function paint(){
       var s=.05+.73*p,r=p;
       pool.style.opacity=p>0.01?1:0;
@@ -2114,7 +2114,7 @@ var FIREBASE_CONFIG={
       if(fin||down===v)return;down=v;hit.classList.toggle('hold',v);
       th.style.opacity=v?1:0;th.style.transform=v?'scaleY(1)':'scaleY(0)';
       if(v){
-        say('استمر… الشمع يسيل');
+        say('الشمع يسيل…');
         if(Date.now()-sndT>2600){sndT=Date.now();window.SFX&&(SFX.drip(),setTimeout(SFX.pour,40))}
       }else say('كمّل الضغط حتى يكتمل الشمع');
     }
@@ -2135,12 +2135,8 @@ var FIREBASE_CONFIG={
       if(p>=1){finish();return}
       raf=requestAnimationFrame(tick);
     }
-    hit.addEventListener('pointerdown',function(e){e.preventDefault();try{hit.setPointerCapture(e.pointerId)}catch(_){}setDown(true)});
-    ['pointerup','pointercancel','lostpointercapture'].forEach(function(n){hit.addEventListener(n,function(){setDown(false)})});
-    hit.addEventListener('contextmenu',function(e){e.preventDefault()});
-    hit.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();setDown(true)}});
-    hit.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();setDown(false)}});
-    hit.addEventListener('blur',function(){setDown(false)});
+    /* ضغطة وحدة تكفي: الشمع يسيل لحاله والختم ينزل (نفس الأنميشن) */
+    hit.addEventListener('click',function(e){e.preventDefault();if(started)return;started=true;setDown(true);hit.style.pointerEvents='none'});
     raf=requestAnimationFrame(tick);
   }
   function waxSeq(env,held){
