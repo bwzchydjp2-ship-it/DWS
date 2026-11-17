@@ -2333,6 +2333,14 @@ var FIREBASE_CONFIG={
       document.body.appendChild(n);window.SFX&&SFX.chime();setTimeout(function(){n.style.opacity=0},4200);setTimeout(function(){n.remove()},4900);
     }
   }
+  /* ---------- كتابة الحبر عند القراءة: كل كلمة تظهر كأن الحبر ينتشر ---------- */
+  (function(){
+    if(document.getElementById('inkCss'))return;
+    var st=document.createElement('style');st.id='inkCss';
+    st.textContent='.iw{opacity:0;filter:blur(3.5px);transition:opacity .55s ease,filter .7s ease}.iw.on{opacity:1;filter:none}'
+      +'@media print{.iw{opacity:1!important;filter:none!important}}';
+    document.head.appendChild(st);
+  })();
   function typeIn(rb){
     var nodes=[],w=document.createTreeWalker(rb,NodeFilter.SHOW_TEXT),n,spans=[];
     while((n=w.nextNode()))nodes.push(n);
@@ -2341,15 +2349,31 @@ var FIREBASE_CONFIG={
       t.nodeValue.split(/(\s+)/).forEach(function(x){
         if(!x)return;
         if(/^\s+$/.test(x)){f.appendChild(document.createTextNode(x));return}
-        var sp=document.createElement('span');sp.textContent=x;sp.style.cssText='opacity:0;transition:opacity .45s';f.appendChild(sp);spans.push(sp);
+        var sp=document.createElement('span');sp.className='iw';sp.textContent=x;f.appendChild(sp);spans.push(sp);
       });
       t.parentNode.replaceChild(f,t);
     });
-    var show=function(){spans.forEach(function(x){x.style.opacity=1})};
-    if(!spans.length||spans.length>500){show();return}
-    var i=0,iv=null,gap=Math.max(25,Math.min(110,4500/spans.length));
-    setTimeout(function(){iv=setInterval(function(){if(i>=spans.length){clearInterval(iv);return}spans[i++].style.opacity=1;if(window.SFX&&i%3===0)SFX.quill()},gap)},450);
-    rb.addEventListener('click',function(){if(iv)clearInterval(iv);show()},{once:true});
+    var show=function(){spans.forEach(function(x){x.classList.add('on')})};
+    var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!spans.length||rm){show();return}
+    /* الزمن الكلي: بين ثانيتين و9 ثواني حسب طول الرسالة، والرسائل الطويلة تظهر بدفعات */
+    var tick=45,total=Math.max(2000,Math.min(9000,spans.length*110)),per=Math.max(1,Math.ceil(spans.length/(total/tick)));
+    var i=0,iv=null,sheet=$('readSheet'),follow=true;
+    var stopFollow=function(){follow=false};
+    if(sheet){sheet.addEventListener('touchstart',stopFollow,{once:true,passive:true});sheet.addEventListener('wheel',stopFollow,{once:true,passive:true})}
+    var done=function(){if(iv){clearInterval(iv);iv=null}show()};
+    setTimeout(function(){
+      iv=setInterval(function(){
+        if(!rb.isConnected){clearInterval(iv);iv=null;return}
+        var last=null;
+        for(var k=0;k<per&&i<spans.length;k++){last=spans[i++];last.classList.add('on')}
+        if(window.SFX&&(i/per)%3<1)SFX.quill();
+        if(follow&&last&&sheet){var r=last.getBoundingClientRect(),sr=sheet.getBoundingClientRect();if(r.bottom>sr.bottom-40)sheet.scrollTop+=r.bottom-sr.bottom+80}
+        if(i>=spans.length){clearInterval(iv);iv=null}
+      },tick)
+    },450);
+    /* لمسة وحدة تخلي الرسالة تظهر كاملة */
+    rb.addEventListener('click',done,{once:true});
   }
   function showQR(l){
     if(!window.QRCode){alert('مكتبة QR ما تحمّلت. تأكد من الإنترنت وحدّث الصفحة.');return}
