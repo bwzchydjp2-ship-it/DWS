@@ -87,9 +87,10 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .rk-bar i{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#7a1520,var(--gold));transition:width .8s cubic-bezier(.3,.8,.3,1)}
 .rk-h{font-size:.82rem;color:var(--muted)}
 .rk-ms{display:flex;justify-content:center;gap:7px;margin-top:8px}
-.rk-m{width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 55%,var(--c) 55%,rgba(0,0,0,.45) 100%);box-shadow:0 1px 3px rgba(0,0,0,.7);display:inline-block}
+.rk-m{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 55%,var(--c) 55%,rgba(0,0,0,.45) 100%);box-shadow:0 1px 3px rgba(0,0,0,.7)}
+.rk-m.big{width:36px;height:36px}
 .rk-m.cur{box-shadow:0 0 0 2px rgba(201,138,98,.9),0 0 10px rgba(255,150,60,.5)}
-.rk-m.lock{background:transparent;border:1px dashed #5a4636;box-shadow:none;opacity:.55}
+.rk-m.lock{background:transparent;border:1px dashed #5a4636;box-shadow:none;opacity:.5}.rk-m.lock svg{fill:#7a6554!important;filter:none!important}
 #profOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
 .pf-h{font-size:1.05rem;color:#f0d9bf;margin:18px 0 8px;text-align:right}
 .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -106,7 +107,7 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .pf-arc small{color:var(--muted);white-space:nowrap}.pf-arc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
 .pf-note{font-size:.8rem;color:var(--muted);text-align:center;margin:12px 0 0}
 #accPop #accProf{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
-#accPop #accProf .rk-m{flex:none}
+#accPop #accProf .rk-m{flex:none;width:26px;height:26px}
 #msg.tw{letter-spacing:.015em;text-shadow:.35px .35px 0 rgba(0,0,0,.28),0 0 1px currentColor}
 #msg.twk{animation:twk .09s ease-out}
 @keyframes twk{0%{transform:translateY(0)}35%{transform:translateY(1.4px)}100%{transform:none}}
@@ -1521,7 +1522,7 @@ var RvScene=(function(){
       <div class="rpnote" id="rpNote"></div>
       <label class="to only-letter"><span>إلى:</span><input id="toInput" maxlength="40" placeholder="اسم الشخص" autocomplete="off"></label>
       <textarea id="msg" placeholder="خطّ كلماتك هنا..."></textarea>
-      <div class="hw only-letter"><button type="button" class="hwtgl" id="hwTgl">✍️ كتابة باليد</button><button type="button" class="hwtgl" id="stTgl">🌸 ملصقات</button><button type="button" class="hwtgl" id="imTgl">🖼️ صورة</button><button type="button" class="hwtgl" id="qrTgl">🔳 باركود</button><button type="button" class="hwtgl" id="twTgl">⌨️ آلة كاتبة</button><div class="qrpanel" id="qrPanel" style="display:none"><input id="qrIn" type="text" dir="ltr" maxlength="300" placeholder="الرابط أو النص داخل الباركود" autocomplete="off"><button type="button" class="hwtgl" id="qrAdd">أضف</button></div><div class="stpanel" id="stPanel" style="display:none"></div><input type="file" id="stFile" accept="image/*" hidden></div>
+      <div class="hw only-letter"><button type="button" class="hwtgl" id="hwTgl">✍️ كتابة باليد</button><button type="button" class="hwtgl" id="stTgl">🌸 ملصقات</button><button type="button" class="hwtgl" id="imTgl">🖼️ صورة</button><button type="button" class="hwtgl" id="qrTgl">🔳 باركود</button><div class="qrpanel" id="qrPanel" style="display:none"><input id="qrIn" type="text" dir="ltr" maxlength="300" placeholder="الرابط أو النص داخل الباركود" autocomplete="off"><button type="button" class="hwtgl" id="qrAdd">أضف</button></div><div class="stpanel" id="stPanel" style="display:none"></div><input type="file" id="stFile" accept="image/*" hidden></div>
       <div class="qpbox only-letter" id="qpBox" style="display:none"><div class="qph">💬 ردود جاهزة (يختار منها المستلم، أو يكتب ردّه بنفسه):</div><div id="qpList"></div><div class="qpsug" id="qpSug"></div><button type="button" class="hwtgl" id="qpAdd">+ أضف رد</button></div>
       <div class="dets only-letter" id="dets"></div>
       <label class="to only-letter"><span>الرابط:</span><input id="lkIn" type="url" inputmode="url" dir="ltr" style="text-align:left" maxlength="300" placeholder="https:// (اختياري)" autocomplete="off"></label>
@@ -2009,14 +2010,8 @@ var FIREBASE_CONFIG={
     $('msg').placeholder=rmode?'اكتب ردّك هنا...':(KINDS[sel.kind]||KINDS.letter)[3];
     var pv=$('pvWrap');pv.innerHTML='';pv.appendChild(mkEnv(sel));
   }
-  /* ---------- وضع الآلة الكاتبة ---------- */
-  var tw=false;try{tw=localStorage.getItem('dws_tw')==='1'}catch(e){}
-  function twPaint(){$('msg').classList.toggle('tw',tw);var b=$('twTgl');if(b){b.classList.toggle('on',tw);b.textContent=tw?'⌨️ آلة كاتبة: شغّالة':'⌨️ آلة كاتبة'}}
-  $('twTgl').onclick=function(){
-    tw=!tw;try{localStorage.setItem('dws_tw',tw?'1':'0')}catch(e){}
-    twPaint();if(tw&&window.SFX){SFX.ret();setTimeout(SFX.ding,420)}$('msg').focus();
-  };
-  twPaint();
+  /* ---------- الكتابة بالآلة الكاتبة (أساسية، دائماً شغّالة) ---------- */
+  var tw=true;$('msg').classList.add('tw');
   var _qt=0;$('msg').addEventListener('input',function(e){
     var m=$('msg');
     if(tw){
@@ -2400,7 +2395,10 @@ var FIREBASE_CONFIG={
     location.hash='#box';
   }
   /* ---------- رتبة الكاتب: كل 50 نقطة مستوى جديد، والنقاط ما تنقص إذا حذفت رسالة ---------- */
-  var RANKS=[[0,'Novice Writer','#8a6a4a'],[50,'Scribe','#a31212'],[100,'Storyteller','#b8892e'],[150,'Poet','#1c3f8a'],[200,'Sage of Papers','#5a2d91'],[250,'Keeper of Secrets','#262626'],[300,'The Dead Writer','#d8cfbd']];
+  var RANKS=[[0,'Novice Writer','#8a6a4a','feather','#fff'],[50,'Scribe','#a31212','book','#fff'],[100,'Storyteller','#b8892e','candle','#2a1c12'],[150,'Poet','#1c3f8a','flower','#fff'],[200,'Sage of Papers','#5a2d91','moonstar','#fff'],[250,'Keeper of Secrets','#262626','key','#e9c98a'],[300,'The Dead Writer','#d8cfbd','skull','#1a1210']];
+  var SKULL='<path fill-rule="evenodd" d="M20 9C13.9 9 9.5 13 9.5 18.6C9.5 22.3 11.4 25 14 26.5V30H17.3V28H18.9V30H21.1V28H22.7V30H26V26.5C28.6 25 30.5 22.3 30.5 18.6C30.5 13 26.1 9 20 9Z M15 17.2A3 3 0 1 1 15 23.2A3 3 0 1 1 15 17.2Z M25 17.2A3 3 0 1 1 25 23.2A3 3 0 1 1 25 17.2Z M20 22.5L18.3 25.5H21.7Z"/>';
+  function rkIcon(r){return '<svg viewBox="7 7 26 26" aria-hidden="true" style="width:68%;height:68%;fill:'+r[4]+';filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))">'+(r[3]==='skull'?SKULL:emb(r[3]))+'</svg>'}
+  function rkMedal(j,cls){var r=RANKS[j];return '<span class="rk-m'+(cls?' '+cls:'')+'" style="--c:'+r[2]+'" title="'+r[1]+'">'+rkIcon(r)+'</span>'}
   var RK_STEP=50;
   function rkLoad(){try{var a=JSON.parse(localStorage.getItem('dws_rk_open')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
   function rkSentLoad(){try{var o=JSON.parse(localStorage.getItem('dws_rk_sent')||'{}');return (o&&typeof o==='object'&&!Array.isArray(o))?o:{}}catch(e){return{}}}
@@ -2433,12 +2431,12 @@ var FIREBASE_CONFIG={
     var cur=RANKS[i],nx=RANKS[i+1];
     var pc=Math.round((pts%RK_STEP)/RK_STEP*100),left=RK_STEP-(pts%RK_STEP);
     var ms='';
-    RANKS.forEach(function(r,j){ms+='<span class="rk-m'+(j>i?' lock':'')+(j===i?' cur':'')+'" style="--c:'+r[2]+'" title="'+r[1]+'"></span>'});
-    c.innerHTML='<div class="rk-top"><span class="rk-m cur" style="--c:'+cur[2]+'"></span><b class="rk-t" dir="ltr">'+cur[1]+'</b><span class="rk-p">المستوى '+(lv+1)+' · '+pts+' نقطة</span></div>'
+    RANKS.forEach(function(r,j){ms+=rkMedal(j,(j>i?'lock':'')+(j===i?' cur':''))});
+    c.innerHTML='<div class="rk-top">'+rkMedal(i,'cur big')+'<b class="rk-t" dir="ltr">'+cur[1]+'</b><span class="rk-p">المستوى '+(lv+1)+' · '+pts+' نقطة</span></div>'
       +'<div class="rk-bar"><i style="width:'+pc+'%"></i></div>'
       +'<div class="rk-h" title="رسالة مرسلة = 10 · سرّية +5 · فتح رسالة = 5 · كل 50 نقطة مستوى">باقي '+left+' نقطة للمستوى '+(lv+2)+(nx?' (<bdi dir="ltr">'+nx[1]+'</bdi>)':'')+'</div>'
       +'<div class="rk-ms">'+ms+'</div>';
-    var am=$('accMedal');if(am)am.style.setProperty('--c',cur[2]);
+    var am=$('accMedal');if(am){am.style.setProperty('--c',cur[2]);am.innerHTML=rkIcon(cur)}
     var ar=$('accRk');if(ar)ar.textContent='Lv.'+(lv+1);
     if(!ready)return;
     var old=null;try{old=localStorage.getItem('dws_rk_last')}catch(e){}
@@ -2448,14 +2446,14 @@ var FIREBASE_CONFIG={
   /* ---------- الملف الشخصي: إحصائيات الموقع (الأرشيف) ---------- */
   function buildProfile(){
     var b=$('profBody');if(!b)return;b.innerHTML='';
-    var now=Date.now(),n=letters.length,rd=0,sched=0,sec=0,mu=0,words=0,i,x;
+    var now=Date.now(),n=letters.length,rd=0,sched=0,sec=0,mu=0,words=0,chars=0,nsp=0,i,x;
     var byKind={},byMon={},days={},opens=0,pw=0,art=0,lnk=0,maxW=0;
     letters.forEach(function(l){
       var dk=new Date(l.ts||0);days[dk.getFullYear()+'-'+dk.getMonth()+'-'+dk.getDate()]=Math.floor((l.ts||0)/864e5);
       opens+=(+l.opens||0);if(l.pw)pw++;if((l.draw&&l.draw.length)||(l.stk&&l.stk.length))art++;if(l.link)lnk++;
       var w0=(l.text||'').trim();if(w0)maxW=Math.max(maxW,w0.split(/\s+/).length);
       if(l.readAt)rd++;if(l.openAt&&l.openAt>now)sched++;if(l.secret)sec++;if(l.multi)mu++;
-      var t=(l.text||'').trim();if(t)words+=t.split(/\s+/).length;
+      var t=(l.text||'').trim();if(t){words+=t.split(/\s+/).length;chars+=Array.from(t).length;nsp+=Array.from(t.replace(/\s/g,'')).length}
       byKind[l.kind]=(byKind[l.kind]||0)+1;
       var d=new Date(l.ts||0),k=d.getFullYear()+'/'+p2(d.getMonth()+1);byMon[k]=(byMon[k]||0)+1;
     });
@@ -2467,7 +2465,7 @@ var FIREBASE_CONFIG={
     var cells=[
       ['رسائل مرسلة',n],['مقروءة',rd],['غير مقروءة',Math.max(0,n-rd-sched)],['مؤجلة',sched],
       ['سرّية',sec],['جماعية',mu],['ردود وصلتك',replies.length],['رسائل فتحتها',rkLoad().length],
-      ['كلمات كتبتها',words],['أكثر نوع',topK],
+      ['عدد الأحرف الكلي',chars],['الأحرف بدون مسافات',nsp],['كلمات كتبتها',words],['متوسط الأحرف',n?Math.round(chars/n):0],['أكثر نوع',topK],
       ['متوسط الكلمات',n?Math.round(words/n):0],['أطول رسالة (كلمة)',maxW],
       ['أيام كتبت فيها',dv.length],['أطول سلسلة أيام',streak],
       ['أنشط شهر',busy],['فتحات الجماعية',opens],
@@ -2502,7 +2500,7 @@ var FIREBASE_CONFIG={
     function page(){
       rc.slice(shown,shown+PG).forEach(function(l){
         var r=mk('div','pf-arc'),t=(l.kind==='plain'||!l.to)?((l.text||'').replace(/\s+/g,' ').slice(0,40)||'...'):('إلى '+l.to);
-        r.appendChild(mk('small','',fmtDate(l.ts||0)));r.appendChild(mk('small','',(KINDS[l.kind]||KINDS.letter)[0]));r.appendChild(mk('span','',t));box.appendChild(r);
+        r.appendChild(mk('small','',fmtDate(l.ts||0)));r.appendChild(mk('small','',(KINDS[l.kind]||KINDS.letter)[0]));r.appendChild(mk('span','',t));r.appendChild(mk('small','',Array.from((l.text||'').trim()).length+' حرف'));box.appendChild(r);
       });
       shown=Math.min(rc.length,shown+PG);more.style.display=shown<rc.length?'block':'none';
     }
