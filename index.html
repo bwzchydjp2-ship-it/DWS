@@ -2332,18 +2332,28 @@ var FIREBASE_CONFIG={
     $('toInput').value='';$('hdIn').value='';sel.hd='';sel.open='';$('openIn').value='';if($('cdIn'))$('cdIn').value='';if($('cdClr'))$('cdClr').style.display='none';$('pwIn').value='';if($('pwHint'))$('pwHint').value='';try{localStorage.removeItem('dws_draft')}catch(e){}$('lkIn').value='';strokes=[];if(window.hwSet)hwSet(false);if(window.stClear)stClear();hwRedraw();$('msg').value='';Object.keys(det).forEach(function(k){delete det[k]});buildDets();sync();count();
     location.hash='#box';
   }
-  /* ---------- رتبة الكاتب: كل ما ترسل أو تفتح رسائل تكسب نقاط وختوم وألقاب ---------- */
-  var RANKS=[[0,'Novice Writer','#8a6a4a'],[20,'Scribe','#a31212'],[60,'Storyteller','#b8892e'],[120,'Poet','#1c3f8a'],[220,'Sage of Papers','#5a2d91'],[400,'Keeper of Secrets','#262626'],[700,'The Dead Writer','#d8cfbd']];
+  /* ---------- رتبة الكاتب: كل 50 نقطة مستوى جديد، والنقاط ما تنقص إذا حذفت رسالة ---------- */
+  var RANKS=[[0,'Novice Writer','#8a6a4a'],[50,'Scribe','#a31212'],[100,'Storyteller','#b8892e'],[150,'Poet','#1c3f8a'],[200,'Sage of Papers','#5a2d91'],[250,'Keeper of Secrets','#262626'],[300,'The Dead Writer','#d8cfbd']];
+  var RK_STEP=50;
   function rkLoad(){try{var a=JSON.parse(localStorage.getItem('dws_rk_open')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+  function rkSentLoad(){try{var o=JSON.parse(localStorage.getItem('dws_rk_sent')||'{}');return (o&&typeof o==='object'&&!Array.isArray(o))?o:{}}catch(e){return{}}}
+  /* الرسائل المرسلة تنحفظ بالمتصفح حتى لو انحذفت بعدين */
+  function rkSyncSent(){
+    var o=rkSentLoad(),ch=false;
+    letters.forEach(function(x){if(x&&x.id){var v=x.secret?2:1;if(o[x.id]!==v){o[x.id]=v;ch=true}}});
+    if(ch){try{localStorage.setItem('dws_rk_sent',JSON.stringify(o))}catch(e){}}
+    return o;
+  }
   window.rkOpen=function(id){
     if(!id)return;var a=rkLoad();if(a.indexOf(id)>=0)return;
-    a.push(id);if(a.length>500)a.shift();
+    a.push(id);if(a.length>2000)a.shift();
     try{localStorage.setItem('dws_rk_open',JSON.stringify(a))}catch(e){}
     rkPaint();
   };
   function rkPts(){
-    var sec=0;letters.forEach(function(x){if(x.secret)sec++});
-    return letters.length*10+sec*5+rkLoad().length*5;
+    var o=rkSyncSent(),n=0;
+    Object.keys(o).forEach(function(k){n+=10+(o[k]===2?5:0)});
+    return n+rkLoad().length*5;
   }
   function rkToast(t){
     var e=$('rkToast');if(!e){e=mk('div','');e.id='rkToast';document.body.appendChild(e)}
@@ -2352,20 +2362,19 @@ var FIREBASE_CONFIG={
   }
   function rkPaint(){
     var c=$('rankCard');if(!c)return;
-    var pts=rkPts(),i=0,k;
-    for(k=0;k<RANKS.length;k++)if(pts>=RANKS[k][0])i=k;
-    var nx=RANKS[i+1],cur=RANKS[i];
-    var pc=nx?Math.round((pts-cur[0])/(nx[0]-cur[0])*100):100;
+    var pts=rkPts(),lv=Math.floor(pts/RK_STEP),i=Math.min(lv,RANKS.length-1);
+    var cur=RANKS[i],nx=RANKS[i+1];
+    var pc=Math.round((pts%RK_STEP)/RK_STEP*100),left=RK_STEP-(pts%RK_STEP);
     var ms='';
     RANKS.forEach(function(r,j){ms+='<span class="rk-m'+(j>i?' lock':'')+(j===i?' cur':'')+'" style="--c:'+r[2]+'" title="'+r[1]+'"></span>'});
-    c.innerHTML='<div class="rk-top"><span class="rk-m cur" style="--c:'+cur[2]+'"></span><b class="rk-t" dir="ltr">'+cur[1]+'</b><span class="rk-p">'+pts+' نقطة</span></div>'
+    c.innerHTML='<div class="rk-top"><span class="rk-m cur" style="--c:'+cur[2]+'"></span><b class="rk-t" dir="ltr">'+cur[1]+'</b><span class="rk-p">المستوى '+(lv+1)+' · '+pts+' نقطة</span></div>'
       +'<div class="rk-bar"><i style="width:'+pc+'%"></i></div>'
-      +'<div class="rk-h" title="رسالة مرسلة = 10 · سرّية +5 · فتح رسالة = 5">'+(nx?'باقي '+(nx[0]-pts)+' نقطة حتى <bdi dir="ltr">'+nx[1]+'</bdi>':'وصلت لأعلى رتبة: أنت <bdi dir="ltr">'+cur[1]+'</bdi> 💀')+'</div>'
+      +'<div class="rk-h" title="رسالة مرسلة = 10 · سرّية +5 · فتح رسالة = 5 · كل 50 نقطة مستوى">باقي '+left+' نقطة للمستوى '+(lv+2)+(nx?' (<bdi dir="ltr">'+nx[1]+'</bdi>)':'')+'</div>'
       +'<div class="rk-ms">'+ms+'</div>';
     if(!ready)return;
     var old=null;try{old=localStorage.getItem('dws_rk_last')}catch(e){}
-    if(old!==null&&+old<i)setTimeout(function(){rkToast('🏅 ارتقيت إلى رتبة '+cur[1])},900);
-    if(old===null||+old<i){try{localStorage.setItem('dws_rk_last',String(i))}catch(e){}}
+    if(old!==null&&+old<lv)setTimeout(function(){rkToast(i>Math.min(+old,RANKS.length-1)?'🏅 ارتقيت إلى رتبة '+cur[1]:'⬆️ ارتقيت إلى المستوى '+(lv+1))},900);
+    if(old===null||+old<lv){try{localStorage.setItem('dws_rk_last',String(lv))}catch(e){}}
   }
   function count(){$('cnt').textContent=letters.length;$('cnt2').textContent=replies.length;rkPaint()}
 
