@@ -1709,6 +1709,7 @@ var FIREBASE_CONFIG={
   KINDS.mothers=['عيد الأم','إلى أمي',[],'يا أغلى الناس...'];
   KINDS.grad=['تخرج','مبروك التخرج',['date','place'],'فخور بك وبإنجازك...'];
   KINDS.newborn=['مولود جديد','مبروك المولود',[],'ألف مبروك، الله يبارك لكم فيه...'];
+  KINDS.plain=['نص حر','',[],'اكتب ما تريد...'];
   KINDS.engage=['خطوبة','دعوة خطوبة',['date','time','place'],'يسعدنا دعوتكم لحضور حفل خطوبة...'];
   var OPEN={peel:[1100,2300],curl:[1200,2400],fly:[1000,2200],swing:[1300,2500],tear:[650,1850],slow:[2000,3200],zip:[1050,2250],old:[1150,2500],smooth:[700,1750],linen:[950,2100],leather:[850,1950],velvet:[1600,2950],royal:[1350,2650],air:[800,1900]};
   var FLD={title:['المناسبة','text'],age:['العمر','text'],date:['التاريخ','date'],time:['الوقت','time'],place:['المكان','text']};
@@ -1853,7 +1854,7 @@ var FIREBASE_CONFIG={
   /* ---------- محتوى الورقة ---------- */
   function headInto(el,kind,isReply,custom){
     el.innerHTML='';
-    var t=isReply?'رد على رسالتك':(custom||'');
+    var t=isReply?'رد على رسالتك':(kind==='plain'?'':(custom||''));
     if(!t)return;
     el.appendChild(mk('div','orn'));el.appendChild(mk('h2','',t));el.appendChild(mk('div','orn'));
   }
@@ -1863,7 +1864,7 @@ var FIREBASE_CONFIG={
     var to=mk('div','read-to');
     if(isReply){to.appendChild(mk('span','','رد من: '));to.appendChild(mk('b','',l.fromName||''))}
     else{to.appendChild(mk('span','','إلى: '));to.appendChild(mk('b','',l.to||''))}
-    p.appendChild(to);
+    if(l.kind!=='plain'||isReply)p.appendChild(to);
     if(l.text||!(l.draw&&l.draw.length)){var rb=mk('div','read-body');linkify(rb,l.text||'');p.appendChild(rb)}
     if(!isReply&&l.stk&&l.stk.length){
       var sl=mk('div','st-layer');l.stk.slice(0,24).forEach(function(it){var e=stEl(it);if(e)sl.appendChild(e)});p.appendChild(sl);
@@ -1960,7 +1961,9 @@ var FIREBASE_CONFIG={
     c.className='parch pt-'+sel.ptype+(($('hwBar')||{style:{}}).style.display==='flex'?' hwon':'');
     c.style.setProperty('--ff',f[1]);c.style.setProperty('--fs',f[2]);c.style.setProperty('--ink',sel.ink);applyPaper(c,sel.paper);
     headInto($('kHead'),sel.kind,rmode,sel.hd);
-    $('sigRow').style.display=(sel.priv==='secret')?'none':'';
+    var _pl=sel.kind==='plain';
+    $('hdIn').parentNode.style.display=_pl?'none':'';$('toInput').parentNode.style.display=_pl?'none':'';
+    $('sigRow').style.display=(sel.priv==='secret'||_pl)?'none':'';
     $('msg').placeholder=rmode?'اكتب ردّك هنا...':(KINDS[sel.kind]||KINDS.letter)[3];
     var pv=$('pvWrap');pv.innerHTML='';pv.appendChild(mkEnv(sel));
   }
@@ -1981,8 +1984,9 @@ var FIREBASE_CONFIG={
       $('note').textContent='';pend={text:text};sealReply();return;
     }
     var to=$('toInput').value.trim(),from=$('fromInput').value.trim();
-    if(!to){$('note').textContent='اكتب اسم الشخص اللي ترسله له.';return}
-    if(sel.priv==='public'&&!from){$('note').textContent='اكتب اسمك، أو اختار الرسالة السرية.';return}
+    if(sel.kind==='plain'){to='';from=''}
+    if(!to&&sel.kind!=='plain'){$('note').textContent='اكتب اسم الشخص اللي ترسله له.';return}
+    if(sel.priv==='public'&&!from&&sel.kind!=='plain'){$('note').textContent='اكتب اسمك، أو اختار الرسالة السرية.';return}
     $('note').textContent='';$('ctNote').textContent='';
     var lk=($('lkIn').value||'').trim();
     if(lk){
@@ -2098,10 +2102,8 @@ var FIREBASE_CONFIG={
     th.style.cssText='position:absolute;left:50%;bottom:50%;width:7%;margin-left:-3.5%;height:'+sh+'px;border-radius:40% 40% 50% 50%;background:linear-gradient(90deg,rgba(0,0,0,.35),'+col+' 30%,'+col+' 70%,rgba(0,0,0,.35));box-shadow:0 0 8px rgba(255,140,50,.5);transform-origin:50% 0%;transform:scaleY(0);opacity:0;transition:transform .45s cubic-bezier(.5,0,.8,.5),opacity .3s';
     top.appendChild(th);
     var hit=mk('button','wx-hit');hit.type='button';hit.setAttribute('aria-label','اضغط لختم الرسالة');
-    env.appendChild(hit);
     var cm=$('cerMsg'),ct=$('cerTxt');
-    function say(t){ct.textContent=t;cm.classList.add('on')}
-    say('اضغط على الختم 🕯️');
+    function say(t){}
     var DUR=2400,BACK=1500,started=false,p=0,down=false,last=0,raf=0,fin=false,vt=0,sndT=0;
     function paint(){
       var s=.05+.73*p,r=p;
@@ -2136,7 +2138,7 @@ var FIREBASE_CONFIG={
       raf=requestAnimationFrame(tick);
     }
     /* ضغطة وحدة تكفي: الشمع يسيل لحاله والختم ينزل (نفس الأنميشن) */
-    hit.addEventListener('click',function(e){e.preventDefault();if(started)return;started=true;setDown(true);hit.style.pointerEvents='none'});
+    setTimeout(function(){started=true;setDown(true)},400);
     raf=requestAnimationFrame(tick);
   }
   function waxSeq(env,held){
@@ -2273,7 +2275,7 @@ var FIREBASE_CONFIG={
     if(!l.secret)l.fromName=pend.from;
     if(sel.rep==='no')l.noRep=true;
     if(sel.multi==='yes')l.multi=true;
-    if(sel.hd)l.hd=sel.hd;
+    if(sel.hd&&sel.kind!=='plain')l.hd=sel.hd;
     if(oa)l.openAt=oa;
     var cdv=($('cdIn').value||'').trim();if(/^\d{4}-\d{2}-\d{2}$/.test(cdv))l.cd=cdv;
     var pw=($('pwIn').value||'').trim();if(pw)l.pw=h32(pw);var pwh=($('pwHint').value||'').trim();if(pw&&pwh)l.pwh=pwh;if(o&&!pw&&o.pw){l.pw=o.pw;if(o.pwh)l.pwh=o.pwh}
@@ -2425,7 +2427,7 @@ var FIREBASE_CONFIG={
       env.addEventListener('click',function(){openLetter(l,env,isReply?'reply':'sent')});
       slot.appendChild(env);
       var cap=mk('div','cap');
-      cap.appendChild(mk('b','',isReply?('رد من '+(l.fromName||'')):('إلى '+(l.to||''))));
+      cap.appendChild(mk('b','',isReply?('رد من '+(l.fromName||'')):(l.kind==='plain'?((l.text||'').replace(/\s+/g,' ').slice(0,24)||'نص حر'):('إلى '+(l.to||'')))));
       cap.appendChild(mk('span','',(isReply?'':((KINDS[l.kind]||KINDS.letter)[0]+(l.secret?' · سرية':'')+(l.multi?' · جماعية':'')+' · '))+fmtDT(l.ts)));
       if(l.ed&&!isReply)cap.appendChild(mk('span','','  ✎ معدّلة'));if(l.openAt&&l.openAt>Date.now())cap.appendChild(mk('span','','  🔒 تنفتح '+fmtDT(l.openAt)));if(!isReply&&l.readAt&&!l.multi)cap.appendChild(mk('span','','  ✓ انفتحت '+fmtDT(l.readAt)));if(!isReply&&l.multi){var rc=replies.filter(function(r){return r.letterId===l.id}).length;cap.appendChild(mk('span','','  👁 '+(l.opens||0)+(rc?' · 💬 '+rc:'')))}if(!isReply){var qe=mk('button','cap-edit','✏️ تعديل');qe.type='button';qe.onclick=function(ev){ev.stopPropagation();startEdit(l)};var qw=mk('div');qw.style.textAlign='center';qw.appendChild(qe);cap.appendChild(qw);
         if(l.tags&&l.tags.length){var tg=mk('div','cap-tags');l.tags.forEach(function(t){var i=mk('i','','#'+t);i.onclick=function(ev){ev.stopPropagation();bxTag=t;renderShelf(letters,$('shelf'),false)};tg.appendChild(i)});cap.appendChild(tg)}
@@ -2498,9 +2500,9 @@ var FIREBASE_CONFIG={
   }
   function previewLetter(){
     var K=KINDS[sel.kind]||KINDS.letter,d={};(K[2]||[]).forEach(function(f){if(det[f])d[f]=det[f]});
-    var l=Object.assign({id:'preview',ts:Date.now(),kind:sel.kind,to:$('toInput').value.trim()||'...',text:$('msg').value.trim(),secret:sel.priv==='secret'},styleOf(sel));
-    if(!l.secret)l.fromName=$('fromInput').value.trim();
-    if(sel.hd)l.hd=sel.hd;if(Object.keys(d).length)l.det=d;
+    var l=Object.assign({id:'preview',ts:Date.now(),kind:sel.kind,to:sel.kind==='plain'?'':($('toInput').value.trim()||'...'),text:$('msg').value.trim(),secret:sel.priv==='secret'},styleOf(sel));
+    if(!l.secret&&sel.kind!=='plain')l.fromName=$('fromInput').value.trim();
+    if(sel.hd&&sel.kind!=='plain')l.hd=sel.hd;if(Object.keys(d).length)l.det=d;
     var cdp=($('cdIn').value||'').trim();if(/^\d{4}-\d{2}-\d{2}$/.test(cdp))l.cd=cdp;
     var lk=($('lkIn').value||'').trim();if(lk&&!/^https?:\/\//i.test(lk))lk='https://'+lk;if(/^https?:\/\/\S+\.\S+/i.test(lk))l.link=lk;
     if(strokes.length)l.draw=JSON.parse(JSON.stringify(strokes));if(stk.length)l.stk=JSON.parse(JSON.stringify(stk));
@@ -2705,9 +2707,9 @@ var FIREBASE_CONFIG={
         y+=gap||0;
       }
       var bold='700 '+Math.round(base*.95)+'px '+fam,norm=base+'px '+fam,small=Math.round(base*.7)+'px '+fam,sz=Math.round(base*.7),slh=Math.round(sz*1.4);
-      var ttl=isReply?'رد على رسالتك':(l.hd||'');
+      var ttl=isReply?'رد على رسالتك':(l.kind==='plain'?'':(l.hd||''));
       if(ttl)add(ttl,bold,'#7a5a22',base*1.5,'center',base*.6);
-      if(!isReply)add('إلى: '+(l.to||''),bold,ink,base*1.6,'right',base*.3);
+      if(!isReply&&l.kind!=='plain')add('إلى: '+(l.to||''),bold,ink,base*1.6,'right',base*.3);
       if(isReply)add('رد من: '+(l.fromName||''),bold,ink,base*1.6,'right',base*.3);
       if(l.text)add(l.text,norm,ink,base*1.75,'right',base*.5);
       /* الرابط اللي ضافه المرسل: كامل بدون قص */
