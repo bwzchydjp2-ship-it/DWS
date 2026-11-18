@@ -96,7 +96,7 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .pf-head h2{margin:0}
 .pf-back{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid #5a3328;background:rgba(0,0,0,.35);color:#f0d9bf;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .2s}
 .pf-back:hover,.pf-back:active{background:rgba(120,40,40,.4)}
-#profOv .dlg,#yrOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
+#profOv .dlg,#yrOv .dlg,#jrOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
 .pf-h{font-size:1.05rem;color:#f0d9bf;margin:18px 0 8px;text-align:right}
 .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pf-c{padding:10px 6px;border:1px solid #4a2a24;border-radius:12px;background:rgba(0,0,0,.28);text-align:center}
@@ -111,8 +111,14 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .pf-arc{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.9rem;text-align:right}
 .pf-arc small{color:var(--muted);white-space:nowrap}.pf-arc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
 .pf-note{font-size:.8rem;color:var(--muted);text-align:center;margin:12px 0 0}
-#accPop #accProf{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+#accPop #accProf,#accPop #accJr{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
 #accPop #accProf .rk-m{flex:none;width:26px;height:26px}
+.jr-in{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid #5a3328;background:rgba(0,0,0,.4);color:#f3e3d0;font:inherit;font-size:1.1rem;text-align:center;margin:6px 0}
+.jr-txt{width:100%;box-sizing:border-box;min-height:260px;padding:14px;border-radius:14px;border:1px solid #5a3328;background:rgba(0,0,0,.4);color:#f3e3d0;font-family:'Amiri',serif;font-size:1.25rem;line-height:2;resize:vertical;direction:rtl}
+.jr-msg{font-size:.9rem;color:#e0a59a;min-height:1.2em;text-align:center;margin:6px 0}
+.jr-it{display:flex;gap:10px;align-items:baseline;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;text-align:right}
+.jr-it:hover{background:rgba(255,255,255,.04)}.jr-it small{color:var(--muted);white-space:nowrap}.jr-it span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jr-mood{display:flex;gap:8px;justify-content:center;margin:10px 0}.jr-mood button{font-size:1.5rem;background:transparent;border:1px solid transparent;border-radius:12px;padding:4px 8px;cursor:pointer;opacity:.55}.jr-mood button.on{opacity:1;border-color:var(--gold);background:rgba(255,255,255,.06)}
 #msg.tw{letter-spacing:.015em;text-shadow:.35px .35px 0 rgba(0,0,0,.28),0 0 1px currentColor}
 #msg.twk{animation:twk .09s ease-out}
 @keyframes twk{0%{transform:translateY(0)}35%{transform:translateY(1.4px)}100%{transform:none}}
@@ -1571,6 +1577,11 @@ var RvScene=(function(){
   <div class="row" style="margin:6px 0 2px;justify-content:center;flex-wrap:wrap"><button class="btn ghost" id="profYear" type="button">📅 حصاد السنة</button></div>
   <div id="profBody"></div>
 </div></div>
+<div class="overlay" id="jrOv"><div class="dlg">
+  <div class="pf-head"><button class="pf-back" id="jrClose" type="button" aria-label="رجوع" title="رجوع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12H20M13 5L20 12L13 19"/></svg></button><h2>دفتر اليوميات</h2></div>
+  <div id="jrBody"></div>
+  <input type="file" id="jrFile" accept="application/json,.json" hidden>
+</div></div>
 <div class="overlay" id="yrOv"><div class="dlg">
   <div class="pf-head"><button class="pf-back" id="yrClose" type="button" aria-label="رجوع" title="رجوع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12H20M13 5L20 12L13 19"/></svg></button><h2>حصاد السنة</h2></div>
   <div class="row" style="justify-content:center;align-items:center;gap:12px"><button class="btn ghost" id="yrPrev" type="button">السابقة</button><b id="yrY" style="font-size:1.5rem;color:#f6e0c8"></b><button class="btn ghost" id="yrNext" type="button">التالية</button></div>
@@ -2558,6 +2569,139 @@ var FIREBASE_CONFIG={
   $('yrOv').addEventListener('click',function(e){if(e.target===this)closeOv('yrOv')});
   $('yrPrev').onclick=function(){yrSel--;buildYear()};
   $('yrNext').onclick=function(){yrSel++;buildYear()};
+  /* ---------- دفتر اليوميات الخاص: صفحات لنفسك، مشفّرة برمز سري وتنحفظ بهذا المتصفح فقط ---------- */
+  var JR_KEY='dws_jr',JR_ITER=150000,JR_MOODS=['😊','😌','😐','😢','😠','😴'];
+  var jr={key:null,entries:[],timer:0,cur:null};
+  function jrHas(){return !!(window.crypto&&crypto.subtle)}
+  function u2b(u){var s='',i;for(i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)}
+  function b2u(b){var s=atob(b),u=new Uint8Array(s.length),i;for(i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
+  async function jrDerive(pin,salt){
+    var k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:JR_ITER,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+  }
+  async function jrEnc(key,obj){
+    var iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(JSON.stringify(obj)));
+    return {iv:u2b(iv),ct:u2b(new Uint8Array(ct))};
+  }
+  async function jrDec(key,blob){
+    var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b2u(blob.iv)},key,b2u(blob.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  function jrMeta(){try{var m=JSON.parse(localStorage.getItem(JR_KEY)||'null');return (m&&m.salt&&m.check&&m.data)?m:null}catch(e){return null}}
+  function jrSetMeta(m){try{localStorage.setItem(JR_KEY,JSON.stringify(m));return true}catch(e){return false}}
+  async function jrSave(){
+    var m=jrMeta();if(!m||!jr.key)return false;
+    m.data=await jrEnc(jr.key,jr.entries);return jrSetMeta(m);
+  }
+  function jrLock(){jr.key=null;jr.entries=[];jr.cur=null;clearTimeout(jr.timer)}
+  function jrTouch(){clearTimeout(jr.timer);if(jr.key)jr.timer=setTimeout(function(){if($('jrOv').classList.contains('on')){jrLock();jrRender()}else jrLock()},180000)}
+  function jrBtn(t,cls,fn){var b=mk('button','btn '+(cls||'ghost'),t);b.type='button';b.onclick=fn;return b}
+  function jrRow(){var r=mk('div','row');r.style.cssText='justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px';return r}
+  function jrInput(ph){var i=mk('input','jr-in');i.type='password';i.placeholder=ph;i.autocomplete='off';i.inputMode='numeric';i.setAttribute('aria-label',ph);return i}
+  function jrRestoreBtn(jrMsg){
+    return jrBtn('استرجاع نسخة','ghost',function(){$('jrFile').value='';$('jrFile').onchange=function(e){
+      var f=e.target.files&&e.target.files[0];if(!f)return;
+      var r=new FileReader();r.onload=function(){try{
+        var m=JSON.parse(r.result);if(!(m&&m.salt&&m.check&&m.data&&m.check.ct&&m.data.ct))throw 0;
+        if(jrMeta()&&!confirm('راح يستبدل الدفتر الحالي بالنسخة المحفوظة. تكمّل؟'))return;
+        jrLock();jrSetMeta({v:1,salt:m.salt,iter:m.iter||JR_ITER,check:m.check,data:m.data});jrRender();
+      }catch(er){jrMsg.textContent='الملف مو نسخة دفتر صالحة.'}};r.readAsText(f);
+    };$('jrFile').click()});
+  }
+  var jrMsg=null;
+  function jrRender(){
+    var b=$('jrBody');b.innerHTML='';jrMsg=mk('div','jr-msg');
+    if(!jrHas()){b.appendChild(mk('p','pf-note','هذا المتصفح ما يدعم التشفير، فما نكدر نوفر دفتراً مقفلاً هنا.'));return}
+    var m=jrMeta();
+    if(!m){ /* إنشاء الدفتر */
+      b.appendChild(mk('p','pf-note','دفتر لنفسك فقط. صفحاته تنحفظ مشفّرة بهذا المتصفح ولا ترسل لأحد. اختر رمزاً سرياً (4 خانات على الأقل):'));
+      var a=jrInput('الرمز السري'),c=jrInput('أعد كتابة الرمز');b.appendChild(a);b.appendChild(c);
+      b.appendChild(mk('p','pf-note','تنبيه: إذا نسيت الرمز ما نكدر نسترجع دفترك.'));
+      b.appendChild(jrMsg);
+      var r=jrRow();r.appendChild(jrBtn('إنشاء الدفتر','',async function(){
+        if(a.value.length<4){jrMsg.textContent='الرمز لازم يكون 4 خانات على الأقل.';return}
+        if(a.value!==c.value){jrMsg.textContent='الرمزان مو متطابقين.';return}
+        jrMsg.textContent='جاري التجهيز...';
+        try{
+          var salt=crypto.getRandomValues(new Uint8Array(16)),key=await jrDerive(a.value,salt);
+          var ok=jrSetMeta({v:1,salt:u2b(salt),iter:JR_ITER,check:await jrEnc(key,'dws-journal'),data:await jrEnc(key,[])});
+          if(!ok){jrMsg.textContent='ما كدرت أحفظ الدفتر بهذا المتصفح.';return}
+          jr.key=key;jr.entries=[];jrTouch();jrRender();
+        }catch(e){jrMsg.textContent='صار خطأ بالتجهيز.'}
+      }));r.appendChild(jrRestoreBtn());b.appendChild(r);
+      return;
+    }
+    if(!jr.key){ /* قفل */
+      b.appendChild(mk('p','pf-note','📓 الدفتر مقفل. اكتب الرمز السري:'));
+      var pin=jrInput('الرمز السري');b.appendChild(pin);b.appendChild(jrMsg);
+      var go=async function(){
+        if(!pin.value)return;jrMsg.textContent='...';
+        try{
+          var key=await jrDerive(pin.value,b2u(m.salt));
+          var chk=await jrDec(key,m.check);if(chk!=='dws-journal')throw 0;
+          jr.entries=await jrDec(key,m.data);jr.key=key;jrTouch();jrRender();
+        }catch(e){jrMsg.textContent='الرمز غلط.';pin.value='';setTimeout(function(){pin.focus()},50)}
+      };
+      pin.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+      var r2=jrRow();r2.appendChild(jrBtn('فتح','',go));r2.appendChild(jrRestoreBtn());b.appendChild(r2);
+      setTimeout(function(){pin.focus()},80);
+      return;
+    }
+    if(jr.cur){jrEditor();return}
+    /* القائمة */
+    var top=jrRow();top.style.marginTop='0';
+    top.appendChild(jrBtn('✍️ صفحة جديدة','',function(){jr.cur={id:'j'+Date.now().toString(36),ts:Date.now(),mood:'',text:'',isNew:true};jrRender()}));
+    top.appendChild(jrBtn('🔒 قفل','ghost',function(){jrLock();jrRender()}));b.appendChild(top);
+    b.appendChild(mk('div','pf-h','📖 صفحاتك ('+jr.entries.length+')'));
+    if(!jr.entries.length)b.appendChild(mk('p','pf-note','الدفتر فاضي. اكتب أول صفحة.'));
+    jr.entries.slice().sort(function(x,y){return y.ts-x.ts}).forEach(function(en){
+      var it=mk('div','jr-it');it.appendChild(mk('small','',fmtDT(en.ts)));
+      it.appendChild(mk('span','',(en.mood?en.mood+' ':'')+((en.text||'').replace(/\s+/g,' ').slice(0,50)||'(صفحة فاضية)')));
+      it.onclick=function(){jr.cur={id:en.id,ts:en.ts,mood:en.mood||'',text:en.text||''};jrRender()};b.appendChild(it);
+    });
+    var bt=jrRow();bt.appendChild(jrBtn('تصدير نسخة مشفّرة','ghost',function(){
+      var m2=jrMeta();if(!m2)return;var a2=document.createElement('a');
+      a2.href=URL.createObjectURL(new Blob([JSON.stringify(m2)],{type:'application/json'}));a2.download='dws-journal-'+new Date().toISOString().slice(0,10)+'.json';a2.click();setTimeout(function(){URL.revokeObjectURL(a2.href)},3000);
+    }));
+    var wipe=jrBtn('حذف الدفتر كله','ghost',function(){
+      if(wipe.dataset.s!=='1'){wipe.dataset.s='1';wipe.textContent='متأكد؟ اضغط مرة ثانية';setTimeout(function(){wipe.dataset.s='';wipe.textContent='حذف الدفتر كله'},3500);return}
+      try{localStorage.removeItem(JR_KEY)}catch(e){}jrLock();jrRender();
+    });bt.appendChild(wipe);b.appendChild(bt);
+    b.appendChild(mk('p','pf-note','الصفحات تنحفظ بهذا المتصفح فقط، فاحفظ نسخة إذا تريد تنقلها لجهاز ثاني.'));
+  }
+  function jrEditor(){
+    var b=$('jrBody'),en=jr.cur;b.innerHTML='';
+    b.appendChild(mk('p','pf-note',fmtDT(en.ts)));
+    var mo=mk('div','jr-mood');
+    JR_MOODS.forEach(function(m){var x=mk('button',en.mood===m?'on':'',m);x.type='button';x.onclick=function(){en.mood=(en.mood===m?'':m);[].forEach.call(mo.children,function(c){c.classList.toggle('on',c.textContent===en.mood)})};mo.appendChild(x)});
+    b.appendChild(mo);
+    var ta=mk('textarea','jr-txt');ta.value=en.text;ta.placeholder='اكتب اللي بقلبك... محد يشوفه غيرك.';ta.addEventListener('input',function(){jrTouch()});b.appendChild(ta);
+    var m=mk('div','jr-msg');b.appendChild(m);
+    var r=jrRow();
+    r.appendChild(jrBtn('حفظ','',async function(){
+      en.text=ta.value;
+      if(!en.text.trim()&&en.isNew){jr.cur=null;jrRender();return}
+      var i=jr.entries.findIndex(function(x){return x.id===en.id}),rec={id:en.id,ts:en.ts,mood:en.mood,text:en.text,ed:Date.now()};
+      if(i<0)jr.entries.push(rec);else jr.entries[i]=rec;
+      m.textContent='جاري الحفظ...';
+      var ok=false;try{ok=await jrSave()}catch(e){}
+      if(!ok){m.textContent='ما كدرت أحفظ بهذا المتصفح.';return}
+      jr.cur=null;jrRender();
+    }));
+    r.appendChild(jrBtn('رجوع','ghost',function(){jr.cur=null;jrRender()}));
+    if(!en.isNew){
+      var del=jrBtn('حذف الصفحة','ghost',async function(){
+        if(del.dataset.s!=='1'){del.dataset.s='1';del.textContent='متأكد؟';setTimeout(function(){del.dataset.s='';del.textContent='حذف الصفحة'},3000);return}
+        jr.entries=jr.entries.filter(function(x){return x.id!==en.id});try{await jrSave()}catch(e){}jr.cur=null;jrRender();
+      });r.appendChild(del);
+    }
+    b.appendChild(r);setTimeout(function(){ta.focus()},60);
+  }
+  window.openJournal=function(){jr.cur=null;jrRender();openOv('jrOv')};
+  function jrClose(){jrLock();closeOv('jrOv')}
+  $('jrClose').onclick=jrClose;
+  $('jrOv').addEventListener('click',function(e){if(e.target===this)jrClose()});
+  $('jrOv').addEventListener('pointerdown',jrTouch);
   window.openProfile=function(){rkPaint();buildProfile();openOv('profOv')};
   $('profClose').onclick=function(){closeOv('profOv')};
   $('profOv').addEventListener('click',function(e){if(e.target===this)closeOv('profOv')});
@@ -3815,12 +3959,13 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   try{if(document.fonts&&document.fonts.load)document.fonts.load('700 17px "Scheherazade New"','حأب').then(function(){sync();if(location.hash==='#box')renderShelf(letters,$('shelf'),false)},function(){})}catch(e){}
 })();
 </script>
-<button type="button" id="accBtn" aria-label="الحساب" title="الحساب"><span class="rk-m cur" id="accBtnMedal" style="--c:#8a6a4a"></span></button><div id="accPop"><div id="accLbl"></div><button class="btn ghost" id="accProf" type="button"><span class="rk-m cur" id="accMedal" style="--c:#8a6a4a"></span><span>الملف الشخصي</span><small id="accRk" dir="ltr" style="opacity:.7"></small></button><button class="btn ghost" id="accGo" type="button">ربط / تبديل الحساب بـ Google</button></div>
+<button type="button" id="accBtn" aria-label="الحساب" title="الحساب"><span class="rk-m cur" id="accBtnMedal" style="--c:#8a6a4a"></span></button><div id="accPop"><div id="accLbl"></div><button class="btn ghost" id="accProf" type="button"><span class="rk-m cur" id="accMedal" style="--c:#8a6a4a"></span><span>الملف الشخصي</span><small id="accRk" dir="ltr" style="opacity:.7"></small></button><button class="btn ghost" id="accJr" type="button"><span style="font-size:1.3rem">📓</span><span>دفتر اليوميات</span></button><button class="btn ghost" id="accGo" type="button">ربط / تبديل الحساب بـ Google</button></div>
 <script>
 (function(){
   var b=document.getElementById('accBtn'),p=document.getElementById('accPop'),g=document.getElementById('accGo'),pf=document.getElementById('accProf');
   try{if(window.rkPaint)window.rkPaint()}catch(e){}
   pf.onclick=function(){p.classList.remove('on');if(window.openProfile)window.openProfile()};
+  document.getElementById('accJr').onclick=function(){p.classList.remove('on');if(window.openJournal)window.openJournal()};
   b.onclick=function(e){e.stopPropagation();p.classList.toggle('on')};
   document.addEventListener('click',function(e){if(!p.contains(e.target)&&e.target!==b)p.classList.remove('on')});
   g.onclick=function(){p.classList.remove('on');var t=document.getElementById('swBtn'),l=document.getElementById('gBtn');
