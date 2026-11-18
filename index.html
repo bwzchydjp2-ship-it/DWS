@@ -91,6 +91,10 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .rk-m.big{width:36px;height:36px}
 .rk-m.cur{box-shadow:0 0 0 2px rgba(201,138,98,.9),0 0 10px rgba(255,150,60,.5)}
 .rk-m.lock{background:transparent;border:1px dashed #5a4636;box-shadow:none;opacity:.5}.rk-m.lock svg{fill:#7a6554!important;filter:none!important}
+.pf-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px;margin-bottom:10px}
+.pf-head h2{margin:0}
+.pf-back{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid #5a3328;background:rgba(0,0,0,.35);color:#f0d9bf;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .2s}
+.pf-back:hover,.pf-back:active{background:rgba(120,40,40,.4)}
 #profOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
 .pf-h{font-size:1.05rem;color:#f0d9bf;margin:18px 0 8px;text-align:right}
 .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -1533,7 +1537,7 @@ var RvScene=(function(){
   </div>
 </section>
 
-<section class="view" id="vBox"><div class="row" style="justify-content:center;margin:0 0 14px"><button class="btn ghost" id="bkBtn" type="button" style="display:none">نسخة احتياطية</button><button class="btn ghost" id="rsBtn" type="button" style="display:none">استرجاع نسخة</button><button class="btn ghost" id="gBtn" type="button" style="display:none">ربط حسابي بـ Google</button><button class="btn ghost" id="swBtn" type="button" style="display:none">تبديل الحساب</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div>
+<section class="view" id="vBox"><div class="row" style="justify-content:center;margin:0 0 14px"><button class="btn ghost" id="bkBtn" type="button" style="display:none">نسخة احتياطية</button><button class="btn ghost" id="rsBtn" type="button" style="display:none">استرجاع نسخة</button><button class="btn ghost" id="gBtn" type="button" style="display:none">ربط حسابي بـ Google</button><button class="btn ghost" id="swBtn" type="button" style="display:none">تبديل الحساب</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div class="shelf" id="dwDaily" style="margin-bottom:18px"></div>
   <div class="row" style="justify-content:center;margin:0 0 14px"><input id="bxQ" placeholder="بحث بالصندوق (اسم، كلمة...)" autocomplete="off" style="width:min(340px,86vw);padding:8px 14px;border-radius:20px;border:1px solid #4a2a24;background:rgba(0,0,0,.4);color:var(--text);font:1.05rem Amiri,serif"></div>
   <div class="row" style="justify-content:center;margin:0 0 10px"><div class="sw chips" id="bxF"><button type="button" data-f="all" class="on">الكل</button><button type="button" data-f="unread">غير مقروءة</button><button type="button" data-f="read">مقروءة</button><button type="button" data-f="sched">مؤجلة</button></div></div>
   <div class="row" style="justify-content:center;margin:0 0 10px"><div class="sw chips" id="bxT" style="display:none"></div></div>
@@ -1561,10 +1565,9 @@ var RvScene=(function(){
   </div></div></div></div>
 </div>
 <div class="overlay" id="profOv"><div class="dlg">
-  <h2>الملف الشخصي</h2>
+  <div class="pf-head"><button class="pf-back" id="profClose" type="button" aria-label="رجوع للصفحة الرئيسية" title="رجوع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12H20M13 5L20 12L13 19"/></svg></button><h2>الملف الشخصي</h2></div>
   <div id="rankCard" aria-live="polite"></div>
   <div id="profBody"></div>
-  <div class="row" style="margin-top:16px"><button class="btn ghost" id="profClose" type="button">رجوع</button></div>
 </div></div>
 <div class="overlay" id="ctOv"><div class="dlg">
   <h2>كيف توصلها له؟</h2>
@@ -1734,7 +1737,7 @@ var FIREBASE_CONFIG={
   var PAPERS={aged:['قديمة','#efe2c0','#e3cf9f','#c4a468','110,70,25'],cream:['عاجية','#f6efdc','#ece0c2','#d6c294','120,90,40'],yellow:['صفراء','#f3e6a8','#e8d27c','#c9ac4c','130,100,20'],peach:['خوخية','#f8e0cc','#efc9a8','#d6a47c','140,90,50'],white:['بيضاء','#fbf8f1','#f1ece0','#ddd5c0','130,110,80'],rose:['وردية','#f8e4e1','#efcdc8','#d9a9a3','140,80,80'],sky:['زرقاء','#e3ecf5','#cfdcec','#a9bdd6','70,95,135'],mint:['خضراء','#e4efe1','#cde0c8','#a6c3a0','70,110,70'],lav:['بنفسجية','#ece4f3','#dccfea','#bba9d3','100,75,135'],gray:['رمادية','#e8e6e1','#d6d3cc','#b3afa5','90,85,75'],orange:['برتقالية','#f9e1c4','#f1c98f','#d9a45a','150,95,30'],gold:['ذهبية','#f1e1a6','#e3c871','#c3a042','140,105,20'],teal:['فيروزية','#d9eeee','#bddfe0','#8fc4c6','50,110,115'],olive:['زيتونية','#e6e8cf','#d3d7ae','#b2b883','90,100,45'],ruby:['عنابية فاتحة','#efd3d8','#e2b4bd','#c98c99','120,40,60'],kraft:['كرافت','#d9bb8c','#c9a46b','#a98040','100,70,25'],black:['سوداء','#2a2623','#1d1a18','#0f0d0c','0,0,0'],navy:['كحلية','#26324f','#1b2540','#10182c','0,0,0']};
   var INKS=[['أسود','#1f1a17'],['أزرق','#1d3a6b'],['أحمر','#8a1c1c'],['أخضر','#2f4a2b'],['بنفسجي','#4b2e63'],['بني','#5a3a1e'],['كحلي','#10213f'],['رمادي','#4a4a4a'],['برتقالي','#a24a12'],['ذهبي','#8a6a1f'],['أبيض','#f4efe6'],['ذهبي فاتح','#e0b94a'],['فضي','#cfd4da'],['عنابي','#6e0f26'],['أزرق سماوي','#2b6cb0'],['أخضر زيتي','#4b5320'],['وردي','#b83b6b'],['تركوازي','#12717a']];
   var SEALS=[['أحمر','#a31212'],['عنابي','#6e0f26'],['ذهبي','#b8892e'],['أسود','#262626'],['أزرق','#1c3f8a'],['أخضر','#1f6b3f'],['وردي','#d1507a'],['بنفسجي','#5a2d91'],['برتقالي','#c9591b'],['تركوازي','#187a80'],['أبيض','#e9e4d6'],['بني','#6b3f22'],['ذهبي لامع','#d4a437'],['فضي','#b8bcc4'],['نبيتي','#4a0d1d'],['كحلي','#16264d'],['زيتي','#4b5320'],['روز جولد','#b76e79'],['زمردي','#0f7a55'],['كوبالت','#2a56c6']];
-  var EMBS=[['الشعار','logo'],['قلب','heart'],['نجمة','star'],['هلال','moon'],['زهرة','flower'],['ماس','gem'],['هلال ونجمة','moonstar'],['خاتم','ring'],['هدية','gift'],['قبعة تخرج','cap'],['ريشة','feather'],['حمامة','dove'],['تاج','crown'],['قفل','lock'],['شمس','sun'],['كتاب','book'],['حرف','letter'],['فراشة','butterfly'],['مفتاح','key'],['جرس','bell'],['لانهاية','infinity'],['برق','bolt'],['برسيم','clover'],['نوتة','note'],['فنجان','cup'],['طائرة','plane'],['شمعة','candle']];
+  var EMBS=[['الشعار','logo'],['قلب','heart'],['نجمة','star'],['هلال','moon'],['زهرة','flower'],['ماس','gem'],['هلال ونجمة','moonstar'],['خاتم','ring'],['هدية','gift'],['قبعة تخرج','cap'],['ريشة','feather'],['حمامة','dove'],['تاج','crown'],['قفل','lock'],['شمس','sun'],['كتاب','book'],['حرف','letter'],['فراشة','butterfly'],['مفتاح','key'],['جرس','bell'],['لانهاية','infinity'],['برق','bolt'],['برسيم','clover'],['نوتة','note'],['فنجان','cup'],['طائرة','plane'],['شمعة','candle'],['جمجمة','skull']];
   var FONTS={amiri:['نسخ',"'Amiri',serif",1.3],ruqaa:['رقعة',"'Aref Ruqaa',serif",1.25],lateef:['يد',"'Lateef',serif",1.75],kufi:['كوفي',"'Reem Kufi',sans-serif",1.15],schehe:['مزخرف',"'Scheherazade New',serif",1.4],katibeh:['كاتبة',"'Katibeh',serif",1.7],mirza:['مرزا',"'Mirza',serif",1.35],lemon:['مرح',"'Lemonada',sans-serif",1.05],lalezar:['عريض',"'Lalezar',sans-serif",1.4],tajawal:['هادئ',"'Tajawal',sans-serif",1.15],playpen:['خط يد حديث',"'Playpen Sans Arabic',sans-serif",1.05],nastaliq:['نستعليق',"'Noto Nastaliq Urdu',serif",1],harmattan:['هرمتان',"'Harmattan',sans-serif",1.35],messiri:['ميسيري',"'El Messiri',sans-serif",1.3],markazi:['مركزي',"'Markazi Text',serif",1.5],rakkas:['رقّاص',"'Rakkas',serif",1.3],vibes:['زخرفي',"'Vibes',cursive",1.5],gulzar:['گلزار',"'Gulzar',serif",1.8],blaka:['بلاكا',"'Blaka',cursive",1.3],naskh:['نسخ كلاسيكي',"'Noto Naskh Arabic',serif",1.55],cairo:['القاهرة',"'Cairo',sans-serif",1.2],almarai:['المراعي',"'Almarai',sans-serif",1.25]};
   var KINDS={
     letter:['رسالة','',[],'خطّ كلماتك هنا...'],
@@ -1827,6 +1830,7 @@ var FIREBASE_CONFIG={
       cup:'<path d="M11.5 17H26V23C26 26.5 23.5 28.8 20.4 28.8H17.1C14 28.8 11.5 26.5 11.5 23Z"/><path fill-rule="evenodd" d="M26 18.5H27.6C29.6 18.5 30.8 19.9 30.8 21.6C30.8 23.3 29.6 24.7 27.6 24.7H25.6V23.2H27.4C28.3 23.2 29 22.6 29 21.6C29 20.6 28.3 20 27.4 20H26Z"/><path d="M15 10.5C14 12 16 13 15 14.5L16.2 14.5C17.2 13 15.2 12 16.2 10.5Z M19.6 10.5C18.6 12 20.6 13 19.6 14.5L20.8 14.5C21.8 13 19.8 12 20.8 10.5Z"/>',
       plane:'<path d="M30 10L10.5 19L16.2 21.8L18 28.5L21.4 23.6L26 26Z"/>',
       candle:'<path d="M20 9.5C18.2 12 18.2 13.6 20 14.6C21.8 13.6 21.8 12 20 9.5Z"/><path d="M16 17H24V30H16Z"/><path d="M19.4 15.4H20.6V17H19.4Z"/>',
+      skull:'<path fill-rule="evenodd" d="M20 9C13.9 9 9.5 13 9.5 18.6C9.5 22.3 11.4 25 14 26.5V30H17.3V28H18.9V30H21.1V28H22.7V30H26V26.5C28.6 25 30.5 22.3 30.5 18.6C30.5 13 26.1 9 20 9Z M15 17.2A3 3 0 1 1 15 23.2A3 3 0 1 1 15 17.2Z M25 17.2A3 3 0 1 1 25 23.2A3 3 0 1 1 25 17.2Z M20 22.5L18.3 25.5H21.7Z"/>',
       book:'<path d="M9.5 14C14 12.8 18 13.3 20 15.6C22 13.3 26 12.8 30.5 14V27.5C26 26.4 22 26.9 20 29C18 26.9 14 26.4 9.5 27.5Z"/>'
     };
     if(kind==='letter'){var c=String(ch||'✦').replace(/[<>&"']/g,''),g=glyphPos(c,17);return '<text x="'+g.x.toFixed(2)+'" y="'+g.y.toFixed(2)+'" direction="ltr" text-anchor="start" font-size="17" font-weight="700" style="font-family:\'Scheherazade New\',\'Amiri\',serif">'+c+'</text>'}
@@ -2396,8 +2400,7 @@ var FIREBASE_CONFIG={
   }
   /* ---------- رتبة الكاتب: كل 50 نقطة مستوى جديد، والنقاط ما تنقص إذا حذفت رسالة ---------- */
   var RANKS=[[0,'Novice Writer','#8a6a4a','feather','#fff'],[50,'Scribe','#a31212','book','#fff'],[100,'Storyteller','#b8892e','candle','#2a1c12'],[150,'Poet','#1c3f8a','flower','#fff'],[200,'Sage of Papers','#5a2d91','moonstar','#fff'],[250,'Keeper of Secrets','#262626','key','#e9c98a'],[300,'The Dead Writer','#d8cfbd','skull','#1a1210']];
-  var SKULL='<path fill-rule="evenodd" d="M20 9C13.9 9 9.5 13 9.5 18.6C9.5 22.3 11.4 25 14 26.5V30H17.3V28H18.9V30H21.1V28H22.7V30H26V26.5C28.6 25 30.5 22.3 30.5 18.6C30.5 13 26.1 9 20 9Z M15 17.2A3 3 0 1 1 15 23.2A3 3 0 1 1 15 17.2Z M25 17.2A3 3 0 1 1 25 23.2A3 3 0 1 1 25 17.2Z M20 22.5L18.3 25.5H21.7Z"/>';
-  function rkIcon(r){return '<svg viewBox="7 7 26 26" aria-hidden="true" style="width:68%;height:68%;fill:'+r[4]+';filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))">'+(r[3]==='skull'?SKULL:emb(r[3]))+'</svg>'}
+  function rkIcon(r){return '<svg viewBox="7 7 26 26" aria-hidden="true" style="width:68%;height:68%;fill:'+r[4]+';filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))">'+emb(r[3])+'</svg>'}
   function rkMedal(j,cls){var r=RANKS[j];return '<span class="rk-m'+(cls?' '+cls:'')+'" style="--c:'+r[2]+'" title="'+r[1]+'">'+rkIcon(r)+'</span>'}
   var RK_STEP=50;
   function rkLoad(){try{var a=JSON.parse(localStorage.getItem('dws_rk_open')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
@@ -2465,7 +2468,7 @@ var FIREBASE_CONFIG={
     var cells=[
       ['رسائل مرسلة',n],['مقروءة',rd],['غير مقروءة',Math.max(0,n-rd-sched)],['مؤجلة',sched],
       ['سرّية',sec],['جماعية',mu],['ردود وصلتك',replies.length],['رسائل فتحتها',rkLoad().length],
-      ['عدد الأحرف الكلي',chars],['الأحرف بدون مسافات',nsp],['كلمات كتبتها',words],['متوسط الأحرف',n?Math.round(chars/n):0],['أكثر نوع',topK],
+      ['كتّاب التقيتهم',dwSeen().length+' / '+DW.length],['أيام فتحت فيها ظرف الكاتب',rkLoad().filter(function(x){return String(x).indexOf('dw-')===0}).length],['عدد الأحرف الكلي',chars],['الأحرف بدون مسافات',nsp],['كلمات كتبتها',words],['متوسط الأحرف',n?Math.round(chars/n):0],['أكثر نوع',topK],
       ['متوسط الكلمات',n?Math.round(words/n):0],['أطول رسالة (كلمة)',maxW],
       ['أيام كتبت فيها',dv.length],['أطول سلسلة أيام',streak],
       ['أنشط شهر',busy],['فتحات الجماعية',opens],
@@ -2511,7 +2514,77 @@ var FIREBASE_CONFIG={
   window.openProfile=function(){rkPaint();buildProfile();openOv('profOv')};
   $('profClose').onclick=function(){closeOv('profOv')};
   $('profOv').addEventListener('click',function(e){if(e.target===this)closeOv('profOv')});
-  function count(){$('cnt').textContent=letters.length;$('cnt2').textContent=replies.length;rkPaint()}
+  /* ---------- أرشيف الكتّاب الموتى: ظرف يومي بملف عن كاتب أو شاعر أو أديب راحل ----------
+     كل عنصر: n الاسم، r الصفة، y السنوات، p المكان، b نبذة، w أعمال، t تحدّي كتابة، q اقتباس (اختياري، اتركه فاضي أو ضيف اقتباس موثّق) */
+  var DW=[
+    {n:'امرؤ القيس',r:'شاعر جاهلي',y:'توفي نحو 540م',p:'شبه الجزيرة العربية',b:'من أشهر شعراء الجاهلية، وصاحب إحدى أشهر المعلّقات. اشتهر بوصف الطلل والخيل والرحلة والغزل.',w:['معلقة «قفا نبك»'],t:'صِف مكاناً غادرته وما زال يسكنك، كأنك تقف على أطلاله.',q:''},
+    {n:'المتنبي',r:'شاعر',y:'915 – 965م',p:'الكوفة، العراق',b:'أبو الطيب أحمد بن الحسين، من أعظم شعراء العصر العباسي. اشتهر بالفخر والحكمة ومدح سيف الدولة الحمداني، وقُتل وهو عائد إلى الكوفة.',w:['ديوان المتنبي'],t:'اكتب فقرة فخر بنفسك دون أن تذكر اسمك.',q:''},
+    {n:'أبو العلاء المعري',r:'شاعر وفيلسوف',y:'973 – 1057م',p:'معرّة النعمان، سوريا',b:'فقد بصره في طفولته، وعُرف بفلسفته وتشاؤمه، ولقّب نفسه «رهين المحبسين».',w:['«رسالة الغفران»','«لزوم ما لا يلزم»','«سقط الزند»'],t:'اكتب رسالة إلى من يسكن الجنة تسأله فيها سؤالاً لا يجيب عنه أحد.',q:''},
+    {n:'أبو نواس',r:'شاعر',y:'نحو 756 – 814م',p:'الأهواز وبغداد',b:'شاعر عباسي جدّد في موضوعات الشعر، وبرع في الخمريات والوصف، وخالف طريقة القدماء في افتتاح القصيدة.',w:['ديوان أبي نواس'],t:'اكتب مشهداً لليلة متأخرة كأنك شاعر يتمرّد على وقار القصيدة.',q:''},
+    {n:'نازك الملائكة',r:'شاعرة وناقدة',y:'1923 – 2007',p:'بغداد، العراق',b:'من رائدات الشعر الحر، وأثّر كتابها «قضايا الشعر المعاصر» في النقد الأدبي. توفيت في القاهرة.',w:['«شظايا ورماد»','«قضايا الشعر المعاصر»'],t:'اكتب عن صمت الليل كأنه شخص يجلس بجانبك.',q:''},
+    {n:'محمد مهدي الجواهري',r:'شاعر',y:'1899 – 1997',p:'النجف، العراق',b:'من أبرز شعراء العربية في القرن العشرين، تميّز بالقصيدة العمودية الجزلة والمواقف الوطنية. توفي في دمشق.',w:['ديوان الجواهري'],t:'اكتب رسالة إلى مدينتك الأولى بعد غياب طويل.',q:''},
+    {n:'معروف الرصافي',r:'شاعر',y:'1875 – 1945',p:'بغداد، العراق',b:'شاعر عراقي اشتهر بقصائده الاجتماعية والإصلاحية ودعوته إلى التجديد.',w:['ديوان الرصافي'],t:'اكتب عن ظلم رأيته ولم تسكت عنه.',q:''},
+    {n:'محمود درويش',r:'شاعر',y:'1941 – 2008',p:'البروة، فلسطين',b:'شاعر فلسطيني ارتبط شعره بالأرض والمنفى والهوية. توفي في هيوستن.',w:['«جدارية»','«لماذا تركت الحصان وحيداً»','«سرير الغريبة»'],t:'اكتب عن بيت تحمله معك أينما ذهبت.',q:''},
+    {n:'نزار قباني',r:'شاعر',y:'1923 – 1998',p:'دمشق، سوريا',b:'عُرف بقصائد الحب وبتقريب لغة الشعر من لغة الحياة اليومية. توفي في لندن.',w:['«قالت لي السمراء»','«الرسم بالكلمات»'],t:'اكتب رسالة حب لا تستعمل فيها كلمة «حب».',q:''},
+    {n:'أحمد شوقي',r:'شاعر',y:'1868 – 1932',p:'القاهرة، مصر',b:'لُقّب بأمير الشعراء، وهو من رواد المسرح الشعري في العربية.',w:['«الشوقيات»','«مصرع كليوباترا»','«مجنون ليلى»'],t:'اكتب حواراً قصيراً بين عاشقين يفصل بينهما مستحيل.',q:''},
+    {n:'ابن زيدون',r:'شاعر',y:'1003 – 1071م',p:'قرطبة، الأندلس',b:'شاعر أندلسي اشتهر بحبّه لولّادة بنت المستكفي وبنونيّته في الفراق.',w:['النونية'],t:'اكتب عن فراق بين قريبين تفصل بينهما مدينة.',q:''},
+    {n:'جبران خليل جبران',r:'كاتب وشاعر ورسّام',y:'1883 – 1931',p:'بشرّي، لبنان',b:'من أدباء المهجر، كتب بالعربية والإنجليزية. توفي في نيويورك.',w:['«النبي»','«الأجنحة المتكسرة»','«دمعة وابتسامة»'],t:'اكتب نصيحة قصيرة في موضوع واحد كأنك نبيّ صغير.',q:''},
+    {n:'طه حسين',r:'أديب وناقد',y:'1889 – 1973',p:'المنيا، مصر',b:'لُقّب بعميد الأدب العربي. فقد بصره طفلاً، وصار من أبرز رموز الثقافة، وتولّى وزارة المعارف.',w:['«الأيام»','«في الشعر الجاهلي»','«دعاء الكروان»'],t:'اكتب عن أول يوم لك في مدرسة أو مكان جديد.',q:''},
+    {n:'نجيب محفوظ',r:'روائي',y:'1911 – 2006',p:'القاهرة، مصر',b:'أول عربي ينال جائزة نوبل للأدب (1988). صوّر الحارة المصرية وتحوّلات المجتمع في أعمال طويلة.',w:['«الثلاثية»','«أولاد حارتنا»','«اللص والكلاب»'],t:'صِف شارعاً بتفاصيله حتى يصير شخصية.',q:''},
+    {n:'غسان كنفاني',r:'روائي وصحفي',y:'1936 – 1972',p:'عكّا، فلسطين',b:'كاتب فلسطيني اغتيل في بيروت. جمع بين الرواية والقصة والعمل الصحفي.',w:['«رجال في الشمس»','«عائد إلى حيفا»','«أرض البرتقال الحزين»'],t:'اكتب عن عودة إلى مكان لم يعد كما تركته.',q:''},
+    {n:'الجاحظ',r:'أديب',y:'نحو 776 – 868م',p:'البصرة، العراق',b:'عمرو بن بحر، أديب عباسي موسوعي اشتهر بأسلوبه الساخر وتنوّع معارفه.',w:['«البخلاء»','«الحيوان»','«البيان والتبيين»'],t:'اكتب وصفاً ساخراً لعادة غريبة عند شخص تعرفه.',q:''},
+    {n:'ابن المقفّع',r:'كاتب ومترجم',y:'نحو 720 – 757م',p:'فارس والبصرة',b:'من أوائل أعلام النثر العربي، ارتبط اسمه بكتاب «كليلة ودمنة» الذي نقله إلى العربية عن الفهلوية.',w:['«كليلة ودمنة»','«الأدب الكبير»'],t:'اكتب حكاية قصيرة على لسان حيوانين تحمل حكمة.',q:''},
+    {n:'مي زيادة',r:'أديبة',y:'1886 – 1941',p:'الناصرة، فلسطين، والقاهرة',b:'أديبة وكاتبة ومترجمة، اشتهر صالونها الأدبي في القاهرة.',w:['«سوانح فتاة»','«باحثة البادية»'],t:'اكتب دعوة إلى صالون أدبي تتخيّله.',q:''},
+    {n:'توفيق الحكيم',r:'كاتب مسرحي وروائي',y:'1898 – 1987',p:'الإسكندرية، مصر',b:'من رواد المسرح العربي، واشتهر بالمسرح الذهني الذي يقرأ أكثر مما يُمثَّل.',w:['«أهل الكهف»','«عصفور من الشرق»','«يوميات نائب في الأرياف»'],t:'اكتب حواراً قصيراً بين شخصين عالقين في مكان واحد.',q:''},
+    {n:'الطيب صالح',r:'روائي',y:'1929 – 2009',p:'شمال السودان',b:'روائي سوداني، تُعدّ «موسم الهجرة إلى الشمال» من أهم الروايات العربية. توفي في لندن.',w:['«موسم الهجرة إلى الشمال»','«عرس الزين»'],t:'اكتب عن رجل يعود إلى قريته بعد سنوات من الغربة.',q:''},
+    {n:'عبد الرحمن منيف',r:'روائي',y:'1933 – 2004',p:'عمّان، الأردن',b:'اشتهر بخماسية «مدن الملح» التي تروي تحوّلات الجزيرة العربية مع النفط. توفي في دمشق.',w:['«مدن الملح»','«شرق المتوسط»'],t:'اكتب عن مدينة تتغيّر حتى لا يعرفها أهلها.',q:''},
+    {n:'ويليام شكسبير',r:'شاعر ومسرحي',y:'1564 – 1616',p:'ستراتفورد، إنجلترا',b:'من أعظم كتّاب المسرح في الإنجليزية، كتب التراجيديا والكوميديا والسوناتات.',w:['«هاملت»','«ماكبث»','«روميو وجولييت»'],t:'اكتب مونولوجاً قصيراً لشخص يتردّد بين قرارين.',q:''},
+    {n:'فيودور دوستويفسكي',r:'روائي',y:'1821 – 1881',p:'موسكو، روسيا',b:'غاص في النفس البشرية وأسئلة الذنب والإيمان والحرية.',w:['«الجريمة والعقاب»','«الإخوة كارامازوف»','«مذلّون مهانون»'],t:'اكتب اعترافاً لم تقله لأحد، بدون أن تذكر اسماً.',q:''},
+    {n:'إدغار آلان بو',r:'شاعر وقاص',y:'1809 – 1849',p:'بوسطن، الولايات المتحدة',b:'من رواد القصة القوطية وقصص الغموض والرعب النفسي. توفي في بالتيمور.',w:['«الغراب»','«سقوط بيت آشر»','«القلب الواشي»'],t:'اكتب قصة قصيرة تبدأ بطرقة على الباب في منتصف الليل.',q:''},
+    {n:'فرانز كافكا',r:'كاتب',y:'1883 – 1924',p:'براغ',b:'كتب بالألمانية عن الاغتراب والقلق والبيروقراطية، ولم ينشر معظم أعماله في حياته.',w:['«المسخ»','«المحاكمة»','«القلعة»'],t:'اكتب عن يوم استيقظت فيه فوجدت العالم يعاملك بطريقة غريبة.',q:''},
+    {n:'ليو تولستوي',r:'روائي',y:'1828 – 1910',p:'ياسنايا بوليانا، روسيا',b:'من كبار الروائيين الواقعيين، جمع في أعماله بين التاريخ والحياة العائلية والأسئلة الأخلاقية.',w:['«الحرب والسلم»','«آنا كارنينا»','«موت إيفان إيليتش»'],t:'اكتب مشهداً عائلياً صغيراً بتفاصيل دقيقة.',q:''},
+    {n:'جلال الدين الرومي',r:'شاعر صوفي',y:'1207 – 1273',p:'بلخ وقونية',b:'وُلد في بلخ وعاش في قونية، وكتب بالفارسية شعراً صوفياً عن الحب والفقد والبحث عن المعنى.',w:['«المثنوي»','«ديوان شمس تبريزي»'],t:'اكتب عن صديق غيّر نظرتك إلى الحياة.',q:''},
+    {n:'عمر الخيّام',r:'شاعر وفلكي ورياضي',y:'1048 – 1131',p:'نيسابور، إيران',b:'عالم رياضيات وفلك، اشتهر عالمياً برباعياته التي تأمّلت الزمن والعمر.',w:['«الرباعيات»'],t:'اكتب عن لحظة واحدة تتمنى أن تُوقف الزمن عندها.',q:''},
+    {n:'دانتي أليغييري',r:'شاعر',y:'1265 – 1321',p:'فلورنسا، إيطاليا',b:'من أعظم شعراء أوروبا في العصور الوسطى، كتب رحلة خيالية عبر الجحيم والمطهر والفردوس.',w:['«الكوميديا الإلهية»'],t:'اكتب عن رحلة داخل نفسك بثلاث محطات.',q:''},
+    {n:'فيكتور هوغو',r:'شاعر وروائي',y:'1802 – 1885',p:'بزانسون، فرنسا',b:'من أبرز أدباء الرومانسية الفرنسية، وكتب الشعر والرواية والمسرح.',w:['«البؤساء»','«أحدب نوتردام»'],t:'اكتب عن شخص صغير يغيّر حياة كبيرة.',q:''},
+    {n:'إميلي برونتي',r:'روائية وشاعرة',y:'1818 – 1848',p:'يوركشاير، إنجلترا',b:'ماتت شابة، وتركت رواية واحدة صارت من كلاسيكيات الأدب القوطي.',w:['«مرتفعات ويذرينغ»'],t:'اكتب مشهداً في بيت على تلّة، تضربه الرياح ولا يزوره أحد.',q:''},
+    {n:'ماري شيلي',r:'روائية',y:'1797 – 1851',p:'لندن، إنجلترا',b:'كتبت «فرانكنشتاين» وهي في العشرين تقريباً، فصارت من مؤسسات أدب الخيال العلمي والرعب.',w:['«فرانكنشتاين»'],t:'اكتب رسالة من مخلوق إلى من صنعه.',q:''},
+    {n:'خورخي لويس بورخيس',r:'كاتب وشاعر',y:'1899 – 1986',p:'بوينس آيرس، الأرجنتين',b:'اشتهر بقصصه القصيرة عن المتاهات والمكتبات واللانهاية. فقد بصره في آخر عمره، وتوفي في جنيف.',w:['«الألف»','«متاهات»'],t:'اكتب عن مكتبة لا نهاية لها وما فيها.',q:''},
+    {n:'غابرييل غارسيا ماركيز',r:'روائي',y:'1927 – 2014',p:'أراكاتاكا، كولومبيا',b:'نال نوبل للأدب عام 1982، ومن أشهر ممثّلي الواقعية السحرية. توفي في مكسيكو.',w:['«مئة عام من العزلة»','«الحب في زمن الكوليرا»','«وقائع موت معلن»'],t:'اكتب عن عائلة تتكرر أسماؤها جيلاً بعد جيل.',q:''},
+    {n:'بابلو نيرودا',r:'شاعر',y:'1904 – 1973',p:'بارال، تشيلي',b:'شاعر تشيلي نال نوبل للأدب عام 1971، جمع بين شعر الحب والشعر السياسي.',w:['«عشرون قصيدة حب وأغنية يائسة»','«نشيد عام»'],t:'اكتب عن شيء عادي، كالملح أو الخبز، كأنه قصيدة غزل.',q:''}
+  ];
+  function dwKey(d){d=d||new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+  function dwIdx(d){d=d||new Date();var n=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);return ((n%DW.length)+DW.length)%DW.length}
+  function dwSeen(){try{var a=JSON.parse(localStorage.getItem('dws_dw_seen')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+  function dwText(w){
+    var t='✦ ظرف اليوم من أرشيف الكتّاب الموتى ✦\n\n'+w.n+'\n'+w.r+' · '+w.y+'\n'+w.p+'\n\n'+w.b+'\n\nأشهر أعماله: '+w.w.join(' ، ');
+    if(w.q)t+='\n\n«'+w.q+'»\n— '+w.n;
+    return t+'\n\nتحدّي اليوم للكتابة:\n'+w.t;
+  }
+  function dwLetter(){
+    var d=new Date(),w=DW[dwIdx(d)],k=dwKey(d);
+    return {id:'dw-'+k,kind:'plain',noRep:true,dw:1,text:dwText(w),ts:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
+      env:'#1a1a1d',etype:'old',ptype:'old',paper:'aged',font:'amiri',ink:'#1f1a17',seal:'#262626',semb:'skull',esh:'classic',mot:'auto'};
+  }
+  function dwRender(){
+    var box=$('dwDaily');if(!box||busy)return;
+    var d=new Date(),k=dwKey(d),w=DW[dwIdx(d)],opened=false;
+    try{opened=localStorage.getItem('dws_dw_open_'+k)==='1'}catch(e){}
+    box.innerHTML='';
+    var L=dwLetter(),slot=mk('div','slot'),env=mkEnv(L);
+    env.style.setProperty('--rot','-1.2deg');
+    var cap=mk('div','cap'),t1=mk('b','',opened?('📜 '+w.n):'📜 ظرف اليوم من كاتب ميت'),t2=mk('span','',opened?'فتحته اليوم · ارجع بكرة لظرف جديد':'مختوم · افتحه لتعرف مَن كتب لك');
+    cap.appendChild(t1);cap.appendChild(t2);
+    env.addEventListener('click',function(){
+      if(busy)return;openLetter(L,env,'recv');
+      if(!current||current.l!==L)return;
+      try{localStorage.setItem('dws_dw_open_'+k,'1')}catch(e){}
+      var sn=dwSeen(),ix=dwIdx(d);if(sn.indexOf(ix)<0){sn.push(ix);try{localStorage.setItem('dws_dw_seen',JSON.stringify(sn))}catch(e){}}
+      t1.textContent='📜 '+w.n;t2.textContent='فتحته اليوم · ارجع بكرة لظرف جديد';
+    });
+    slot.appendChild(env);slot.appendChild(cap);box.appendChild(slot);
+  }
+  function count(){$('cnt').textContent=letters.length;$('cnt2').textContent=replies.length;rkPaint();try{dwRender()}catch(e){}}
 
   /* ---------- الصناديق ---------- */
   function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%9973;return h}
