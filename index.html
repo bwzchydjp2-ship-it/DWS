@@ -95,7 +95,7 @@ body.guest #rankCard,body.auth #rankCard{display:none!important}
 .pf-head h2{margin:0}
 .pf-back{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid #5a3328;background:rgba(0,0,0,.35);color:#f0d9bf;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .2s}
 .pf-back:hover,.pf-back:active{background:rgba(120,40,40,.4)}
-#profOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
+#profOv .dlg,#yrOv .dlg{max-width:460px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch}
 .pf-h{font-size:1.05rem;color:#f0d9bf;margin:18px 0 8px;text-align:right}
 .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pf-c{padding:10px 6px;border:1px solid #4a2a24;border-radius:12px;background:rgba(0,0,0,.28);text-align:center}
@@ -1567,7 +1567,13 @@ var RvScene=(function(){
 <div class="overlay" id="profOv"><div class="dlg">
   <div class="pf-head"><button class="pf-back" id="profClose" type="button" aria-label="رجوع للصفحة الرئيسية" title="رجوع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12H20M13 5L20 12L13 19"/></svg></button><h2>الملف الشخصي</h2></div>
   <div id="rankCard" aria-live="polite"></div>
+  <div class="row" style="margin:6px 0 2px;justify-content:center;flex-wrap:wrap"><button class="btn ghost" id="profImg" type="button">🖼️ حفظ ملفي كصورة</button><button class="btn ghost" id="profYear" type="button">📅 حصاد السنة</button></div>
   <div id="profBody"></div>
+</div></div>
+<div class="overlay" id="yrOv"><div class="dlg">
+  <div class="pf-head"><button class="pf-back" id="yrClose" type="button" aria-label="رجوع" title="رجوع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12H20M13 5L20 12L13 19"/></svg></button><h2>حصاد السنة</h2></div>
+  <div class="row" style="justify-content:center;align-items:center;gap:12px"><button class="btn ghost" id="yrPrev" type="button">السابقة</button><b id="yrY" style="font-size:1.5rem;color:#f6e0c8"></b><button class="btn ghost" id="yrNext" type="button">التالية</button></div>
+  <div id="yrBody"></div>
 </div></div>
 <div class="overlay" id="ctOv"><div class="dlg">
   <h2>كيف توصلها له؟</h2>
@@ -2511,6 +2517,123 @@ var FIREBASE_CONFIG={
     if(!rc.length)b.appendChild(mk('p','pf-note','ماكو رسائل بعد.'));else{page();b.appendChild(more)}
     b.appendChild(mk('p','pf-note','النقاط محفوظة حتى لو حذفت رسائل، أما الإحصائيات أعلاه فتحسب من رسائلك الموجودة.'));
   }
+  /* ---------- صورة الملف الشخصي (بطاقة للمشاركة) ---------- */
+  function rkSvgImg(r,locked){
+    return new Promise(function(res){
+      var im=new Image();im.onload=function(){res(im)};im.onerror=function(){res(null)};
+      var inner=emb(r[3]);
+      im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="7 7 26 26" width="260" height="260"><g fill="'+(locked?'#7a6554':r[4])+'">'+inner+'</g></svg>');
+    });
+  }
+  function rkDrawMedal(x,cx,cy,rad,r,img,locked,cur){
+    x.save();
+    if(locked){
+      x.setLineDash([6,6]);x.strokeStyle='#5a4636';x.lineWidth=3;x.beginPath();x.arc(cx,cy,rad,0,6.2832);x.stroke();x.setLineDash([]);x.globalAlpha=.55;
+    }else{
+      x.shadowColor='rgba(0,0,0,.7)';x.shadowBlur=rad*.25;x.shadowOffsetY=rad*.08;
+      var g=x.createRadialGradient(cx,cy+rad*.1,rad*.1,cx,cy,rad);g.addColorStop(0,r[2]);g.addColorStop(.55,r[2]);g.addColorStop(1,'rgba(0,0,0,.55)');
+      x.fillStyle=r[2];x.beginPath();x.arc(cx,cy,rad,0,6.2832);x.fill();x.shadowColor='transparent';x.fillStyle=g;x.fill();
+      var h=x.createRadialGradient(cx-rad*.35,cy-rad*.4,0,cx-rad*.35,cy-rad*.4,rad*.7);h.addColorStop(0,'rgba(255,255,255,.45)');h.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=h;x.beginPath();x.arc(cx,cy,rad,0,6.2832);x.fill();
+      if(cur){x.strokeStyle='#c98a62';x.lineWidth=Math.max(3,rad*.07);x.beginPath();x.arc(cx,cy,rad+x.lineWidth*1.2,0,6.2832);x.stroke()}
+    }
+    if(img){var sz=rad*1.36;x.drawImage(img,cx-sz/2,cy-sz/2,sz,sz)}
+    x.restore();
+  }
+  async function saveProfileImg(){
+    var btn=$('profImg'),old='🖼️ حفظ ملفي كصورة';btn.textContent='جاري التجهيز...';btn.disabled=true;
+    try{
+      try{await Promise.race([Promise.all([document.fonts.load('700 40px Amiri','حأب'),document.fonts.load('40px Amiri','حأب')]),new Promise(function(r){setTimeout(r,2500)})])}catch(e){}
+      var n=letters.length,chars=0,words=0,days={},pts=rkPts(),lv=Math.floor(pts/RK_STEP),i=Math.min(lv,RANKS.length-1),cur=RANKS[i];
+      letters.forEach(function(l){var t=(l.text||'').trim();if(t){chars+=Array.from(t).length;words+=t.split(/\s+/).length}var d=new Date(l.ts||0);days[d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()]=1});
+      var imgs=await Promise.all(RANKS.map(function(r,j){return rkSvgImg(r,j>i)}));
+      var W=1080,H=1640,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
+      /* الخلفية */
+      var bg=x.createRadialGradient(W/2,0,100,W/2,H*.5,H*.9);bg.addColorStop(0,'#3a0f16');bg.addColorStop(.5,'#1a0a0d');bg.addColorStop(1,'#0b0607');
+      x.fillStyle=bg;x.fillRect(0,0,W,H);
+      x.strokeStyle='#c98a62';x.lineWidth=3;x.strokeRect(36,36,W-72,H-72);x.strokeStyle='rgba(201,138,98,.4)';x.lineWidth=1.5;x.strokeRect(52,52,W-104,H-104);
+      x.textAlign='center';x.textBaseline='alphabetic';
+      x.fillStyle='#c98a62';x.font='700 34px Georgia,"Times New Roman",serif';
+      if('letterSpacing' in x)x.letterSpacing='8px';x.fillText('DEAD WRITERS SOCIETY',W/2,130);if('letterSpacing' in x)x.letterSpacing='0px';
+      /* الختم الكبير */
+      rkDrawMedal(x,W/2,360,170,cur,imgs[i],false,true);
+      x.fillStyle='#f6e0c8';x.font='700 84px Georgia,"Times New Roman",serif';x.fillText(cur[1],W/2,640);
+      x.direction='rtl';x.fillStyle='#a38b78';x.font='700 44px Amiri,serif';x.fillText('المستوى '+(lv+1)+' · '+pts+' نقطة',W/2,708);
+      /* شريط التقدم */
+      var bx=190,bw=W-380,by=752,pc=(pts%RK_STEP)/RK_STEP;
+      x.fillStyle='rgba(255,255,255,.1)';x.beginPath();x.roundRect?x.roundRect(bx,by,bw,16,8):x.rect(bx,by,bw,16);x.fill();
+      var bgr=x.createLinearGradient(bx+bw,0,bx,0);bgr.addColorStop(0,'#7a1520');bgr.addColorStop(1,'#c98a62');x.fillStyle=bgr;
+      x.beginPath();var fw=Math.max(16,bw*pc);x.roundRect?x.roundRect(bx+bw-fw,by,fw,16,8):x.rect(bx+bw-fw,by,fw,16);x.fill();
+      x.fillStyle='#a38b78';x.font='36px Amiri,serif';x.fillText('باقي '+(RK_STEP-(pts%RK_STEP))+' نقطة للمستوى '+(lv+2),W/2,818);
+      /* صف الختوم */
+      var gap=118,sx=W/2-gap*3;
+      RANKS.forEach(function(r,j){rkDrawMedal(x,sx+j*gap,900,40,r,imgs[j],j>i,j===i)});
+      /* الإحصائيات */
+      var seen=dwSeen().length,cells=[['رسائل مرسلة',n],['أحرف كتبتها',chars],['كلمات',words],['أيام كتبت فيها',Object.keys(days).length],['كتّاب التقيتهم',seen+' / '+DW.length],['رسائل فتحتها',rkLoad().length]];
+      var cw=420,ch=150,gx=48,cx0=(W-(cw*2+gx))/2,cy0=990;
+      cells.forEach(function(c,k){
+        var col=k%2,row=Math.floor(k/2),px=cx0+col*(cw+gx),py=cy0+row*(ch+22);
+        x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.roundRect?x.roundRect(px,py,cw,ch,24):x.rect(px,py,cw,ch);x.fill();
+        x.strokeStyle='#4a2a24';x.lineWidth=2;x.stroke();
+        x.fillStyle='#f6e0c8';x.font='700 60px Georgia,serif';x.fillText(String(c[1]),px+cw/2,py+78);
+        x.fillStyle='#a38b78';x.font='34px Amiri,serif';x.fillText(c[0],px+cw/2,py+126);
+      });
+      x.fillStyle='rgba(201,138,98,.7)';x.font='28px Georgia,serif';x.direction='ltr';x.fillText(new Date().toISOString().slice(0,10),W/2,H-76);
+      var blob=await new Promise(function(res){var d=false;function fin(v){if(!d){d=true;res(v)}}setTimeout(function(){fin(null)},8000);try{cv.toBlob(fin,'image/png')}catch(e){fin(null)}});
+      var du=null;if(!blob){try{du=cv.toDataURL('image/png')}catch(e){}}
+      if(!blob&&!du)throw new Error('blob');
+      var inApp=/Instagram|FBAN|FBAV|FB_IAB|WhatsApp|Line\/|Snapchat|Telegram|MicroMessenger|TikTok|; wv\)/i.test(navigator.userAgent);
+      if(inApp||!blob){showImg(blob?URL.createObjectURL(blob):du,'');btn.textContent=old;btn.disabled=false;return}
+      var name='dws-profile-'+Date.now()+'.png',file=new File([blob],name,{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{await navigator.share({files:[file]});btn.textContent=old;btn.disabled=false;return}catch(e){if(e&&e.name==='AbortError'){btn.textContent=old;btn.disabled=false;return}}
+      }
+      var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url)},4000);
+      btn.textContent='تم الحفظ ✓';setTimeout(function(){btn.textContent=old;btn.disabled=false},2000);
+    }catch(e){
+      btn.textContent='ما كدرت أحفظ الصورة';setTimeout(function(){btn.textContent=old;btn.disabled=false},2200);
+    }
+  }
+  $('profImg').onclick=saveProfileImg;
+  /* ---------- حصاد السنة ---------- */
+  var MONTHS=['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'];
+  var yrSel=new Date().getFullYear();
+  function buildYear(){
+    var Y=yrSel,b=$('yrBody');b.innerHTML='';$('yrY').textContent=Y;
+    var cy=new Date().getFullYear(),miny=cy;
+    letters.forEach(function(l){var y=new Date(l.ts||0).getFullYear();if(y>1990&&y<miny)miny=y});
+    $('yrPrev').disabled=Y<=miny;$('yrNext').disabled=Y>=cy;
+    var ls=letters.filter(function(l){return new Date(l.ts||0).getFullYear()===Y}).sort(function(a,c){return (a.ts||0)-(c.ts||0)});
+    if(!ls.length){b.appendChild(mk('p','pf-note','ماكو رسائل بسنة '+Y+'.'));return}
+    var chars=0,words=0,sec=0,maxW=0,byM=[],byK={},days={},i;for(i=0;i<12;i++)byM.push(0);
+    ls.forEach(function(l){
+      var d=new Date(l.ts||0),t=(l.text||'').trim(),w=t?t.split(/\s+/).length:0;
+      chars+=Array.from(t).length;words+=w;maxW=Math.max(maxW,w);if(l.secret)sec++;
+      byM[d.getMonth()]++;byK[l.kind]=(byK[l.kind]||0)+1;days[Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)]=1;
+    });
+    var dv=Object.keys(days).map(Number).sort(function(a,c){return a-c}),streak=1,cs=1;
+    for(i=1;i<dv.length;i++){if(dv[i]-dv[i-1]===1){cs++;if(cs>streak)streak=cs}else cs=1}
+    var bm=0,bmi=0;byM.forEach(function(v,j){if(v>bm){bm=v;bmi=j}});
+    var tk='-',tn=0;Object.keys(byK).forEach(function(k){if(byK[k]>tn){tn=byK[k];tk=(KINDS[k]||KINDS.letter)[0]}});
+    var dwN=rkLoad().filter(function(x){return String(x).indexOf('dw-'+Y+'-')===0}).length;
+    var hero=mk('div','pf-c');hero.style.cssText='padding:18px 10px;margin-top:14px';
+    hero.appendChild(mk('b','',String(ls.length)));hero.appendChild(mk('span','','رسالة كتبتها بسنة '+Y+' · '+chars+' حرف'));b.appendChild(hero);
+    var cells=[['كلمات',words],['أيام كتبت فيها',dv.length],['أطول سلسلة أيام',streak],['أنشط شهر',MONTHS[bmi]+' ('+bm+')'],['أكثر نوع',tk],['أطول رسالة (كلمة)',maxW],['رسائل سرّية',sec],['ظروف الكتّاب الموتى',dwN]];
+    var g=mk('div','pf-grid');g.style.marginTop='10px';
+    cells.forEach(function(c){var d=mk('div','pf-c');d.appendChild(mk('b','',String(c[1])));d.appendChild(mk('span','',c[0]));g.appendChild(d)});
+    b.appendChild(g);
+    b.appendChild(mk('div','pf-h','📅 رسائلك شهراً شهراً'));
+    var mx=Math.max.apply(null,byM.concat([1])),mo=mk('div','pf-mo');mo.style.gap='4px';
+    byM.forEach(function(v,j){var d=mk('div','');d.appendChild(mk('span','',String(v||'')));var f=mk('i','');f.style.height=Math.round(v/mx*70)+'%';d.appendChild(f);d.appendChild(mk('span','',String(j+1)));mo.appendChild(d)});
+    b.appendChild(mo);
+    b.appendChild(mk('p','pf-note','أول رسالة بالسنة: '+fmtDate(ls[0].ts)+' · آخر رسالة: '+fmtDate(ls[ls.length-1].ts)));
+  }
+  window.openYear=function(){yrSel=new Date().getFullYear();buildYear();openOv('yrOv')};
+  $('profYear').onclick=function(){window.openYear()};
+  $('yrClose').onclick=function(){closeOv('yrOv')};
+  $('yrOv').addEventListener('click',function(e){if(e.target===this)closeOv('yrOv')});
+  $('yrPrev').onclick=function(){yrSel--;buildYear()};
+  $('yrNext').onclick=function(){yrSel++;buildYear()};
   window.openProfile=function(){rkPaint();buildProfile();openOv('profOv')};
   $('profClose').onclick=function(){closeOv('profOv')};
   $('profOv').addEventListener('click',function(e){if(e.target===this)closeOv('profOv')});
@@ -2553,12 +2676,14 @@ var FIREBASE_CONFIG={
     {n:'غابرييل غارسيا ماركيز',r:'روائي',y:'1927 – 2014',p:'أراكاتاكا، كولومبيا',b:'نال نوبل للأدب عام 1982، ومن أشهر ممثّلي الواقعية السحرية. توفي في مكسيكو.',w:['«مئة عام من العزلة»','«الحب في زمن الكوليرا»','«وقائع موت معلن»'],t:'اكتب عن عائلة تتكرر أسماؤها جيلاً بعد جيل.',q:''},
     {n:'بابلو نيرودا',r:'شاعر',y:'1904 – 1973',p:'بارال، تشيلي',b:'شاعر تشيلي نال نوبل للأدب عام 1971، جمع بين شعر الحب والشعر السياسي.',w:['«عشرون قصيدة حب وأغنية يائسة»','«نشيد عام»'],t:'اكتب عن شيء عادي، كالملح أو الخبز، كأنه قصيدة غزل.',q:''}
   ];
+  var DWA={"امرؤ القيس": "اكتب عن المكان الذي فقدته بتفاصيله الصغيرة؛ الحنين يصير كتابة حين يتحدث عن الأشياء لا عن الشعور وحده.", "المتنبي": "ثق بصوتك، لكن اجعل لثقتك ما يسندها: عملاً تعتزّ به.", "أبو العلاء المعري": "اسأل أكثر مما تجيب، ولا تخف من فكرة لا يوافقك عليها أحد.", "أبو نواس": "جرّب أن تكسر قاعدة واحدة في كتابتك كل مرة، وانظر ماذا يتغيّر.", "نازك الملائكة": "اعرف القاعدة قبل أن تتجاوزها؛ الشكل الجديد لا يعني التخلّي عن الإيقاع.", "محمد مهدي الجواهري": "اكتب كأن المدينة التي تحبها ستقرأ كلامك، فتختار كلماتك بعناية.", "معروف الرصافي": "الكتابة التي تنحاز إلى الناس تحتاج وضوحاً قبل الزخرفة.", "محمود درويش": "المكان الذي تكتب منه يعطيك صوتك؛ لا تتنازل عنه.", "نزار قباني": "بسّط لغتك حتى يفهمها من تحبّ، ولا تتخلَّ عن الجمال.", "أحمد شوقي": "أتقن أدواتك أولاً؛ الموهبة تحتاج صنعة.", "ابن زيدون": "الفراق مادة قوية للكتابة؛ اكتبه بعد أن تهدأ، لا في لحظة اشتعاله فقط.", "جبران خليل جبران": "قلّل الكلمات واترك فراغاً يملؤه القارئ بنفسه.", "طه حسين": "القراءة أول الكتابة؛ اقرأ بصوت عالٍ لتسمع إيقاع جملك.", "نجيب محفوظ": "اكتب عن الشارع الذي تعرفه جيداً؛ ففيه عالم كامل.", "غسان كنفاني": "اجعل القصة أقصر من طموحك وأعمق مما تتوقع.", "الجاحظ": "أضف شيئاً من الفكاهة؛ القارئ يتحمّل الجدّ أكثر حين يبتسم.", "ابن المقفّع": "الحكاية القصيرة تحمل حكمة أكبر من محاضرة طويلة.", "مي زيادة": "اجعل لكتابتك أناساً تحاورهم؛ الحوار يفتح الأفكار.", "توفيق الحكيم": "اترك في نهاية نصك سؤالاً واحداً بلا جواب.", "الطيب صالح": "العودة إلى الأصل تكشف من أنت؛ اكتب عمّا تركته خلفك.", "عبد الرحمن منيف": "التغيير الكبير يبدأ من تفاصيل صغيرة تلاحظها في الناس.", "ويليام شكسبير": "التردّد دراما كاملة؛ لا تستعجل قرارات شخصياتك.", "فيودور دوستويفسكي": "اكتب أكثر أفكارك إزعاجاً بصدق؛ فهي غالباً أصدق ما عندك.", "إدغار آلان بو": "ابدأ بالجوّ قبل الحدث؛ التوتر يُبنى من التفاصيل الصغيرة.", "فرانز كافكا": "حين يبدو العالم غريباً، صِفه بهدوء تام.", "ليو تولستوي": "الحياة العادية مليئة بما يستحق الكتابة؛ انظر إليها عن قرب.", "جلال الدين الرومي": "اكتب لشخص واحد تحبه، فيسمعك الجميع.", "عمر الخيّام": "اللحظة الحالية مادّتك؛ لا تؤجّل الكتابة إلى وقت أنسب.", "دانتي أليغييري": "ارسم لرحلتك خريطة بمراحل؛ التنظيم يحرّر الخيال.", "فيكتور هوغو": "ضع شخصاً بسيطاً في قلب قصتك الكبيرة.", "إميلي برونتي": "المكان القاسي يصنع شخصيات قوية؛ اجعل الطقس جزءاً من الحكاية.", "ماري شيلي": "ابدأ من سؤال واحد: ماذا لو؟ ثم اتبعه بصدق.", "خورخي لويس بورخيس": "اجعل المكتبة بيتك؛ كل كتاب باب.", "غابرييل غارسيا ماركيز": "احكِ الغريب كأنه عادي، والعادي كأنه عجيب.", "بابلو نيرودا": "الأشياء اليومية تصير شعراً إذا أحببتها بما يكفي."};
   function dwKey(d){d=d||new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
   function dwIdx(d){d=d||new Date();var n=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);return ((n%DW.length)+DW.length)%DW.length}
   function dwSeen(){try{var a=JSON.parse(localStorage.getItem('dws_dw_seen')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
   function dwText(w){
     var t='✦ ظرف اليوم من أرشيف الكتّاب الموتى ✦\n\n'+w.n+'\n'+w.r+' · '+w.y+'\n'+w.p+'\n\n'+w.b+'\n\nأشهر أعماله: '+w.w.join(' ، ');
-    if(w.q)t+='\n\n«'+w.q+'»\n— '+w.n;
+    if(w.q)t+='\n\n'+(/شاعر/.test(w.r)?'من شعره:':'من أقواله:')+'\n«'+w.q+'»\n— '+w.n;
+    if(DWA[w.n])t+='\n\nنصيحة بوحي من أسلوبه\n(صياغة الموقع، وليست من كلامه):\n'+DWA[w.n];
     return t+'\n\nتحدّي اليوم للكتابة:\n'+w.t;
   }
   function dwLetter(){
