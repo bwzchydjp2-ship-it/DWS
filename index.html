@@ -222,10 +222,21 @@ body.rmode .tbar button.ol{display:none}
 .wzAct{max-width:680px;margin:14px auto 0}
 body.rmode .wzBar,body.rmode .wzHint,body.rmode #wzPrev,body.rmode #wzNext{display:none!important}
 body:not(.rmode) #vDesk[data-wz="1"] .pvstick{height:0;min-height:0;padding:0;overflow:hidden;visibility:hidden}
-body:not(.rmode) #vDesk[data-wz="3"] .pw{height:0;overflow:hidden;visibility:hidden;pointer-events:none;margin:0 auto!important}
+body:not(.rmode) #vDesk[data-wz="3"] .pw,body:not(.rmode) #vDesk[data-wz="2"][data-sub="env"] .pw{height:0;overflow:hidden;visibility:hidden;pointer-events:none;margin:0 auto!important}
+body:not(.rmode) #vDesk[data-wz="2"][data-sub="paper"] .pvstick{height:0;min-height:0;padding:0;overflow:hidden;visibility:hidden}
+.wzSub{display:none;justify-content:center;gap:8px;max-width:680px;margin:0 auto 12px}
+body:not(.rmode) #vDesk[data-wz="2"] .wzSub{display:flex}
+.wzSub button{flex:1 1 0;max-width:200px;font:1.1rem 'Amiri',serif;color:var(--muted);background:rgba(0,0,0,.35);border:1px solid #4a2a24;border-radius:20px;padding:6px 14px;cursor:pointer;transition:.25s}
+.wzSub button.on{background:#3a0f16;border-color:var(--gold);color:#f6e0c8}
+body.rmode .wzSub{display:none!important}
 body:not(.rmode) #vDesk:not([data-wz="3"]) #sendBtn{display:none}
 body:not(.rmode) #vDesk[data-wz="3"] #wzNext{display:none}
 #vDesk[data-wz="1"] #wzPrev{display:none}
+#wzNext,#wzPrev{display:none!important}
+#wzAct .row:last-child:not(:has(#sendBtn:not([style*="none"]))){margin:0}
+/* الورقة تطول مع الكتابة بدل شريط التمرير الداخلي */
+#compose .sheet{max-height:none;overflow:visible}
+#msg{overflow:hidden;min-height:230px}
 
 /* envelope */
 .env{
@@ -1868,6 +1879,7 @@ var RvScene=(function(){
     <button type="button" data-s="3"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L3 10.5l7 3 3 7z"/><path d="M21 3L10 13.5"/></svg></span><b>3. خيارات الإرسال</b></button>
   </nav>
   <p class="wzHint" id="wzHint"></p>
+  <div class="wzSub" id="wzSub"><button type="button" data-sub="env" class="on">✉️ الظرف</button><button type="button" data-sub="paper">📜 الورقة</button></div>
   <div class="pvbox">
   <div class="pvstick"><div class="pvwrap" id="pvWrap"></div></div>
   <div class="tools">
@@ -2462,7 +2474,20 @@ var FIREBASE_CONFIG={
     $('sigRow').style.display=(sel.priv==='secret'||_pl)?'none':'';
     $('msg').placeholder=rmode?'اكتب ردّك هنا...':(KINDS[sel.kind]||KINDS.letter)[3];
     var pv=$('pvWrap');pv.innerHTML='';pv.appendChild(mkEnv(sel));
+    try{msgGrow()}catch(e){}
   }
+  /* ---------- تكبير خانة الكتابة تلقائياً مع النص ---------- */
+  function msgGrow(){
+    var m=$('msg');if(!m)return;
+    m.style.height='auto';
+    var h=Math.max(230,m.scrollHeight);
+    m.style.height=h+'px';
+    var cp=$('compose');if(cp&&cp.classList.contains('hwon')&&typeof hwFit==='function')hwFit();
+  }
+  $('msg').addEventListener('input',function(){msgGrow()});
+  window.addEventListener('resize',function(){msgGrow()});
+  try{document.fonts.ready.then(function(){msgGrow()})}catch(e){}
+  setTimeout(msgGrow,300);
   /* ---------- الكتابة بالآلة الكاتبة (أساسية، دائماً شغّالة) ---------- */
   var tw=true;$('msg').classList.add('tw');
   var _qt=0;$('msg').addEventListener('input',function(e){
@@ -3897,11 +3922,13 @@ var FIREBASE_CONFIG={
     var oa=+data.openAt||0;
     function lockMsg(){var d=oa-Date.now();if(d<=0)return '';var m=Math.floor(d/60000)%60,h=Math.floor(d/3600000)%24,dd=Math.floor(d/86400000);return '🔒 الرسالة مختومة وتنفتح بعد '+(dd?dd+' يوم ':'')+(h?h+' ساعة ':'')+m+' دقيقة'}
     if(lockMsg()){msg.textContent=lockMsg();var tk=setInterval(function(){var t=lockMsg();if(!t||readId!==id){clearInterval(tk);if(readId===id)msg.textContent='انقر على الظرف لتفتحه'}else msg.textContent=t},30000)}
-    var okpw=!data.pw;
+    /* كلمة السر تنسأل مرة وحدة بس لكل جهاز (تنحفظ ببصمتها، فإذا المرسل غيّرها تنسأل من جديد) */
+    var pwk='dws_pw_'+id,okpw=!data.pw;
+    if(data.pw){try{okpw=localStorage.getItem(pwk)===data.pw}catch(e){okpw=false}}
     if(lockMsg()){var ic=mk('button','btn ghost','أضفها لتقويمي');ic.onclick=function(){var z=function(t){return new Date(t).toISOString().replace(/[-:]|\.\d+/g,'')};var c='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:'+id+'@dws\r\nDTSTAMP:'+z(Date.now())+'\r\nDTSTART:'+z(oa)+'\r\nDTEND:'+z(oa+1800000)+'\r\nSUMMARY:افتح رسالتك المختومة 💌\r\nEND:VEVENT\r\nEND:VCALENDAR';var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'}));a.download='dws.ics';a.click()};b.appendChild(ic)}
     env.addEventListener('click',function(){
       if(lockMsg()){msg.textContent=lockMsg();return}
-      if(!okpw){var a=prompt(data.pwh?(data.pwh+'\n\nاكتب كلمة السر:'):'هذي الرسالة محمية بكلمة سر. اكتبها:');if(a===null)return;if(h32(a.trim())!==data.pw){msg.textContent='كلمة السر غلط.';return}okpw=true}
+      if(!okpw){var a=prompt(data.pwh?(data.pwh+'\n\nاكتب كلمة السر:'):'هذي الرسالة محمية بكلمة سر. اكتبها:');if(a===null)return;if(h32(a.trim())!==data.pw){msg.textContent='كلمة السر غلط.';return}okpw=true;try{localStorage.setItem(pwk,data.pw)}catch(e){}}
       openLetter(l,env,'recv');msg.textContent='';
       if(!(user&&data.ownerUid===user.uid)){
         if(data.multi){
@@ -4075,7 +4102,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   function hwFit(){
     if(!hwCv)return;var pad=hwCv.parentNode,w=pad.clientWidth;if(!w)return;
     stU();
-    var h=Math.max(160,$('sendBtn').parentNode.offsetTop-6);hwCv.style.height=h+'px';hwSize(hwCv,w,h);hwRedraw();
+    var h=Math.max(160,pad.offsetHeight-6);hwCv.style.height=h+'px';hwSize(hwCv,w,h);hwRedraw();
   }
   function hwAsp(){var r=hwCv.getBoundingClientRect();return r.width?Math.round(r.height/r.width*1000)/1000:.8}
   function hwShow(p,dc,list,asp){
@@ -4306,10 +4333,10 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   /* ---------- شريط الاختيارات الثابت + مراحل المحرر (3 خطوات) ---------- */
   (function(){
     var tools=document.querySelector('.tools'),bar=document.createElement('div');bar.className='tbar';
-    var groups=[],S1={swKind:1,swCd:1,swAdd:1},S3={swPriv:1,swRep:1,swMulti:1,swCap:1,swOpen:1,swPw:1,swDlv:1};
+    var groups=[],SP={swPtype:1,swPaper:1,swFont:1,swTa:1,swInk:1},S1={swKind:1,swCd:1,swAdd:1},S3={swPriv:1,swRep:1,swMulti:1,swCap:1,swOpen:1,swPw:1,swDlv:1};
     [].forEach.call(tools.querySelectorAll('h3'),function(h){
       var sw=h.nextElementSibling;if(!sw||!sw.classList.contains('sw'))return;
-      var g={sw:sw,extra:sw.id==='swEmb'?$('schIn'):null,step:S1[sw.id]?1:(S3[sw.id]?3:2)},b=document.createElement('button');
+      var g={sw:sw,extra:sw.id==='swEmb'?$('schIn'):null,step:S1[sw.id]?1:(S3[sw.id]?3:2),sub:SP[sw.id]?'paper':'env'},b=document.createElement('button');
       b.textContent=h.textContent;if(h.closest('.only-letter'))b.className='ol';
       b.onclick=function(){show(g,b)};bar.appendChild(b);g.b=b;groups.push(g);
     });
@@ -4321,24 +4348,33 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     }
     function fit(){document.documentElement.style.setProperty('--barh',tools.offsetHeight+'px')}
     /* ===== المراحل: 1 كتابة · 2 تصميم · 3 إرسال ===== */
-    var WZ=$('vDesk'),wbtn=[].slice.call($('wzBar').querySelectorAll('button')),cur=1;
+    var WZ=$('vDesk'),wbtn=[].slice.call($('wzBar').querySelectorAll('button')),cur=1,sub='env';
+    var sbtn=[].slice.call($('wzSub').querySelectorAll('button'));
+    var HINT2={env:'شكل الظرف ونوعه ولونه، حركة الفتح، الختم والشمع.',paper:'نوع الورقة ولونها، الخط، المحاذاة، لون الحبر.'};
     var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'الورق، الخط، الظرف، الحبر، الختم.',3:'الخصوصية، كلمة السر، موعد الفتح، وسيلة التوصيل والإرسال.'};
     function applyStep(n){
-      groups.forEach(function(g){g.b.style.display=g.step===n?'':'none'});
-      var f=groups.filter(function(g){return g.step===n})[0];if(f)show(f,f.b);
+      var ok=function(g){return g.step===n&&(n!==2||g.sub===sub)};
+      groups.forEach(function(g){g.b.style.display=ok(g)?'':'none'});
+      var f=groups.filter(ok)[0];if(f)show(f,f.b);
     }
     function go(n,force,keepNote){
       n=Math.max(1,Math.min(3,n));
       if(!force&&!rmode&&n>1&&cur===1&&!$('msg').value.trim()&&!strokes.length&&!stk.length){
         $('note').textContent='اكتب شيئاً بالرسالة أولاً.';try{$('msg').focus()}catch(e){}return}
       if(!keepNote)$('note').textContent='';
-      cur=n;WZ.setAttribute('data-wz',n);
+      cur=n;WZ.setAttribute('data-wz',n);WZ.setAttribute('data-sub',sub);
       wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n)});
-      $('wzHint').textContent=HINT[n];
+      $('wzHint').textContent=n===2?HINT2[sub]:HINT[n];
       applyStep(n);
       try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
     }
     wbtn.forEach(function(b){b.onclick=function(){go(+b.getAttribute('data-s'))}});
+    sbtn.forEach(function(b){b.onclick=function(){
+      sub=b.getAttribute('data-sub');
+      sbtn.forEach(function(x){x.classList.toggle('on',x===b)});
+      WZ.setAttribute('data-sub',sub);$('wzHint').textContent=HINT2[sub];applyStep(2);
+      try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+    }});
     $('wzNext').onclick=function(){go(cur+1)};
     $('wzPrev').onclick=function(){go(cur-1)};
     /* لو الإرسال فشل بسبب شي من الخطوة الأولى (اسم، رابط...) نرجع المستخدم لها */
