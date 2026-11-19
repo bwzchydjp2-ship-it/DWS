@@ -3720,6 +3720,12 @@ var FIREBASE_CONFIG={
       var hasDraw=!isReply&&l.draw&&l.draw.length,hasStk=!isReply&&l.stk&&l.stk.length;
       var imgs=hasStk?await Promise.all(l.stk.slice(0,24).map(function(it){return it.t==='i'&&okData(it.d)?loadImg(it.d):Promise.resolve(null)})):[];
       if(hasDraw||hasStk)H=Math.max(H,Math.round(pad*2+(l.asp||.8)*mw+linkH));
+      /* توسيط الكلام عمودياً بالورقة إذا كان قليل (بدون رسم/ملصقات) */
+      if(!hasDraw&&!hasStk){
+        var cTop=pad+20,cBot=y-base*.5,aTop=pad,aBot=H-pad+10-(fromT?base*1.5:0)-base*1.2;
+        var shY=Math.round((aTop+aBot)/2-(cTop+cBot)/2);
+        if(shY>0)items.forEach(function(it){it.y+=shY});
+      }
       var dateY=H-pad+10;
       items.push({t:(l.cd?fmtD(l.cd):fmtDate(l.ts)),font:small,color:'#7a5a22',y:dateY,align:'center'});
       if(fromT)items.push({t:fromT,font:bold,color:ink,y:dateY-base*1.5,align:'right'});
