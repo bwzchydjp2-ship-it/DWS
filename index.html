@@ -211,7 +211,8 @@ body.rmode .tbar button.ol{display:none}
 .tools #schIn.act{display:block!important}
 @keyframes toolIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 /* ===== مراحل المحرر (3 خطوات) ===== */
-.wzBar{display:flex;gap:8px;max-width:680px;margin:6px auto 4px}
+.wzBar{display:flex;gap:8px;max-width:680px;margin:6px auto 4px;position:sticky;top:0;z-index:26;padding:6px 0 8px}
+.wzBar::before{content:'';position:absolute;z-index:-1;top:0;bottom:0;left:-16px;right:-16px;background:rgba(11,6,7,.96);border-bottom:1px solid rgba(201,138,98,.25)}
 .wzBar button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 4px 9px;border-radius:16px;border:1px solid #3a2a26;background:rgba(0,0,0,.35);color:var(--muted);font:1rem 'Amiri',serif;line-height:1.25;cursor:pointer;transition:.25s;-webkit-tap-highlight-color:transparent}
 .wzBar button b{font-weight:700;text-align:center}
 .wzBar button.on{border-color:var(--gold);background:#2a0d12;color:#f6e0c8}
@@ -4372,6 +4373,14 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     var sbtn=[].slice.call($('wzSub').querySelectorAll('button'));
     var HINT2={env:'شكل الظرف ونوعه ولونه، حركة الفتح، الختم والشمع.',paper:'نوع الورقة ولونها، الخط، المحاذاة، لون الحبر.'};
     var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'',3:'راجع الملخص، المس أي سطر تعدّله، وبعدها اختم وأرسل.'};
+    /* يعرض القسم المختار كامل (مو بس راسه): الظرف/الورقة توسّط بين شريط الأقسام والشريط السفلي */
+    function focusView(){
+      var el=document.querySelector((cur===2&&sub==='env')||cur===3?'.pvstick':'.pw');if(!el)return;
+      var tl=tools.getBoundingClientRect(),r=el.getBoundingClientRect();
+      var top=$('wzBar').offsetHeight+8,avail=tl.top-top-8,h=r.height,y=window.scrollY+r.top;
+      var t=(cur!==3&&h<avail)?y-top-(avail-h)/2:y-top;
+      try{window.scrollTo({top:Math.max(0,t),behavior:'smooth'})}catch(e){window.scrollTo(0,Math.max(0,t))}
+    }
     function applyStep(n){
       var ok=function(g){return g.step===n&&(n!==2||g.sub===sub)};
       groups.forEach(function(g){g.b.style.display=ok(g)?'':'none'});
@@ -4387,14 +4396,14 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n&&(n!==2||b.getAttribute('data-sub')===sub))});
       $('wzHint').textContent=n===2?HINT2[sub]:HINT[n];
       applyStep(n);if(n===3)sumRender();
-      try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+      setTimeout(focusView,70)
     }
     wbtn.forEach(function(b){b.onclick=function(){go(+b.getAttribute('data-s'),false,false,b.getAttribute('data-sub')||undefined)}});
     sbtn.forEach(function(b){b.onclick=function(){
       sub=b.getAttribute('data-sub');
       sbtn.forEach(function(x){x.classList.toggle('on',x===b)});
       WZ.setAttribute('data-sub',sub);$('wzHint').textContent=HINT2[sub];applyStep(2);
-      try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+      setTimeout(focusView,70)
     }});
     $('wzNext').onclick=function(){go(cur+1)};
     $('wzPrev').onclick=function(){go(cur-1)};
