@@ -210,6 +210,22 @@ body.rmode .tbar button.ol{display:none}
 .tools #schIn{display:none!important;margin:0 16px}
 .tools #schIn.act{display:block!important}
 @keyframes toolIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* ===== مراحل المحرر (3 خطوات) ===== */
+.wzBar{display:flex;gap:8px;max-width:680px;margin:6px auto 4px}
+.wzBar button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 4px 9px;border-radius:16px;border:1px solid #3a2a26;background:rgba(0,0,0,.35);color:var(--muted);font:1rem 'Amiri',serif;line-height:1.25;cursor:pointer;transition:.25s;-webkit-tap-highlight-color:transparent}
+.wzBar button b{font-weight:700;text-align:center}
+.wzBar button.on{border-color:var(--gold);background:#2a0d12;color:#f6e0c8}
+.wzI{width:40px;height:40px;border-radius:13px;background:#241d1b;display:flex;align-items:center;justify-content:center;color:#c9a777;transition:.25s}
+.wzBar button.on .wzI{background:#3a0f16;color:#efd3a8}
+.wzI svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.wzHint{max-width:680px;margin:6px auto 12px;text-align:center;color:var(--muted);font-size:1.02rem;min-height:1.4em}
+.wzAct{max-width:680px;margin:14px auto 0}
+body.rmode .wzBar,body.rmode .wzHint,body.rmode #wzPrev,body.rmode #wzNext{display:none!important}
+body:not(.rmode) #vDesk[data-wz="1"] .pvstick{height:0;min-height:0;padding:0;overflow:hidden;visibility:hidden}
+body:not(.rmode) #vDesk[data-wz="3"] .pw{height:0;overflow:hidden;visibility:hidden;pointer-events:none;margin:0 auto!important}
+body:not(.rmode) #vDesk:not([data-wz="3"]) #sendBtn{display:none}
+body:not(.rmode) #vDesk[data-wz="3"] #wzNext{display:none}
+#vDesk[data-wz="1"] #wzPrev{display:none}
 
 /* envelope */
 .env{
@@ -1846,6 +1862,12 @@ var RvScene=(function(){
 
 
 <section class="view desk" id="vDesk">
+  <nav class="wzBar" id="wzBar" aria-label="مراحل الرسالة">
+    <button type="button" data-s="1" class="on"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l4 4L8 20H4v-4z"/><path d="M13 20h7"/></svg></span><b>1. كتابة الرسالة</b></button>
+    <button type="button" data-s="2"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.4 0 2-1 1.6-2-.5-1.2.2-2.5 1.6-2.5H17a4 4 0 004-4c0-5-4-9.5-9-9.5z"/><circle cx="7.5" cy="11.5" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="8" r="1"/></svg></span><b>2. تصميم الرسالة</b></button>
+    <button type="button" data-s="3"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L3 10.5l7 3 3 7z"/><path d="M21 3L10 13.5"/></svg></span><b>3. خيارات الإرسال</b></button>
+  </nav>
+  <p class="wzHint" id="wzHint"></p>
   <div class="pvbox">
   <div class="pvstick"><div class="pvwrap" id="pvWrap"></div></div>
   <div class="tools">
@@ -1888,9 +1910,12 @@ var RvScene=(function(){
       <div class="dets only-letter" id="dets"></div>
       <label class="to only-letter"><span>الرابط:</span><input id="lkIn" type="url" inputmode="url" dir="ltr" style="text-align:left" maxlength="300" placeholder="https:// (اختياري)" autocomplete="off"></label>
       <label class="to sig only-letter" id="sigRow"><span>من:</span><input id="fromInput" maxlength="40" placeholder="اسمك" autocomplete="off"></label>
-      <p class="note" id="note"></p>
-      <div class="row"><button class="btn ghost only-letter" id="dfSave" type="button">💾 حفظ كمسودة</button><button class="btn ghost only-letter" id="dfList" type="button">📂 مسوداتي (<span id="dfN">0</span>)</button><button class="btn ghost" id="pvBtn" type="button">معاينة</button><button class="btn" id="sendBtn">ختم وإرسال</button></div>
     </div></div></div>
+  </div>
+  <div class="wzAct" id="wzAct">
+    <p class="note" id="note"></p>
+    <div class="row"><button class="btn ghost only-letter" id="dfSave" type="button">💾 حفظ كمسودة</button><button class="btn ghost only-letter" id="dfList" type="button">📂 مسوداتي (<span id="dfN">0</span>)</button><button class="btn ghost" id="pvBtn" type="button">معاينة</button></div>
+    <div class="row"><button class="btn ghost" id="wzPrev" type="button">› السابق</button><button class="btn" id="wzNext" type="button">التالي ‹</button><button class="btn" id="sendBtn">ختم وإرسال</button></div>
   </div>
 </section>
 
@@ -3946,6 +3971,7 @@ var FIREBASE_CONFIG={
     $('tDesk').classList.toggle('on',mode==='desk');$('tBox').classList.toggle('on',mode==='box');$('tRep').classList.toggle('on',mode==='replies');
     $('sub').textContent=rmode?'اكتب ردّك على الرسالة':'';
     sync();
+    if((mode==='desk'||mode==='reply')&&window.__wz)window.__wz.reset();
     if(mode==='box'){renderShelf(letters,$('shelf'),false);checkReads()}
     if(mode==='replies')renderShelf(replies,$('shelfR'),true);
     if(!guest&&user)refreshReplies();
@@ -4277,13 +4303,13 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
   qpRender();
 
   
-  /* ---------- شريط الاختيارات الثابت ---------- */
+  /* ---------- شريط الاختيارات الثابت + مراحل المحرر (3 خطوات) ---------- */
   (function(){
     var tools=document.querySelector('.tools'),bar=document.createElement('div');bar.className='tbar';
-    var groups=[];
+    var groups=[],S1={swKind:1,swCd:1,swAdd:1},S3={swPriv:1,swRep:1,swMulti:1,swCap:1,swOpen:1,swPw:1,swDlv:1};
     [].forEach.call(tools.querySelectorAll('h3'),function(h){
       var sw=h.nextElementSibling;if(!sw||!sw.classList.contains('sw'))return;
-      var g={sw:sw,extra:sw.id==='swEmb'?$('schIn'):null},b=document.createElement('button');
+      var g={sw:sw,extra:sw.id==='swEmb'?$('schIn'):null,step:S1[sw.id]?1:(S3[sw.id]?3:2)},b=document.createElement('button');
       b.textContent=h.textContent;if(h.closest('.only-letter'))b.className='ol';
       b.onclick=function(){show(g,b)};bar.appendChild(b);g.b=b;groups.push(g);
     });
@@ -4293,9 +4319,44 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       g.sw.classList.add('act');if(g.extra)g.extra.classList.add('act');b.classList.add('on');
       bar.scrollTo({left:b.offsetLeft-(bar.clientWidth-b.offsetWidth)/2,behavior:'smooth'});
     }
-    var first=groups[2]||groups[0];show(first,first.b);
     function fit(){document.documentElement.style.setProperty('--barh',tools.offsetHeight+'px')}
+    /* ===== المراحل: 1 كتابة · 2 تصميم · 3 إرسال ===== */
+    var WZ=$('vDesk'),wbtn=[].slice.call($('wzBar').querySelectorAll('button')),cur=1;
+    var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'الورق، الخط، الظرف، الحبر، الختم.',3:'الخصوصية، كلمة السر، موعد الفتح، وسيلة التوصيل والإرسال.'};
+    function applyStep(n){
+      groups.forEach(function(g){g.b.style.display=g.step===n?'':'none'});
+      var f=groups.filter(function(g){return g.step===n})[0];if(f)show(f,f.b);
+    }
+    function go(n,force,keepNote){
+      n=Math.max(1,Math.min(3,n));
+      if(!force&&!rmode&&n>1&&cur===1&&!$('msg').value.trim()&&!strokes.length&&!stk.length){
+        $('note').textContent='اكتب شيئاً بالرسالة أولاً.';try{$('msg').focus()}catch(e){}return}
+      if(!keepNote)$('note').textContent='';
+      cur=n;WZ.setAttribute('data-wz',n);
+      wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n)});
+      $('wzHint').textContent=HINT[n];
+      applyStep(n);
+      try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+    }
+    wbtn.forEach(function(b){b.onclick=function(){go(+b.getAttribute('data-s'))}});
+    $('wzNext').onclick=function(){go(cur+1)};
+    $('wzPrev').onclick=function(){go(cur-1)};
+    /* لو الإرسال فشل بسبب شي من الخطوة الأولى (اسم، رابط...) نرجع المستخدم لها */
+    var sb=$('sendBtn'),so=sb.onclick;
+    sb.onclick=function(){
+      if(rmode||!so)return so&&so.apply(this,arguments);
+      $('note').textContent='';
+      var r=so.apply(this,arguments),t=$('note').textContent;
+      if(cur!==1&&/اكتب|الرابط|الصور/.test(t)){
+        go(1,true,true);
+        var f=/اسمك/.test(t)?$('fromInput'):(/الشخص/.test(t)?$('toInput'):(/الرابط/.test(t)?$('lkIn'):null));
+        if(f)setTimeout(function(){try{f.focus()}catch(e){}},450);
+      }
+      return r;
+    };
+    window.__wz={go:go,reset:function(){go(1,true)}};
     fit();window.addEventListener('resize',fit);setTimeout(fit,300);try{new ResizeObserver(fit).observe(tools)}catch(e){}
+    go(1,true);
   })();
 
   /* مسودة تنحفظ تلقائياً */
