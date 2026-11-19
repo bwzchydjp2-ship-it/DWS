@@ -228,11 +228,28 @@ body:not(.rmode) #vDesk[data-wz="2"][data-sub="paper"] .pvstick{height:0;min-hei
 body:not(.rmode) #vDesk[data-wz="2"] .wzSub{display:flex}
 .wzSub button{flex:1 1 0;max-width:200px;font:1.1rem 'Amiri',serif;color:var(--muted);background:rgba(0,0,0,.35);border:1px solid #4a2a24;border-radius:20px;padding:6px 14px;cursor:pointer;transition:.25s}
 .wzSub button.on{background:#3a0f16;border-color:var(--gold);color:#f6e0c8}
-body.rmode .wzSub{display:none!important}
+body .wzSub{display:none!important}
+.wzBar button b{font-size:1.02rem}
+.wzSum{display:none;max-width:680px;margin:0 auto 14px;border:1px solid #4a2a24;border-radius:16px;background:rgba(0,0,0,.35);overflow:hidden}
+body:not(.rmode) #vDesk[data-wz="3"] .wzSum{display:block}
+.wzSum h4{margin:0;padding:10px 16px 6px;font-weight:400;font-size:1.05rem;color:var(--muted);text-align:center}
+.wzSum button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 16px;background:transparent;border:0;border-top:1px solid #2e1c1a;color:var(--text);font:1.12rem 'Amiri',serif;cursor:pointer;text-align:right;-webkit-tap-highlight-color:transparent}
+.wzSum button:active{background:rgba(120,40,40,.25)}
+.wzSum button i{font-style:normal;font-size:1.25rem;width:26px;text-align:center}
+.wzSum button span{color:var(--muted);flex:0 0 auto}
+.wzSum button em{font-style:normal;color:#e8c9a0;margin-inline-start:auto;text-align:left}
+.wzSum button.dim em{color:#7d6a5b}
+.wzSum button::after{content:'‹';color:var(--gold);font-size:1.3rem;line-height:1}
+body:not(.rmode) #vDesk[data-wz="3"] #sendBtn{font-size:1.35rem;padding:14px 52px;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,138,98,.18),0 8px 22px rgba(0,0,0,.55)}
 body:not(.rmode) #vDesk:not([data-wz="3"]) #sendBtn{display:none}
 body:not(.rmode) #vDesk[data-wz="3"] #wzNext{display:none}
 #vDesk[data-wz="1"] #wzPrev{display:none}
 #wzNext,#wzPrev{display:none!important}
+/* أزرار المسودة والمعاينة: كانت بلون داكن مخصص للورقة، هسه واضحة على الخلفية الغامقة */
+.wzAct .btn.ghost{color:#f0d9bf;background:rgba(201,138,98,.10);border:1px solid #b07a58;padding:9px 16px;font-size:1.08rem;box-shadow:none}
+.wzAct .btn.ghost:active{background:rgba(201,138,98,.28)}
+.wzAct .row:has(#dfSave){gap:8px}
+.wzAct .row:has(#dfSave) .btn{flex:1 1 auto;white-space:nowrap}
 #wzAct .row:last-child:not(:has(#sendBtn:not([style*="none"]))){margin:0}
 /* الورقة تطول مع الكتابة بدل شريط التمرير الداخلي */
 #compose .sheet{max-height:none;overflow:visible}
@@ -1873,10 +1890,11 @@ var RvScene=(function(){
 
 
 <section class="view desk" id="vDesk">
-  <nav class="wzBar" id="wzBar" aria-label="مراحل الرسالة">
-    <button type="button" data-s="1" class="on"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l4 4L8 20H4v-4z"/><path d="M13 20h7"/></svg></span><b>1. كتابة الرسالة</b></button>
-    <button type="button" data-s="2"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.4 0 2-1 1.6-2-.5-1.2.2-2.5 1.6-2.5H17a4 4 0 004-4c0-5-4-9.5-9-9.5z"/><circle cx="7.5" cy="11.5" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="8" r="1"/></svg></span><b>2. تصميم الرسالة</b></button>
-    <button type="button" data-s="3"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L3 10.5l7 3 3 7z"/><path d="M21 3L10 13.5"/></svg></span><b>3. خيارات الإرسال</b></button>
+  <nav class="wzBar" id="wzBar" aria-label="أقسام الرسالة">
+    <button type="button" data-s="1" class="on"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l4 4L8 20H4v-4z"/><path d="M13 20h7"/></svg></span><b>الكتابة</b></button>
+    <button type="button" data-s="2" data-sub="env"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><b>الظرف</b></button>
+    <button type="button" data-s="2" data-sub="paper"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 16h6"/></svg></span><b>الورقة</b></button>
+    <button type="button" data-s="3"><span class="wzI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L3 10.5l7 3 3 7z"/><path d="M21 3L10 13.5"/></svg></span><b>الإرسال</b></button>
   </nav>
   <p class="wzHint" id="wzHint"></p>
   <div class="wzSub" id="wzSub"><button type="button" data-sub="env" class="on">✉️ الظرف</button><button type="button" data-sub="paper">📜 الورقة</button></div>
@@ -1925,6 +1943,7 @@ var RvScene=(function(){
     </div></div></div>
   </div>
   <div class="wzAct" id="wzAct">
+    <div class="wzSum" id="wzSum"></div>
     <p class="note" id="note"></p>
     <div class="row"><button class="btn ghost only-letter" id="dfSave" type="button">💾 حفظ كمسودة</button><button class="btn ghost only-letter" id="dfList" type="button">📂 مسوداتي (<span id="dfN">0</span>)</button><button class="btn ghost" id="pvBtn" type="button">معاينة</button></div>
     <div class="row"><button class="btn ghost" id="wzPrev" type="button">› السابق</button><button class="btn" id="wzNext" type="button">التالي ‹</button><button class="btn" id="sendBtn">ختم وإرسال</button></div>
@@ -2475,6 +2494,7 @@ var FIREBASE_CONFIG={
     $('msg').placeholder=rmode?'اكتب ردّك هنا...':(KINDS[sel.kind]||KINDS.letter)[3];
     var pv=$('pvWrap');pv.innerHTML='';pv.appendChild(mkEnv(sel));
     try{msgGrow()}catch(e){}
+    try{if(window.__wz)window.__wz.sum()}catch(e){}
   }
   /* ---------- تكبير خانة الكتابة تلقائياً مع النص ---------- */
   function msgGrow(){
@@ -4351,24 +4371,25 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     var WZ=$('vDesk'),wbtn=[].slice.call($('wzBar').querySelectorAll('button')),cur=1,sub='env';
     var sbtn=[].slice.call($('wzSub').querySelectorAll('button'));
     var HINT2={env:'شكل الظرف ونوعه ولونه، حركة الفتح، الختم والشمع.',paper:'نوع الورقة ولونها، الخط، المحاذاة، لون الحبر.'};
-    var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'الورق، الخط، الظرف، الحبر، الختم.',3:'الخصوصية، كلمة السر، موعد الفتح، وسيلة التوصيل والإرسال.'};
+    var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'',3:'راجع الملخص، المس أي سطر تعدّله، وبعدها اختم وأرسل.'};
     function applyStep(n){
       var ok=function(g){return g.step===n&&(n!==2||g.sub===sub)};
       groups.forEach(function(g){g.b.style.display=ok(g)?'':'none'});
       var f=groups.filter(ok)[0];if(f)show(f,f.b);
     }
-    function go(n,force,keepNote){
+    function go(n,force,keepNote,sb){
       n=Math.max(1,Math.min(3,n));
       if(!force&&!rmode&&n>1&&cur===1&&!$('msg').value.trim()&&!strokes.length&&!stk.length){
         $('note').textContent='اكتب شيئاً بالرسالة أولاً.';try{$('msg').focus()}catch(e){}return}
       if(!keepNote)$('note').textContent='';
+      if(sb)sub=sb;
       cur=n;WZ.setAttribute('data-wz',n);WZ.setAttribute('data-sub',sub);
-      wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n)});
+      wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n&&(n!==2||b.getAttribute('data-sub')===sub))});
       $('wzHint').textContent=n===2?HINT2[sub]:HINT[n];
-      applyStep(n);
+      applyStep(n);if(n===3)sumRender();
       try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
     }
-    wbtn.forEach(function(b){b.onclick=function(){go(+b.getAttribute('data-s'))}});
+    wbtn.forEach(function(b){b.onclick=function(){go(+b.getAttribute('data-s'),false,false,b.getAttribute('data-sub')||undefined)}});
     sbtn.forEach(function(b){b.onclick=function(){
       sub=b.getAttribute('data-sub');
       sbtn.forEach(function(x){x.classList.toggle('on',x===b)});
@@ -4390,7 +4411,31 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       }
       return r;
     };
-    window.__wz={go:go,reset:function(){go(1,true)}};
+    /* ملخص الإرسال: كل سطر يفتح خياره بالأسفل */
+    function sumRender(){
+      var box=$('wzSum');if(!box)return;box.innerHTML='';
+      var oa=0;if(sel.open==='custom')oa=new Date($('openIn').value).getTime()||0;else if(sel.open)oa=Date.now()+(+sel.open);
+      var pw=($('pwIn').value||'').trim(),ph=($('pwHint').value||'').trim(),dl='';
+      DLVS.forEach(function(d){if(d[1]===(sel.dlv||''))dl=d[0]});
+      var rows=[
+        ['👤','الخصوصية',sel.priv==='secret'?'سرية (بدون اسمي)':'علنية (باسمي)','swPriv',0],
+        ['💬','الرد',sel.rep==='no'?'بدون رد':'يقبل الرد','swRep',sel.rep==='no'],
+        ['👥','المستلمون',sel.multi==='yes'?'عدة أشخاص (رابط واحد)':'شخص واحد','swMulti',0],
+        ['⏳','موعد الفتح',oa>Date.now()?fmtDT(oa):'فوراً','swOpen',!(oa>Date.now())],
+        ['🔑','كلمة السر',pw?('مفعّلة'+(ph?' · '+ph:'')):'بدون','swPw',!pw],
+        ['📮','وسيلة التوصيل',dl||'الغراب (الافتراضي)','swDlv',!(sel.dlv)]
+      ];
+      var h=document.createElement('h4');h.textContent='ملخص الإرسال';box.appendChild(h);
+      rows.forEach(function(r){
+        var b=document.createElement('button');b.type='button';if(r[4])b.className='dim';
+        var i=document.createElement('i');i.textContent=r[0];var sp=document.createElement('span');sp.textContent=r[1];var em=document.createElement('em');em.textContent=r[2];
+        b.appendChild(i);b.appendChild(sp);b.appendChild(em);
+        b.onclick=function(){var g=groups.filter(function(x){return x.sw.id===r[3]})[0];if(g)show(g,g.b)};
+        box.appendChild(b);
+      });
+    }
+    ['pwIn','pwHint'].forEach(function(i){var e=$(i);if(e)e.addEventListener('input',function(){if(cur===3)sumRender()})});
+    window.__wz={go:go,sum:function(){if(cur===3)sumRender()},reset:function(){go(1,true,false,'env')}};
     fit();window.addEventListener('resize',fit);setTimeout(fit,300);try{new ResizeObserver(fit).observe(tools)}catch(e){}
     go(1,true);
   })();
