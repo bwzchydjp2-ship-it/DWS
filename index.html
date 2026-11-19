@@ -414,6 +414,9 @@ body.rmode .tbar button.ol{display:none}
 .o-flip{--fo:perspective(700px) rotateX(180deg) rotateZ(-6deg);--fd:.8s;--pout:translateY(-97%)}
 .o-shrink{--fd:.7s;--pout:translateY(-97%) scale(1.06)}
 .o-slant{--fd:.85s;--pout:translateY(-95%) skewX(-3deg)}
+html.rvWait body>*:not(#rvOv):not(#dvOv):not(#rvCur){visibility:hidden!important}
+html.rvWait,html.rvWait body{background:#070304!important}
+#rvCur{position:fixed;inset:0;z-index:9990;background:#070304}
 /* مشاهد توصيل الرسالة (ساعي بريد، حمامة، زجاجة، تحت الباب) */
 #dvOv{position:fixed;inset:0;z-index:9999;overflow:hidden;opacity:0;transition:opacity .7s ease;background:#0b0607}
 #dvOv.on{opacity:1}
@@ -592,6 +595,9 @@ body.rvOn{overflow:hidden}
 </style>
 </head>
 <body class="introOn">
+<script>/* رابط رسالة (#r-): غطاء داكن يخفي صفحة التحميل لين يبين مشهد التوصيل */
+(function(){if(!/^#r-/.test(location.hash))return;var d=document.documentElement;d.classList.add('rvWait');var c=document.createElement('div');c.id='rvCur';document.body.insertBefore(c,document.body.firstChild);window.__rvRmCur=function(){d.classList.remove('rvWait');var x=document.getElementById('rvCur');if(x)x.remove()};setTimeout(window.__rvRmCur,15000)})();
+</script>
 <div id="introOv"><button id="introSkip" type="button">تخطي</button></div>
 <script type="text/plain" id="introSrc"><!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>
   .replay{display:none!important}
@@ -1099,7 +1105,7 @@ body.rvOn{overflow:hidden}
 (function(){
   if(!/^#r-/.test(location.hash))return;
   var rm=false;try{rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
-  if(rm||!document.body||!document.body.animate)return;
+  if(rm||!document.body||!document.body.animate){window.__rvRmCur&&window.__rvRmCur();return}
 /* بومة DWS الحقيقية (قص من الصورة): الجسم + جناح منفصل يرفرف، ويحمل الظرف بمخالبه */
 var RvBirdLib=(function(){
   var UW=760,UH=620,CX=380,CY=340,K=.8,OY=180,BX0=CX-67;
@@ -1495,13 +1501,13 @@ var RvScene=(function(){
       startArrive();envReady=true;tryRelease();
     }catch(x){startArrive();envReady=true;tryRelease()}
   };
-  window.__rvLoaded=function(){if(!owlShown){finish();return}loaded=true;startArrive();envReady=true;tryRelease();tryFinish()};
+  window.__rvLoaded=function(){if(!owlShown){window.__rvRmCur&&window.__rvRmCur();finish();return}loaded=true;startArrive();envReady=true;tryRelease();tryFinish()};
   document.getElementById('rvSkip').onclick=finish;
   T(finish,30000);
   /* مخفي لين يتحدد نوع التوصيل: ما نبين البومة إذا المرسل اختار وسيلة ثانية */
   ov.style.opacity='0';ov.style.pointerEvents='none';
   var owlShown=false;
-  window.__rvShowOwl=function(){if(finished)return;owlShown=true;ov.style.opacity='1';ov.style.pointerEvents=''};
+  window.__rvShowOwl=function(){if(finished)return;owlShown=true;ov.style.opacity='1';ov.style.pointerEvents='';window.__rvRmCur&&setTimeout(window.__rvRmCur,1000)};
   frame();
 })();
 </script>
@@ -1767,6 +1773,7 @@ var RvScene=(function(){
     ov.innerHTML='<div class="dvL">'+S.bg+'</div><div id="dvLet"></div><div class="dvL">'+(S.fg||'')+'</div><div id="dvTxt">'+S.txt+'</div><button id="dvSkip" type="button">تخطي</button>';
     document.body.appendChild(ov);document.body.classList.add('rvOn');
     requestAnimationFrame(function(){ov.classList.add('on')});
+    setTimeout(function(){window.__rvRmCur&&window.__rvRmCur()},900);
     var anims=[],timers=[],finished=false,animDone=false,loaded=false,realEnv=null,Wf=300,ran=false,t0=Date.now();
     var let_=ov.querySelector('#dvLet'),txt=ov.querySelector('#dvTxt');
     function A(el,kf,o){var a=el.animate(kf,o);anims.push(a);return a}
@@ -1815,7 +1822,7 @@ var RvScene=(function(){
   /* يستدعيها السكربت الرئيسي بعد ما تنجلب الرسالة ويعرف نوع التوصيل */
   window.__rvKind=function(k){
     if(started)return;
-    if(k==='none'){started=true;var b0=document.getElementById('rvSkip');if(b0)b0.click();return}
+    if(k==='none'){started=true;var b0=document.getElementById('rvSkip');if(b0)b0.click();window.__rvRmCur&&window.__rvRmCur();return}
     var S=SC[k];if(!S){if(window.__rvShowOwl)window.__rvShowOwl();return}
     started=true;
     var b=document.getElementById('rvSkip');if(b)b.click();
@@ -3665,6 +3672,14 @@ var FIREBASE_CONFIG={
         });
         return out;
       }
+      function wrapM(t,font,lim){
+        x.font=font;var out=[];
+        String(t).split('\n').forEach(function(par){
+          var cur='',ls=[];par.split(/\s+/).forEach(function(wd){var tr=cur?cur+' '+wd:wd;if(cur&&x.measureText(tr).width>lim){ls.push(cur);cur=wd}else cur=tr});
+          ls.push(cur);ls.forEach(function(s,i){out.push({t:s,last:i===ls.length-1})});
+        });
+        return out;
+      }
       function wrapU(u,font){
         x.font=font;var out=[],cur='';
         for(var i=0;i<u.length;i++){var t=cur+u.charAt(i);if(cur&&x.measureText(t).width>mw){out.push(cur);cur=u.charAt(i)}else cur=t}
@@ -3681,7 +3696,16 @@ var FIREBASE_CONFIG={
       if(ttl)add(ttl,bold,'#7a5a22',base*1.5,'center',base*.6);
       if(!isReply&&l.kind!=='plain')add('إلى: '+(l.to||''),bold,ink,base*1.6,'right',base*.3);
       if(isReply)add('رد من: '+(l.fromName||''),bold,ink,base*1.6,'right',base*.3);
-      if(l.text)add(l.text,norm,ink,base*1.75,'right',base*.5);
+      if(l.text){
+        /* نفس محاذاة النص المختارة: يمين / وسط / يسار / ضبط / قصيدة */
+        var ta=l.ta||'',lim=ta==='poem'?Math.round(mw*.82):mw,al=(ta==='center'||ta==='poem')?'center':(ta==='left'?'left':'right'),mlh=base*1.75;
+        wrapM(l.text,norm,lim).forEach(function(r){
+          var it={t:r.t,font:norm,color:ink,y:y+mlh*.8,align:al};
+          if(ta==='justify'&&!r.last&&r.t.indexOf(' ')>0)it.just=mw;
+          items.push(it);y+=mlh;
+        });
+        y+=base*.5;
+      }
       /* الرابط اللي ضافه المرسل: كامل بدون قص */
       /* الرابط ما ينرسم بالصورة (يروح بنص المشاركة بس) */
       if(!isReply)(K[2]||[]).filter(function(f){return d[f]}).forEach(function(f){
@@ -3709,7 +3733,15 @@ var FIREBASE_CONFIG={
       paintPaper(x,W,H,l.ptype||'old',P);
       items.forEach(function(it){
         x.font=it.font;x.fillStyle=it.color;x.textBaseline='alphabetic';x.direction=it.dir||'rtl';
-        if(it.align==='center'){x.textAlign='center';x.fillText(it.t,W/2,it.y)}
+        if(it.just){
+          var ws=it.t.split(/\s+/).filter(Boolean),tw=0,sp=x.measureText(' ').width;
+          ws.forEach(function(w){tw+=x.measureText(w).width});
+          var gp=(it.just-tw)/(ws.length-1);
+          if(ws.length>1&&gp>=sp*.8&&gp<=sp*4){var pxr=W-pad;x.textAlign='right';ws.forEach(function(w){x.fillText(w,pxr,it.y);pxr-=x.measureText(w).width+gp})}
+          else{x.textAlign='right';x.fillText(it.t,W-pad,it.y)}
+        }
+        else if(it.align==='center'){x.textAlign='center';x.fillText(it.t,W/2,it.y)}
+        else if(it.align==='left'){x.textAlign='left';x.fillText(it.t,pad,it.y)}
         else{x.textAlign='right';x.fillText(it.t,W-pad,it.y)}
       });
       x.direction='rtl';
