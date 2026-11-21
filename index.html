@@ -619,6 +619,35 @@ body.rvOn{overflow:hidden}
 #rvSkip{position:absolute;z-index:2;top:calc(14px + env(safe-area-inset-top,0px));left:14px;font:1rem 'Amiri',serif;color:#f0b98d;background:rgba(20,10,11,.78);border:1px solid rgba(201,138,98,.55);border-radius:999px;padding:8px 20px;cursor:pointer}
 .msg-link{text-decoration:none;cursor:pointer;display:inline-block;padding:0 .15em;font-size:1.15em;transition:transform .2s}
 .msg-link:hover{transform:scale(1.2)}
+
+/* جلدة لكل مجموعة ردود */
+.shelf>.binder{grid-column:1/-1;position:relative;margin:6px 0 14px;border-radius:10px 22px 22px 10px;background:linear-gradient(135deg,#5a2a1c,#3b1810 60%,#2a110b);box-shadow:0 14px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(201,163,90,.35),inset 0 2px 0 rgba(255,255,255,.08);padding:0 0 18px;overflow:hidden}
+.binder.bk-anon{background:linear-gradient(135deg,#2c2a52,#1d1b3a 60%,#12102a)}
+.binder::before{content:'';position:absolute;top:0;bottom:0;right:0;width:22px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.07) 45%,rgba(0,0,0,.4));border-left:1px solid rgba(201,163,90,.35)}
+.binder::after{content:'';position:absolute;inset:8px 34px 8px 8px;border:1px dashed rgba(201,163,90,.35);border-radius:6px;pointer-events:none}
+.binderH{all:unset;box-sizing:border-box;position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;padding:16px 44px 10px 24px;cursor:pointer;color:var(--gold)}
+.binderT{font:700 1.25rem 'Amiri',serif;background:linear-gradient(180deg,rgba(201,163,90,.22),rgba(201,163,90,.08));border:1px solid rgba(201,163,90,.55);border-radius:6px;padding:3px 14px;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+.binderN{font-size:.85rem;opacity:.8;margin-inline-start:auto}
+.binderC{transition:transform .25s}
+.binderIn{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:26px 22px;padding:14px 46px 8px 26px}
+.binderIn .cap,.binderIn .cap *{color:#f1e6cf}
+@media(max-width:520px){.binderIn{padding:10px 40px 6px 14px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 12px}.binderT{font-size:1.05rem}}
+
+.shelf>.binder{perspective:1400px;transition:min-height .7s ease}
+.binder.closed{min-height:150px;padding-bottom:0}
+.binderBody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .8s ease,opacity .6s ease .2s;position:relative;z-index:1}
+.binderBody>.binderIn{overflow:hidden;min-height:0}
+.binder.closed .binderBody{grid-template-rows:0fr;opacity:0}
+.binder.closed .binderH{opacity:0;pointer-events:none}
+.binderCv{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--gold);transform-origin:right center;transform:rotateY(0);transition:transform .9s cubic-bezier(.5,.05,.2,1),opacity .2s ease .75s,visibility 0s linear .95s;backface-visibility:hidden;border-radius:inherit;background:linear-gradient(135deg,#6a3322,#4a1f14 60%,#341209);box-shadow:inset 0 0 0 1px rgba(201,163,90,.5),inset 0 0 40px rgba(0,0,0,.4)}
+.binder.bk-anon .binderCv{background:linear-gradient(135deg,#34316a,#24214a 60%,#171435)}
+.binderCv::before{content:'';position:absolute;inset:10px 34px 10px 10px;border:1px dashed rgba(201,163,90,.5);border-radius:6px}
+.binderCv .cvT{position:relative;font:700 1.5rem 'Amiri',serif;border:1px solid rgba(201,163,90,.6);background:rgba(201,163,90,.14);padding:4px 20px;border-radius:6px;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+.binderCv .cvN{position:relative;font-size:.9rem;opacity:.85}
+.binderCv .cvH{position:relative;font-size:.78rem;opacity:.6}
+.binder.open .binderCv{transform:rotateY(-165deg);opacity:0;visibility:hidden;pointer-events:none}
+.binder.closed:hover .binderCv{transform:rotateY(-10deg)}
+@media(prefers-reduced-motion:reduce){.binderCv,.binderBody,.shelf>.binder{transition:none!important}}
 </style>
 <style>.sw.chips button.sug{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,170,90,.35)}.sw.chips button.sug::before{content:'★ ';color:var(--gold);font-size:.8em}.tools .sugnote{display:none;font-size:.95rem;color:var(--muted);padding:0 18px 2px}.tools #swEmb.act+.sugnote{display:block}</style>
 <style>
@@ -648,6 +677,13 @@ body.rvOn{overflow:hidden}
 .capbox b{color:var(--gold);font-weight:700}
 .capbox.on{display:block}
 @media (prefers-reduced-motion:reduce){.env-hg svg,.hgt,.hgb,.hgg{animation:none}}
+</style>
+<style>
+body.guest.anonrm nav.wzBar{display:flex!important}
+body.anonrm .only-letter{display:none!important}
+body.anonrm .tbar button.ol{display:none}
+body.anonrm .wzSum button{pointer-events:none}
+body.anonrm .wzSum button::after{display:none}
 </style>
 </head>
 <body class="introOn">
@@ -3463,7 +3499,7 @@ var FIREBASE_CONFIG={
   }
   function fmtDT(ts){var d=new Date(ts),h=d.getHours(),m=h>=12?'م':'ص';h=h%12||12;return fmtDate(ts)+' '+h+':'+p2(d.getMinutes())+' '+m}
   /* ---------- تبويبات صندوق الردود: مجموعة لكل نوع رسالة (مجهولة، دعوة، حب، شكر...) ---------- */
-  var rpGv='all';
+  var rpGv='all',rpOpen={};
   function rpGroup(r){
     if(r.anon||r.letterId==='ask')return ['anon','🤫 مجهولة'];
     var l=null;for(var i=0;i<letters.length;i++){if(letters[i].id===r.letterId){l=letters[i];break}}
@@ -3513,6 +3549,24 @@ var FIREBASE_CONFIG={
     }else list.sort(function(a,b){return b.ts-a.ts});
     if(!list.length){el.appendChild(mk('div','empty',isReply?'صندوق الردود فارغ. لما أحد يرد على رسائلك، أو يكتب لك على رابط صندوق الأسرار، تطلع رسالته هنا.':(total?'ماكو رسائل تطابق البحث أو الفلتر.':'الصندوق فارغ. اكتب رسالتك الأولى من المكتب.')));return}
     var hasPin=!isReply&&list.some(function(x){return x.pin}),secDone=0;
+    var bnd={};
+    function binderFor(l){
+      var g=rpGroup(l),k=g[0];
+      if(bnd[k])return bnd[k];
+      var n=0;list.forEach(function(x){if(rpGroup(x)[0]===k)n++});
+      var B=mk('section','binder bk-'+(k==='anon'?'anon':'kind'));
+      var isOpen=rpOpen[k]===undefined?(rpGv!=='all'):rpOpen[k];
+      B.classList.add(isOpen?'open':'closed');
+      var cv=mk('div','binderCv');cv.setAttribute('role','button');cv.tabIndex=0;
+      cv.appendChild(mk('div','cvT',g[1]));cv.appendChild(mk('div','cvN',n+(n===1?' رد':' ردود')));cv.appendChild(mk('div','cvH','اضغط لفتح الجلدة'));
+      var h=mk('button','binderH');h.type='button';
+      h.appendChild(mk('span','binderT',g[1]));h.appendChild(mk('span','binderN',n+(n===1?' رد':' ردود')));h.appendChild(mk('span','binderC','إغلاق ✕'));
+      var tg=function(v){rpOpen[k]=v;B.classList.toggle('open',v);B.classList.toggle('closed',!v)};
+      cv.onclick=function(){tg(true)};cv.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();tg(true)}};
+      h.onclick=function(){tg(false)};
+      var inner=mk('div','binderIn'),wrap=mk('div','binderBody');wrap.appendChild(inner);
+      B.appendChild(h);B.appendChild(wrap);B.appendChild(cv);el.appendChild(B);bnd[k]=inner;return inner;
+    }
     list.forEach(function(l){
       if(hasPin&&secDone!==(l.pin?1:2)){secDone=l.pin?1:2;el.appendChild(mk('div','shelf-sec',l.pin?'📌 مثبّتة':'كل الرسائل'))}
       var slot=mk('div','slot'+(!isReply&&l.pin?' pinned':'')),env=mkEnv(l);
@@ -3527,7 +3581,7 @@ var FIREBASE_CONFIG={
       if(l.ed&&!isReply)cap.appendChild(mk('span','','  ✎ معدّلة'));if(l.openAt&&l.openAt>Date.now())cap.appendChild(mk('span','','  🔒 تنفتح '+fmtDT(l.openAt)));if(!isReply&&l.readAt&&!l.multi)cap.appendChild(mk('span','','  ✓ انفتحت '+fmtDT(l.readAt)));if(!isReply&&l.multi){var rc=replies.filter(function(r){return r.letterId===l.id}).length;cap.appendChild(mk('span','','  👁 '+(l.opens||0)+(rc?' · 💬 '+rc:'')))}if(!isReply){var qe=mk('button','cap-edit','✏️ تعديل');qe.type='button';qe.onclick=function(ev){ev.stopPropagation();startEdit(l)};var qw=mk('div');qw.style.textAlign='center';qw.appendChild(qe);cap.appendChild(qw);
         if(l.tags&&l.tags.length){var tg=mk('div','cap-tags');l.tags.forEach(function(t){var i=mk('i','','#'+t);i.onclick=function(ev){ev.stopPropagation();bxTag=t;renderShelf(letters,$('shelf'),false)};tg.appendChild(i)});cap.appendChild(tg)}
         var ac=mk('div','cap-act'),pb=mk('button',l.pin?'on':'',l.pin?'📌 مثبّتة':'📌 تثبيت');pb.type='button';pb.onclick=function(ev){ev.stopPropagation();if(l.pin)delete l.pin;else l.pin=Date.now();saveMeta(l);renderShelf(letters,$('shelf'),false)};
-        var tb=mk('button','',l.tags&&l.tags.length?'🏷 الوسوم':'🏷 وسم');tb.type='button';tb.onclick=function(ev){ev.stopPropagation();editTags(l)};ac.appendChild(pb);ac.appendChild(tb);cap.appendChild(ac)}slot.appendChild(cap);el.appendChild(slot);
+        var tb=mk('button','',l.tags&&l.tags.length?'🏷 الوسوم':'🏷 وسم');tb.type='button';tb.onclick=function(ev){ev.stopPropagation();editTags(l)};ac.appendChild(pb);ac.appendChild(tb);cap.appendChild(ac)}slot.appendChild(cap);(isReply?binderFor(l):el).appendChild(slot);
     });
     pendingDrop=null;
   }
@@ -4097,7 +4151,7 @@ var FIREBASE_CONFIG={
     var h=location.hash,m=/^#r-([a-z0-9]+)$/.exec(h),rp=/^#re-([a-z0-9]+)$/.exec(h),ak=/^#ask-([A-Za-z0-9]{20,40})$/.exec(h);window.__askUid=ak?ak[1]:null;
     var mode=m?'read':((rp||ak)?'reply':(h==='#box'?'box':(h==='#replies'?'replies':'desk')));
     guest=mode==='read'||mode==='reply';rmode=mode==='reply';replyId=rp?rp[1]:(ak?'ask':null);
-    document.body.classList.toggle('guest',guest);document.documentElement.classList.toggle('guesth',guest);document.body.classList.toggle('rmode',rmode);
+    document.body.classList.toggle('guest',guest);document.documentElement.classList.toggle('guesth',guest);document.body.classList.toggle('rmode',rmode&&!ak);document.body.classList.toggle('anonrm',rmode&&!!ak);
     if(!guest&&ready&&!user)signIn();var shown=mode==='reply'?'desk':mode;
     [['desk','Desk'],['box','Box'],['replies','Replies'],['read','Read']].forEach(function(v){$('v'+v[1]).classList.toggle('on',v[0]===shown)});
     $('tDesk').classList.toggle('on',mode==='desk');$('tBox').classList.toggle('on',mode==='box');$('tRep').classList.toggle('on',mode==='replies');
@@ -4469,6 +4523,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     var sbtn=[].slice.call($('wzSub').querySelectorAll('button'));
     var HINT2={env:'شكل الظرف ونوعه ولونه، حركة الفتح، الختم والشمع.',paper:'نوع الورقة ولونها، الخط، المحاذاة، لون الحبر.'};
     var HINT={1:'العنوان، المستلم، محتوى الرسالة، الصور.',2:'',3:'راجع الملخص، المس أي سطر تعدّله، وبعدها اختم وأرسل.'};
+    var HINTA={1:'اكتب رسالتك المجهولة، ما يعرف أحد مين كتبها.',2:'',3:'راجع واختم وأرسل، رسالتك توصل لصاحب الرابط بشكل مجهول.'};
     /* يعرض القسم المختار كامل (مو بس راسه): الظرف/الورقة توسّط بين شريط الأقسام والشريط السفلي */
     function focusView(){
       var el=document.querySelector((cur===2&&sub==='env')||cur===3?'.pvstick':'.pw');if(!el)return;
@@ -4478,9 +4533,10 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       try{window.scrollTo({top:Math.max(0,t),behavior:'smooth'})}catch(e){window.scrollTo(0,Math.max(0,t))}
     }
     function applyStep(n){
-      var ok=function(g){return g.step===n&&(n!==2||g.sub===sub)};
+      var ok=function(g){return g.step===n&&(n!==2||g.sub===sub)&&!(rmode&&g.sw.id==='swDlv')};
       groups.forEach(function(g){g.b.style.display=ok(g)?'':'none'});
-      var f=groups.filter(ok)[0];if(f)show(f,f.b);
+      var f=groups.filter(function(g){return ok(g)&&!(rmode&&g.b.classList.contains('ol'))})[0];if(f)show(f,f.b);
+      if(document.body.classList.contains('anonrm')){var any=!!f;tools.style.display=any?'':'none';try{fit()}catch(e){}}
     }
     function go(n,force,keepNote,sb){
       n=Math.max(1,Math.min(3,n));
@@ -4490,7 +4546,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
       if(sb)sub=sb;
       cur=n;WZ.setAttribute('data-wz',n);WZ.setAttribute('data-sub',sub);
       wbtn.forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-s')===n&&(n!==2||b.getAttribute('data-sub')===sub))});
-      $('wzHint').textContent=n===2?HINT2[sub]:HINT[n];
+      $('wzHint').textContent=n===2?HINT2[sub]:(rmode?HINTA[n]:HINT[n]);
       applyStep(n);if(n===3)sumRender();
       setTimeout(focusView,70)
     }
@@ -4506,7 +4562,7 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     /* لو الإرسال فشل بسبب شي من الخطوة الأولى (اسم، رابط...) نرجع المستخدم لها */
     var sb=$('sendBtn'),so=sb.onclick;
     sb.onclick=function(){
-      if(rmode||!so)return so&&so.apply(this,arguments);
+      if(rmode||!so){var rr=so&&so.apply(this,arguments);if(rmode&&cur!==1&&/اكتب/.test($('note').textContent))go(1,true,true);return rr}
       $('note').textContent='';
       var r=so.apply(this,arguments),t=$('note').textContent;
       if(cur!==1&&/اكتب|الرابط|الصور|الأغنية/.test(t)){
@@ -4519,6 +4575,13 @@ build($('swMulti'),[['شخص واحد','no'],['عدة أشخاص (رابط وا�
     /* ملخص الإرسال: كل سطر يفتح خياره بالأسفل */
     function sumRender(){
       var box=$('wzSum');if(!box)return;box.innerHTML='';
+      if(rmode){
+        var ha=document.createElement('h4');ha.textContent='ملخص الإرسال';box.appendChild(ha);
+        [['🤫','الخصوصية','مجهولة تماماً: ما يظهر اسمك'],['📮','الوجهة','صندوق الأسرار عند صاحب الرابط'],['💬','النوع','رسالة مجهولة تطلع بشكل ظرف']].forEach(function(r){
+          var b=document.createElement('button');b.type='button';var i=document.createElement('i');i.textContent=r[0];var sp=document.createElement('span');sp.textContent=r[1];var em=document.createElement('em');em.textContent=r[2];
+          b.appendChild(i);b.appendChild(sp);b.appendChild(em);box.appendChild(b)});
+        return;
+      }
       var oa=0;if(sel.open==='custom')oa=new Date($('openIn').value).getTime()||0;else if(sel.open)oa=Date.now()+(+sel.open);
       var pw=($('pwIn').value||'').trim(),ph=($('pwHint').value||'').trim(),dl='';
       DLVS.forEach(function(d){if(d[1]===(sel.dlv||''))dl=d[0]});
