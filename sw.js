@@ -25,7 +25,7 @@ self.addEventListener('push',function(e){
   var n=d.notification||d;
   e.waitUntil(self.registration.showNotification(n.title||'رد جديد 📮',{
     body:n.body||'وصلك رد جديد بصندوق الردود',
-    icon:'icon-192.png',badge:'icon-192.png',tag:'dws-reply',renotify:true,dir:'rtl',lang:'ar',
+    icon:'icon-192.png',badge:'icon-192.png',tag:(d.data&&d.data.tag)||'dws-reply',renotify:true,dir:'rtl',lang:'ar',
     data:{url:(d.data&&d.data.url)||'./#replies'}
   }));
 });

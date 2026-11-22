@@ -667,6 +667,10 @@ body.rmode #swEmb button[data-v=logo],body.anonrm #swEmb button[data-v=logo]{dis
 .slot .newChip{position:absolute;top:6px;left:6px;z-index:8;background:#c9a35a;color:#241405;border-radius:10px;padding:2px 10px;font-size:.78rem;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.5);pointer-events:none}
 .slot:not(.unread) .env{opacity:.82}
 .slot.unread .env{filter:drop-shadow(0 0 10px rgba(201,163,90,.55))}
+
+#dwDaily{display:none!important}
+.binder.bk-dw{background:linear-gradient(135deg,#1f3a2c,#12261c 60%,#0a1812)}
+.binder.bk-dw .binderCv{background:linear-gradient(135deg,#2b4d3a,#1b3527 60%,#0f2118)}
 </style>
 <style>.sw.chips button.sug{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,170,90,.35)}.sw.chips button.sug::before{content:'★ ';color:var(--gold);font-size:.8em}.tools .sugnote{display:none;font-size:.95rem;color:var(--muted);padding:0 18px 2px}.tools #swEmb.act+.sugnote{display:block}</style>
 <style>
@@ -3469,18 +3473,30 @@ var FCM_VAPID_KEY='';
   function dwStep(){var n=DW.length,st=37;function g(a,b){return b?g(b,a%b):a}while(g(st,n)!==1)st++;return st}
   function dwIdx(d){d=d||new Date();var N=DW.length,n=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);return (((n%N)+N)%N*dwStep())%N}
   function dwSeen(){try{var a=JSON.parse(localStorage.getItem('dws_dw_seen')||'[]');if(!Array.isArray(a))return[];var nm=DW.map(function(w){return w.n});return a.filter(function(x,i){return typeof x==='string'&&nm.indexOf(x)>=0&&a.indexOf(x)===i})}catch(e){return[]}}
-  function dwText(w){
+  function dwText(w,dd){
     var t='✦ ظرف اليوم من أرشيف الكتّاب الموتى ✦\n\n'+w.n+'\n'+w.r+' · '+w.y+'\n'+w.p+'\n\n'+w.b+'\n\nأشهر أعماله: '+w.w.join(' ، ');
     if(w.q)t+='\n\n'+(/شاعر/.test(w.r)?'من شعره:':'من أقواله:')+'\n«'+w.q+'»\n— '+w.n;
     /* التحدي شهري: يتغيّر أول كل شهر ويبقى نفسه طول الشهر (بوحي كاتب أول يوم بالشهر) */
-    var d0=new Date(),mw=DW[dwIdx(new Date(d0.getFullYear(),d0.getMonth(),1))];
+    var d0=dd||new Date(),mw=DW[dwIdx(new Date(d0.getFullYear(),d0.getMonth(),1))];
     return t+'\n\nتحدّي هذا الشهر للكتابة (بوحي '+mw.n+'):\n'+mw.t;
   }
-  function dwLetter(){
-    var d=new Date(),w=DW[dwIdx(d)],k=dwKey(d);
-    return {id:'dw-'+k,kind:'plain',noRep:true,dw:1,text:dwText(w),ts:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
+  function dwLetter(d,w){
+    d=d||new Date();w=w||DW[dwIdx(d)];var k=dwKey(d);
+    return {id:'dw-'+k,kind:'plain',noRep:true,dw:1,dwKey:k,dwN:w.n,text:dwText(w,d),ts:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
       env:'#1a1a1d',etype:'old',ptype:'old',paper:'aged',font:'amiri',ink:'#1f1a17',seal:'#262626',semb:'skull',esh:'classic',mot:'auto'};
   }
+  /* أرشيف الكتّاب الموتى: كل يوم ظرف جديد ينضاف وما ينحذف، يبدأ من أول يوم فتحت فيه الموقع بهالنسخة */
+  function dwArc(){
+    var o=lsG('dws_dw_arc')||{},st=null;try{st=localStorage.getItem('dws_dw_start')}catch(e){}
+    var today=new Date(),tk=dwKey(today);
+    if(!st){st=tk;try{localStorage.setItem('dws_dw_start',st)}catch(e){}}
+    var q=st.split('-'),d=new Date(+q[0],+q[1]-1,+q[2]),ks=[],ch=false;
+    for(var i=0;i<4000&&dwKey(d)<=tk;i++){var k=dwKey(d);if(!o[k]){o[k]=DW[dwIdx(d)].n;ch=true}ks.push(k);d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)}
+    if(!ks.length){ks.push(tk);if(!o[tk]){o[tk]=DW[dwIdx(today)].n;ch=true}}
+    if(ch)lsS('dws_dw_arc',o);
+    return ks.reverse().map(function(k){var z=k.split('-'),dd=new Date(+z[0],+z[1]-1,+z[2]),w=DW.filter(function(x){return x.n===o[k]})[0]||DW[dwIdx(dd)];return dwLetter(dd,w)});
+  }
+  function dwOpened(k){try{return localStorage.getItem('dws_dw_open_'+k)==='1'}catch(e){return false}}
   function dwRender(){
     var box=$('dwDaily');if(!box||busy)return;
     var d=new Date(),k=dwKey(d),w=DW[dwIdx(d)],opened=false;
@@ -3531,7 +3547,7 @@ var FCM_VAPID_KEY='';
   function rpK(){return user?'dws_rp_'+user.uid:null}
   function rrGet(){var k=rrK();return (k&&lsG(k))||{}}
   function rrInit(){var k=rrK();if(!k)return;try{if(localStorage.getItem(k)!==null)return}catch(e){return}var o={};replies.forEach(function(r){o[r.id]=1});lsS(k,o)}
-  function rrUnread(){var o=rrGet();return replies.filter(function(r){return !o[r.id]})}
+  function rrUnread(){var o=rrGet(),a=replies;try{a=replies.concat(dwArc())}catch(e){}return a.filter(function(r){return !o[r.id]})}
   function rrMark(id){var k=rrK();if(!k)return;var o=rrGet();if(o[id])return;o[id]=1;lsS(k,o);
     [].forEach.call(document.querySelectorAll('.slot[data-rid="'+id+'"]'),function(x){x.classList.remove('unread');var b=x.querySelector('.newChip');if(b)b.remove()});
     try{count()}catch(e){}}
@@ -3545,8 +3561,8 @@ var FCM_VAPID_KEY='';
   function ntOn(){try{return ntSupported()&&Notification.permission==='granted'&&localStorage.getItem('dws_nt_off')!=='1'}catch(e){return false}}
   function ntShow(n){
     if(!ntOn())return;
-    var o={body:n===0?'تم تفعيل الإشعارات ✓ بتوصلك لمن يجي رد':(n>1?'وصلك '+n+' ردود جديدة بصندوق الردود':'وصلك رد جديد بصندوق الردود'),icon:'icon-192.png',badge:'icon-192.png',tag:'dws-reply',renotify:true,dir:'rtl',lang:'ar',data:{url:'./#replies'}};
-    try{if(swReg&&swReg.showNotification)swReg.showNotification('رد جديد 📮',o);else{var x=new Notification('رد جديد 📮',o);x.onclick=function(){window.focus();location.hash='#replies';x.close()}}}catch(e){}
+    var dwN=(n==='dw');var o={body:dwN?'وصلك ظرف جديد من كاتب ميت 📜':n===0?'تم تفعيل الإشعارات ✓ بتوصلك لمن يجي رد':(n>1?'وصلك '+n+' ردود جديدة بصندوق الردود':'وصلك رد جديد بصندوق الردود'),icon:'icon-192.png',badge:'icon-192.png',tag:dwN?'dws-dw':'dws-reply',renotify:true,dir:'rtl',lang:'ar',data:{url:'./#replies'}};var tt=dwN?'ظرف اليوم 📜':'رد جديد 📮';
+    try{if(swReg&&swReg.showNotification)swReg.showNotification(tt,o);else{var x=new Notification(tt,o);x.onclick=function(){window.focus();location.hash='#replies';x.close()}}}catch(e){}
   }
   async function ntFcm(){
     if(!FCM_VAPID_KEY||!user||!swReg||!ntOn())return;
@@ -3581,7 +3597,7 @@ var FCM_VAPID_KEY='';
     };
     if(!replies.length){bell();return}
     if(!rpSelMode){btn('☑ تحديد','ghost',function(){rpSelMode=true;rpSel={};rpDelArm=false;replies.forEach(function(r){rpOpen[rpGroup(r)[0]]=true});renderShelf(replies,$('shelfR'),true)});bell();return}
-    var ids=rpVis.map(function(r){return r.id}),n=Object.keys(rpSel).length,allOn=ids.length&&ids.every(function(i){return rpSel[i]});
+    var ids=rpVis.filter(function(r){return !r.dw}).map(function(r){return r.id}),n=Object.keys(rpSel).length,allOn=ids.length&&ids.every(function(i){return rpSel[i]});
     bar.appendChild(mk('span','rpSC','محدد '+n));
     btn(allOn?'إلغاء تحديد الكل':'تحديد الكل','ghost',function(){ids.forEach(function(i){if(allOn)delete rpSel[i];else rpSel[i]=1});rpDelArm=false;renderShelf(replies,$('shelfR'),true)});
     var d=btn(rpDelArm?'متأكد؟ احذف '+n:'🗑 حذف المحدد','danger',async function(){
@@ -3589,14 +3605,14 @@ var FCM_VAPID_KEY='';
       if(!rpDelArm){rpDelArm=true;rpSelPaint();setTimeout(function(){if(rpDelArm){rpDelArm=false;rpSelPaint()}},3500);return}
       rpDelArm=false;d.disabled=true;d.textContent='جاري الحذف...';
       var gone={};
-      var all=Object.keys(rpSel);
+      var all=Object.keys(rpSel).filter(function(i){return i.indexOf('dw-')!==0});
       for(var j=0;j<all.length;j++){try{await dbh.collection('replies').doc(all[j]).delete();gone[all[j]]=1}catch(e){}}
       replies=replies.filter(function(x){return !gone[x.id]});
       rpSel={};rpSelMode=false;count();renderShelf(replies,$('shelfR'),true);
     },!n);
     btn('إلغاء','ghost',function(){rpSelMode=false;rpSel={};rpDelArm=false;renderShelf(replies,$('shelfR'),true)});
   }
-  function rpGroup(r){
+  function rpGroup(r){ if(r.dw)return ['dw','📜 الكتّاب الموتى'];
     if(r.anon||r.letterId==='ask')return ['anon','🤫 مجهولة'];
     var l=null;for(var i=0;i<letters.length;i++){if(letters[i].id===r.letterId){l=letters[i];break}}
     if(!l)return ['other','أخرى'];
@@ -3610,14 +3626,16 @@ var FCM_VAPID_KEY='';
     bar.innerHTML='';
     if(!all.length){bar.style.display='none';return}
     bar.style.display='';
-    var w=function(k){return k==='anon'?0:(k==='other'?2:1)};
+    var w=function(k){return k==='anon'?0:(k==='dw'?1:(k==='other'?3:2))};
     order.sort(function(a,b){return w(a)-w(b)||cnt[b]-cnt[a]});
     var add=function(label,val){var b=mk('button','',label);b.type='button';b.setAttribute('data-g',val);if(val===rpGv)b.className='on';b.onclick=function(){rpGv=val;renderShelf(replies,$('shelfR'),true)};bar.appendChild(b)};
     add('الكل '+all.length,'all');
     order.forEach(function(k){add(lab[k]+' '+cnt[k],k)});
   }
   function renderShelf(list,el,isReply){
-    el.innerHTML='';var total=list.length,now=Date.now();
+    el.innerHTML='';
+    if(isReply){try{list=list.concat(dwArc())}catch(e){}}
+    var total=list.length,now=Date.now();
     list=list.slice();
     if(isReply){renderRepBar(list);if(rpGv!=='all')list=list.filter(function(r){return rpGroup(r)[0]===rpGv});rpVis=list;if(rpSelMode){var _k={};replies.forEach(function(r){_k[r.id]=1});Object.keys(rpSel).forEach(function(i){if(!_k[i])delete rpSel[i]})}rpSelPaint()}
     if(!isReply){
@@ -3649,8 +3667,8 @@ var FCM_VAPID_KEY='';
     function binderFor(l){
       var g=rpGroup(l),k=g[0];
       if(bnd[k])return bnd[k];
-      var n=0,u=0,_rr=rrGet();list.forEach(function(x){if(rpGroup(x)[0]===k){n++;if(!_rr[x.id])u++}});var nt=n+(n===1?' رد':' ردود')+(u?' · '+u+' جديد':'');
-      var B=mk('section','binder bk-'+(k==='anon'?'anon':'kind'));
+      var n=0,u=0,_rr=rrGet();list.forEach(function(x){if(rpGroup(x)[0]===k){n++;if(!_rr[x.id])u++}});var nt=n+(k==='dw'?(n===1?' رسالة':' رسائل'):(n===1?' رد':' ردود'))+(u?' · '+u+' جديد':'');
+      var B=mk('section','binder bk-'+(k==='anon'?'anon':(k==='dw'?'dw':'kind')));
       var isOpen=rpOpen[k]===undefined?(rpGv!=='all'):rpOpen[k];
       B.classList.add(isOpen?'open':'closed');
       var cv=mk('div','binderCv');cv.setAttribute('role','button');cv.tabIndex=0;
@@ -3669,12 +3687,12 @@ var FCM_VAPID_KEY='';
       if(!isReply&&l.pin)env.appendChild(mk('span','pin-badge','📌'));
       env.style.setProperty('--rot',((hash(l.id)%7)-3)*.8+'deg');
       if(!isReply&&l.id===pendingDrop)env.classList.add('drop');
-      if(isReply&&rpSelMode){slot.classList.toggle('selOn',!!rpSel[l.id]);slot.appendChild(mk('span','selChk','✓'))}
+      if(isReply&&rpSelMode&&!l.dw){slot.classList.toggle('selOn',!!rpSel[l.id]);slot.appendChild(mk('span','selChk','✓'))}
       if(isReply){slot.dataset.rid=l.id;if(!rrGet()[l.id]){slot.classList.add('unread');slot.appendChild(mk('span','newChip','جديد'))}}
-      env.addEventListener('click',function(ev){if(isReply&&rpSelMode){ev.stopPropagation();if(rpSel[l.id])delete rpSel[l.id];else rpSel[l.id]=1;slot.classList.toggle('selOn',!!rpSel[l.id]);rpSelPaint();return}openLetter(l,env,isReply?'reply':'sent')});
+      env.addEventListener('click',function(ev){if(isReply&&l.dw){if(busy)return;ev.stopPropagation();openLetter(l,env,'recv');if(!current||current.l!==l)return;try{localStorage.setItem('dws_dw_open_'+l.dwKey,'1')}catch(e){}var sn=dwSeen();if(sn.indexOf(l.dwN)<0){sn.push(l.dwN);try{localStorage.setItem('dws_dw_seen',JSON.stringify(sn))}catch(e){}}var cb=slot.querySelector('.cap b');if(cb)cb.textContent='📜 '+l.dwN;rrMark(l.id);return}if(isReply&&rpSelMode){ev.stopPropagation();if(rpSel[l.id])delete rpSel[l.id];else rpSel[l.id]=1;slot.classList.toggle('selOn',!!rpSel[l.id]);rpSelPaint();return}openLetter(l,env,isReply?'reply':'sent')});
       slot.appendChild(env);
       var cap=mk('div','cap');
-      cap.appendChild(mk('b','',isReply?('رد من '+(l.anon?'مجهول 🤫':(l.fromName||''))):(l.kind==='plain'?((l.text||'').replace(/\s+/g,' ').slice(0,24)||'نص حر'):('إلى '+(l.to||'')))));
+      cap.appendChild(mk('b','',l.dw?(dwOpened(l.dwKey)?'📜 '+l.dwN:'📜 رسالة من كاتب ميت'):isReply?('رد من '+(l.anon?'مجهول 🤫':(l.fromName||''))):(l.kind==='plain'?((l.text||'').replace(/\s+/g,' ').slice(0,24)||'نص حر'):('إلى '+(l.to||'')))));
       cap.appendChild(mk('span','',(isReply?'':((KINDS[l.kind]||KINDS.letter)[0]+(l.secret?' · سرية':'')+(l.multi?' · جماعية':'')+' · '))+fmtDT(l.ts)));
       if(l.ed&&!isReply)cap.appendChild(mk('span','','  ✎ معدّلة'));if(l.openAt&&l.openAt>Date.now())cap.appendChild(mk('span','','  🔒 تنفتح '+fmtDT(l.openAt)));if(!isReply&&l.readAt&&!l.multi)cap.appendChild(mk('span','','  ✓ انفتحت '+fmtDT(l.readAt)));if(!isReply&&l.multi){var rc=replies.filter(function(r){return r.letterId===l.id}).length;cap.appendChild(mk('span','','  👁 '+(l.opens||0)+(rc?' · 💬 '+rc:'')))}if(!isReply){var qe=mk('button','cap-edit','✏️ تعديل');qe.type='button';qe.onclick=function(ev){ev.stopPropagation();startEdit(l)};var qw=mk('div');qw.style.textAlign='center';qw.appendChild(qe);cap.appendChild(qw);
         if(l.tags&&l.tags.length){var tg=mk('div','cap-tags');l.tags.forEach(function(t){var i=mk('i','','#'+t);i.onclick=function(ev){ev.stopPropagation();bxTag=t;renderShelf(letters,$('shelf'),false)};tg.appendChild(i)});cap.appendChild(tg)}
@@ -4066,7 +4084,9 @@ var FCM_VAPID_KEY='';
         var old={};replies.forEach(function(r){old[r.id]=1});var fresh=nr.filter(function(r){return !old[r.id]}).length;
         replies=nr;count();if(!document.hidden)renderShelf(replies,$('shelfR'),true);
         if(fresh&&(document.hidden||location.hash!=='#replies'))ntShow(fresh);
-      }}catch(e){}
+      }
+      try{var dl=dwArc()[0];if(dl&&localStorage.getItem('dws_dw_nt')!==dl.dwKey&&!rrGet()[dl.id]&&(document.hidden||location.hash!=='#replies')){localStorage.setItem('dws_dw_nt',dl.dwKey);ntShow('dw')}}catch(e){}
+    }catch(e){}
   },45000);
   $('closeBtn').onclick=closeReader;
   $('readOv').addEventListener('click',function(e){if(e.target===this)closeReader()});
