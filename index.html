@@ -764,6 +764,15 @@ html[data-th=ram]{--bg:#050d13;--bg0:#050d13;--text:#e6e9d6;--muted:#8fa59a;--go
 @keyframes pgOut{to{transform:rotateY(var(--pgd,60deg)) translateX(calc(var(--pgd,60deg) * -.4));opacity:0}}
 @keyframes pgIn{from{transform:rotateY(var(--pgd,-60deg));opacity:0}to{transform:none;opacity:1}}
 #pgRow button:disabled{opacity:.3}
+
+/* أثناء الكتابة: نوقف فلتر حواف الورقة الثقيل ونثبّت الطبقة حتى ما تتعلّق الكتابة */
+body.typing .pbg{filter:none!important}
+.pbg{will-change:transform;transform:translateZ(0)}
+
+/* بدون فلتر حواف الورق لكل الأنواع */
+.pbg,[class*=pt-] .pbg{filter:none!important}
+
+body.guest #thBtn,body.guest #thPop,html.guesth #thBtn,html.guesth #thPop{display:none!important}
 </style>
 <style>.sw.chips button.sug{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,170,90,.35)}.sw.chips button.sug::before{content:'★ ';color:var(--gold);font-size:.8em}.tools .sugnote{display:none;font-size:.95rem;color:var(--muted);padding:0 18px 2px}.tools #swEmb.act+.sugnote{display:block}</style>
 <style>
@@ -2750,6 +2759,7 @@ var FCM_VAPID_KEY='';
     var cp=$('compose');if(cp&&cp.classList.contains('hwon')&&typeof hwFit==='function')hwFit();
   }
   $('msg').addEventListener('input',function(){msgGrow()});
+  (function(){var m=$('msg'),tt=0;m.addEventListener('focus',function(){document.body.classList.add('typing')});m.addEventListener('blur',function(){document.body.classList.remove('typing')})})();
   window.addEventListener('resize',function(){msgGrow()});
   try{document.fonts.ready.then(function(){msgGrow()})}catch(e){}
   setTimeout(msgGrow,300);
@@ -5544,9 +5554,12 @@ function build(){
 try{build()}catch(e){}
 window.DWSAtm={
   TH:TH,AM:AM,
-  set:function(t,a){setTh(t,true);setAmb(a,true)},
+  set:function(t,a){window.__letterTh=true;setTh(t,true);setAmb(a,true)},
   base:function(){
     /* ثيم المكتب: يختاره المستخدم من الصفحة الرئيسية ويبقى ثابتاً. ثيم الرسالة يتغير فقط أثناء فتحها ثم يرجع هذا */
+    if(/^#(r-|re-|ask-)/.test(location.hash)){ /* صفحة المستلم: ثيم الرسالة فقط، ويبقى بعد الفتح */
+      if(!window.__letterTh){setTh('def',true);setAmb('none',true)}return}
+    window.__letterTh=false;
     setTh(g('dws_th')||'def',true);setAmb(g('dws_amb')||'none',true);
   }
 };
