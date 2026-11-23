@@ -4505,7 +4505,7 @@ var FCM_VAPID_KEY='';
     if(!data){msg.textContent='ما كدرت أفتح الرسالة. ممكن الرابط ناقص أو الرسالة انحذفت.';readId=null;if(window.__rvLoaded)window.__rvLoaded();return}
     msg.textContent='انقر على الظرف لتفتحه';
     var l=Object.assign({id:id},data),env=mkEnv(l);env.style.cursor='pointer';
-    try{window.__preTh={th:data.dth||'def',am:data.dam||'none'};window.__letterTh=false;window.DWSAtm&&DWSAtm.base()}catch(e){}
+    try{window.__preTh=null;window.__letterTh=false;window.DWSAtm&&DWSAtm.base()}catch(e){}
     var oa=+data.openAt||0;
     function lockMsg(){var d=oa-Date.now();if(d<=0)return '';var m=Math.floor(d/60000)%60,h=Math.floor(d/3600000)%24,dd=Math.floor(d/86400000);return '🔒 الرسالة مختومة وتنفتح بعد '+(dd?dd+' يوم ':'')+(h?h+' ساعة ':'')+m+' دقيقة'}
     if(lockMsg()){msg.textContent=lockMsg();var tk=setInterval(function(){var t=lockMsg();if(!t||readId!==id){clearInterval(tk);if(readId===id)msg.textContent='انقر على الظرف لتفتحه'}else msg.textContent=t},30000)}
@@ -5638,7 +5638,7 @@ window.DWSAtm={
   base:function(){
     /* ثيم المكتب: يختاره المستخدم من الصفحة الرئيسية ويبقى ثابتاً. ثيم الرسالة يتغير فقط أثناء فتحها ثم يرجع هذا */
     if(/^#(r-|re-|ask-)/.test(location.hash)){ /* صفحة المستلم: ثيم الرسالة فقط، ويبقى بعد الفتح */
-      if(!window.__letterTh){var P=window.__preTh;setTh(P?P.th:'def',true);setAmb(P?P.am:'none',true)}return}
+      if(!window.__letterTh){setTh('def',true);setAmb('none',true)}return}
     window.__letterTh=false;
     setTh(g('dws_th')||'def',true);setAmb(g('dws_amb')||'none',true);
   }
