@@ -32,6 +32,11 @@ html.lgfx header h1.dws img.lg-g{display:none!important}
 html.guesth .lgf{display:block}
 .lgf img{position:absolute;inset:0;width:100%;height:100%;opacity:0;display:block}
 .lgf.go img{opacity:1}
+html.skybg{background:#03040a!important}
+html.skybg body,html.skybg[data-th] body{background:transparent!important}
+#rvOv.sky{z-index:-1!important;pointer-events:none!important;opacity:1!important;transition:none!important}
+#dvOv.sky{z-index:-1!important;pointer-events:none!important;opacity:1!important;transition:none!important}
+#dvOv.sky::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.5))}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
@@ -1733,10 +1738,32 @@ var RvScene=(function(){
     T(function(){hovered=true;envReady=true;tryRelease()},9500);
   }
   T(startArrive,8000);
+  var skyRaf=0;
+  function skyLoop(){
+    if(!ov.isConnected)return;
+    var n=Date.now();
+    if(!document.hidden&&n-(skyLoop.l||0)>=33){skyLoop.l=n;try{RvScene.draw(scn,sx,(n-t0)/1000)}catch(e){}}
+    skyRaf=requestAnimationFrame(skyLoop);
+  }
   function finish(){
     if(finished)return;finished=true;
     timers.forEach(clearTimeout);cancelAnimationFrame(raf);
-    ov.classList.add('out');document.body.classList.remove('rvOn');
+    document.body.classList.remove('rvOn');
+    if(owlShown){
+      /* مشهد البومة: نخلي نفس سماء الليل (قمر، نجوم، غيوم) خلفية ثابتة للصفحة بعد ما تنزل الرسالة */
+      try{
+        anims.forEach(function(a){try{a.cancel()}catch(e){}});
+        [bird,letter,txt,document.getElementById('rvSkip')].forEach(function(e){if(e)e.style.display='none'});
+        ov.classList.add('sky');document.documentElement.classList.add('skybg');
+        skyLoop();
+        window.addEventListener('hashchange',function(){
+          if(/^#r-/.test(location.hash))return;
+          cancelAnimationFrame(skyRaf);try{ov.remove()}catch(e){}document.documentElement.classList.remove('skybg');
+        });
+        return;
+      }catch(e){}
+    }
+    ov.classList.add('out');
     setTimeout(function(){try{ov.remove()}catch(e){}anims.forEach(function(a){try{a.cancel()}catch(e){}})},1000);
   }
   function tryFinish(){if(animDone&&(loaded||Date.now()-t0>24000))finish()}
@@ -2050,7 +2077,18 @@ var RvScene=(function(){
     function finish(){
       if(finished)return;finished=true;
       timers.forEach(clearTimeout);
-      ov.classList.add('out');document.body.classList.remove('rvOn');
+      document.body.classList.remove('rvOn');
+      /* نخلي مشهد التوصيل نفسه (بيت، سطح، شاطئ، باب) خلفية ثابتة للصفحة بعد ما توصل الرسالة */
+      try{
+        [let_,txt,ov.querySelector('#dvSkip')].forEach(function(e){if(e)e.style.display='none'});
+        ov.classList.add('on');ov.classList.add('sky');document.documentElement.classList.add('skybg');
+        window.addEventListener('hashchange',function(){
+          if(/^#r-/.test(location.hash))return;
+          try{ov.remove()}catch(e){}document.documentElement.classList.remove('skybg');
+        });
+        return;
+      }catch(e){}
+      ov.classList.add('out');
       setTimeout(function(){try{ov.remove()}catch(e){}anims.forEach(function(a){try{a.cancel()}catch(e){}})},1000);
     }
     function tryFinish(){if(animDone&&(loaded||Date.now()-t0>24000))finish()}
